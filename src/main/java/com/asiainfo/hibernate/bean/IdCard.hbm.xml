@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.asiainfo.hibernate.bean.IdCard" table="idcard" catalog="db4myeclipse">
+        <id name="id" type="java.lang.String">
+            <column name="id" length="32" />
+            <generator class="uuid"></generator>
+        </id>
+        <property name="cardNo" type="java.lang.String">
+            <column name="cardNo" length="32" not-null="true" />
+        </property>
+        <property name="authDate" type="java.sql.Timestamp">
+            <column name="authDate" length="19" not-null="true" />
+        </property>
+		<!-- one2one 默认是共享主键的加载方式，唯一外键关联必须在一端设置加载的连接属性，
+				连接属性指的是外键所在表的对应的类的属性，hibernate根据类属性对应的字段加载
+				连接类。IdCard根据主键id与关联表类User的idCard属性对应的列card_id进行加载
+				User对象。这里如果不设置property-ref属性，则加载User时，默认会使用
+				IdCard.id=User.id进行加载，这样就无法正确加载关联对象。
+				 -->
+		<one-to-one name="user" class="com.asiainfo.hibernate.bean.User" property-ref="idCard"></one-to-one>
+    </class>
+</hibernate-mapping>

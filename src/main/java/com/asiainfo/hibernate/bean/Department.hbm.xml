@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.asiainfo.hibernate.bean.Department" table="department" catalog="db4myeclipse">
+        <id name="id" type="java.lang.String">
+            <column name="id" length="32" />
+            <generator class="assigned"></generator>
+        </id>
+        
+        <property name="deptName" type="java.lang.String">
+            <column name="deptName" length="32" not-null="true" />
+        </property>
+        
+        <!-- 设置fetch="join"在查询department时会使用inner join进行表连接查询，lazy失效 -->
+        <many-to-one name="parentDept" class="com.asiainfo.hibernate.bean.Department" fetch="join">
+            <column name="parent_id" length="32" />
+        </many-to-one>
+        
+        <set name="users" inverse="true">
+            <key>
+                <column name="dept_id" length="32" />
+            </key>
+            <one-to-many class="com.asiainfo.hibernate.bean.User" />
+        </set>
+        
+        <set name="childDepts" inverse="true">
+            <key>
+                <column name="parent_id" length="32" />
+            </key>
+            <one-to-many class="com.asiainfo.hibernate.bean.Department" />
+        </set>
+    </class>
+</hibernate-mapping>

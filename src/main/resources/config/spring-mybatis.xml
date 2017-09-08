@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd" >
+        
+    <!-- =============================myBatis配置项============================ -->
+    <!-- 配置sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="mapperLocations" value="classpath:com/jaeson/mybatis/mapping/*.xml" />
+    </bean>
+    <!-- 配置扫描器 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描com.jaeson.mybatis.dao这个包以及它的子包下的所有映射接口类 -->
+        <property name="basePackage" value="com.jaeson.mybatis.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+    
+    <!-- 配置事务管理器 -->
+	<!-- 配置DataSource事务管理器 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- 配置 aop事务 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager"> 
+		<tx:attributes>
+			<tx:method name="add*" 		propagation="REQUIRED" />
+			<tx:method name="insert*" 	propagation="REQUIRED" />
+			<tx:method name="save*" 	propagation="REQUIRED" />
+			<tx:method name="update*" 	propagation="REQUIRED" />
+			<tx:method name="delete*"	propagation="REQUIRED" />
+			<tx:method name="remove*" 	propagation="REQUIRED" />
+
+			<tx:method name="get*" 		propagation="SUPPORTS" />
+			<tx:method name="count*" 	propagation="SUPPORTS" />
+			<tx:method name="find*" 	propagation="SUPPORTS" />
+			<tx:method name="list*" 	propagation="SUPPORTS" />
+			<tx:method name="load*"		propagation="SUPPORTS" />
+			<tx:method name="*" 		propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut id="txPointcut" expression="execution(* com.jaeson.mybatis.service..*.*(..))" />  
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />  
+	</aop:config>
+</beans>
+        

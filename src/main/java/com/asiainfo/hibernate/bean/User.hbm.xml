@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.asiainfo.hibernate.bean.User" table="user" catalog="db4myeclipse">
+        <id name="id" type="java.lang.String">
+            <column name="id" length="32" />
+            <generator class="uuid"></generator>
+        </id>
+        
+        <property name="userName" type="java.lang.String">
+            <column name="userName" length="32" not-null="true" />
+        </property>
+        
+        <!-- 组件映射 -->
+		<component name="address" class="com.asiainfo.hibernate.bean.Address">  
+	        <property name="address" type="java.lang.String">
+	            <column name="address" length="128" />
+	        </property>
+	        <property name="zipCode" type="java.lang.Integer">
+	            <column name="zipCode" />
+	        </property>
+	        <property name="phone" type="java.lang.String">
+	            <column name="phone" length="32" />
+	        </property>
+	    </component>
+		
+		<!-- one2one外键关联，通过unique="true"实现 -->
+        <many-to-one name="idCard" class="com.asiainfo.hibernate.bean.IdCard" cascade="all" fetch="select" unique="true">
+            <column name="card_id" length="32" />
+        </many-to-one>
+        
+        <!-- many2one关联 -->
+        <many-to-one name="department" class="com.asiainfo.hibernate.bean.Department" fetch="select">
+            <column name="dept_id" length="32" />
+        </many-to-one>
+       	
+       	<!-- many2many关联 -->
+       	<set name="roles" table="user_role" catalog="db4myeclipse">
+            <key>
+                <column name="user_id" length="32" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.asiainfo.hibernate.bean.Role">
+                <column name="role_id" not-null="true" />
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

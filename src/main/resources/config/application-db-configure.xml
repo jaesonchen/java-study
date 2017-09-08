@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd " >
+
+	<!-- 加载配置文件 -->
+	<bean id="db_propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">	
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+		  <value>classpath:config/db.properties</value>
+		</property>
+	</bean>
+	
+	<!-- 数据源配置 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${env.mcd.db.driver}" />
+        <property name="url" value="${env.mcd.db.url}" />
+        <property name="username" value="${env.mcd.db.username}" />
+        <property name="password" value="${env.mcd.db.password}" />
+		<property name="initialSize" value="5" />
+		<property name="maxActive" value="50" />
+		<property name="minIdle" value="10" />
+		<property name="maxIdle" value="20" />
+		<!-- 自动回收超时连接(该机制在(getNumIdle() < 2) && (getNumActive() > getMaxActive() - 3)时被触发) -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 超时时间(以秒为单位):活动连接只有在没有被使用的时间超过removeAbandonedTimeout时才被删除,在resultset中游历不被计算为被使用 -->
+		<property name="removeAbandonedTimeout" value="300"/>
+		<!-- 超时等待时间(以毫秒为单位):当没有可用连接时,连接池等待连接释放的最大时间,超过该时间限制会抛出异常,如果设置-1表示无限等待,默认为无限 -->
+		<property name="maxWait" value="60000"/>
+		<!-- 每30秒运行一次空闲连接回收器 -->
+		<property name="timeBetweenEvictionRunsMillis" value="30000" />
+		<!-- 连接池中连接,在时间段内一直空闲, 被逐出连接池的时间,默认为30分钟 -->
+		<property name="minEvictableIdleTimeMillis" value="1800000" />
+		<!-- 在每次空闲连接回收器线程(如果有)运行时检查的连接数量,默认值是3 -->
+		<property name="numTestsPerEvictionRun" value="20" />
+		<!-- 指明连接是否被空闲连接回收器(如果有)进行检验.如果检测失败,则连接将被从池中去除 -->
+		<property name="testWhileIdle" value="true" />
+		<!-- 借出连接时不要测试,否则很影响性能,默认值是true -->
+		<property name="testOnBorrow" value="false" />
+		<property name="validationQuery" value="select 1 from dual" />
+    </bean>
+
+	<!-- 启用注解事物 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+    <!-- jdbcTemplate管理 -->
+    <!-- <bean id="jdbcTemplate" class="com.asiainfo.biapp.mcd.jdbc.util.CaseInsensitiveJdbcTemplate"> -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    	<property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>

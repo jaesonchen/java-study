@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd" >
+
+	<!-- hibernate SessionFactory配置 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+            	<!-- 设置数据库方言 -->
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <!-- 设置自动创建|更新|验证数据库表结构  validate | update | create | create-drop -->
+                <!-- <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> -->
+                <!-- 是否在控制台显示sql -->
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <!-- 是否格式化sql，优化显示 -->
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                <prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+                <!-- 在单独使用hibernate时，总是会加上这项配置，但spring与hibernate集成时，不能加上这项配置，
+                	否则会出现：save is not valid without active transaction 。
+                	Spring会自动使用org.springframework.orm.hibernate4.SpringSessionContext替代。-->
+                <!-- <prop key="hibernate.current_session_context_class">thread</prop> -->
+            </props>
+        </property>
+		<!-- 自动扫描实体对象 com.jaeson.hibernatestudy.bean的包结构中存放实体类 -->
+        <!-- <property name="packagesToScan">
+            <list>
+                <value>com.jaeson.hibernatestudy.bean</value>
+            </list>
+        </property> -->
+        <!-- <property name="annotatedClasses">
+			<list> 
+				<value>com.jaeson.hibernatestudy.bean.IdCard</value>
+				<value>com.jaeson.hibernatestudy.bean.Role</value>
+				<value>com.jaeson.hibernatestudy.bean.Department</value>
+				<value>com.jaeson.hibernatestudy.bean.User</value>
+				<value>com.jaeson.hibernatestudy.bean.Student</value>
+				<value>com.jaeson.hibernatestudy.bean.Clazz</value>
+				<value>com.jaeson.hibernatestudy.bean.Learner</value>
+				<value>com.jaeson.hibernatestudy.bean.Course</value>
+			</list>
+		</property>  -->
+		<!-- <property name="mappingResources">
+			<list>
+				<value>com/jaeson/hibernatestudy/bean/IdCard.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/Role.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/Department.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/User.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/Student.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/Clazz.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/Learner.hbm.xml</value>
+				<value>com/jaeson/hibernatestudy/bean/Course.hbm.xml</value>
+			</list>
+		</property> -->
+		<property name="mappingLocations">
+			<value>classpath:/com/jaeson/hibernatestudy/bean/*.hbm.xml</value>
+		</property>
+
+	</bean>
+	
+	<!-- 配置Hibernate 事务管理器-->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- 基于JDK动态代理 ，可以将@Transactional放置在接口和具体类上。
+		 基于CGLIB类代理，只能将@Transactional放置在具体类上。
+		 在接口上标注@Transactional注解，会留下这样的隐患：因为注解不能被继承，所以业务接口中标注的@Transactional注解不会被业务实现类继承。
+		 所以可能会出现不启动事务的情况。所以，Spring建议我们将@Transaction注解在实现类上。
+		 默认基于jdk代理，配置基于CGLIB类代理： 
+		<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/> -->
+
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!-- hibernate4和spring4集成时，Hibernate4必须配置为开启事务，
+		 否则 SessionFactory.getCurrentSession()获取不到Session：Could not obtain transaction-synchronized Session for current thread-->
+</beans>

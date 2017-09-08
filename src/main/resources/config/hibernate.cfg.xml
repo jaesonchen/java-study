@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+		<property name="dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="connection.url">
+			jdbc:mysql://localhost:3306/db4myeclipse
+		</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">admin</property>
+		<property name="connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+		<property name="myeclipse.connection.profile">
+			db4myeclipse
+		</property>
+		<property name="hibernate.jdbc.batch_size">50</property>
+		<property name="hibernate.show_sql">true</property>
+		<!-- 设置为thread否则在使用 SessionFactory.currentSession() 时抛出 no session found for current thread 
+			SessionFactoryImpl使用ThreadLocalSessionContext管理thread Session -->
+		<property name="current_session_context_class">thread</property>
+
+		<!-- 二级缓存设置 -->
+		<!-- 
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.provider_class">
+      		org.hibernate.cache.EhCacheProvider
+   		</property> -->
+		
+		<!-- 默认情况下hbm文件中的声明比类中的注解元数据具有更高的优先级。 -->
+		<mapping
+			resource="com/jaeson/hibernatestudy/bean/IdCard.hbm.xml" />
+		<mapping resource="com/jaeson/hibernatestudy/bean/Role.hbm.xml" />
+		<mapping
+			resource="com/jaeson/hibernatestudy/bean/Department.hbm.xml" />
+		<mapping resource="com/jaeson/hibernatestudy/bean/User.hbm.xml" />
+		<mapping
+			resource="com/jaeson/hibernatestudy/bean/Student.hbm.xml" />
+		<mapping
+			resource="com/jaeson/hibernatestudy/bean/Clazz.hbm.xml" />
+		<mapping
+			resource="com/jaeson/hibernatestudy/bean/Learner.hbm.xml" />
+		<mapping
+			resource="com/jaeson/hibernatestudy/bean/Course.hbm.xml" />
+
+	</session-factory>
+
+</hibernate-configuration>
