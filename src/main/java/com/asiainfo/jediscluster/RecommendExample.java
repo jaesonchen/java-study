@@ -13,7 +13,7 @@ import redis.clients.jedis.JedisCluster;
  * @Description: TODO
  * 
  * @author       zq
- * @date         2017年8月28日  上午10:47:13
+ * @date         2017年9月21日  下午3:22:50
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class RecommendExample {
@@ -21,6 +21,7 @@ public class RecommendExample {
 	static final Serializer<Object> serializer = new JdkSerializer();
 	static final int lastRecommendLimit = 5;
 	static final int recommendNum = 1;
+	
 	/** 
 	 * @Description: TODO
 	 * 
@@ -32,81 +33,81 @@ public class RecommendExample {
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 		final JedisCluster jedisCluster = JedisClusterFactory.getJedisCluster();
 		
-		List<String> lastRecommendList = getLastRecommend(jedisCluster, "13522587602");
-		/*List<String> lastRecommendList = new ArrayList<>(Arrays.asList(new String[] {
-				"600000379484", "600000940495", "600000940495", "610008883838", "610008883838", "600000379293", 
-				"610008883838", "600000379484", "600000940495", "600000940495", "610008883838", "610008883838", 
-				"600000379293", "610008883838", "600000379484", "600000940495", "600000940495", "610008883838"}));*/
+		RecommendExample test = new RecommendExample();
+		List<String> lastRecommendList = test.getLastRecommend(jedisCluster, "13522587602");
 		System.out.println("lastRecommendList=" + lastRecommendList);
 		List<String> recommendList = new ArrayList<>(Arrays.asList(new String[] {
 				"600000940495", "600000379484", "610008883838", "600000379293", "610008883838", "610008883838", "600000940495"
 		}));
 		System.out.println("recommendList=" + recommendList);
-
-		//List<String> result = filter(recommendList, lastRecommendList, recommendNum);
-		FilterResult result = filter(recommendList, lastRecommendList, recommendNum);
+		List<String> result = test.filter(recommendList, lastRecommendList, 1);
+		System.out.println("result=" + result);
 		
-		System.out.println("result=" + result.getResult());
-		System.out.println("index=" + result.getIndex());
-		List<String> lastResult = offerLastRecommend(result.getResult(), lastRecommendList, lastRecommendLimit);
-		System.out.println("lastResult=" + lastResult);
-		service.execute(new AsyncUpdateTask(jedisCluster, lastResult, "13522587602"));
+		lastRecommendList = test.offerLastRecommend(result, lastRecommendList, 100);
+		System.out.println("lastRecommendList=" + lastRecommendList);
+		service.execute(new AsyncUpdateTask(jedisCluster, lastRecommendList, "13522587602"));
 		Thread.sleep(5000);
 		service.shutdown();
+		
+/*		List<String> recommendedList = new ArrayList<>(Arrays.asList(new String[] {"1", "6", "2", "4", "3", "5"}));
+		List<String> recommendList = new ArrayList<>(Arrays.asList(new String[] {"6", "5", "4", "3", "2", "1"}));
+		for (int i = 0; i < 10; i++) {
+			List<String> result = test.filter(recommendList, recommendedList, 1);
+			System.out.println("result=" + result);
+			recommendedList = test.offerLastRecommend(result, recommendedList, 100);
+			System.out.println("recommendedList=" + recommendedList);
+		}*/
 	}
 	
-
-	
-	/**
-	 * @Description: 循环推荐过滤
-	 * 
-	 * @param recommendList			待推荐产品列表
-	 * @param lastRecommendList		已推荐产品列表
-	 * @param recommendNum			本次推荐数量
-	 * @return
-	 */
-	public static FilterResult filter(final List<String> recommendList, final List<String> lastRecommendList, final int recommendNum) {
+	//获取本次循环推荐列表
+	protected List<String> filter(List<String> list, List<String> recommendedList, final int num) {
 		
-		if (null == recommendList || recommendList.isEmpty()) {
-			return new FilterResult();
+		//待推荐列表为空
+		if (null == list || list.isEmpty()) {
+			return new ArrayList<>();
 		}
 		
-		List<String> recommendListCopy = new ArrayList<>(recommendList);
-		final List<Integer> indexList = new ArrayList<>();
-		for (int i = 0; i < recommendListCopy.size(); i++) {
-			indexList.add(i);
+		//待推荐列表少于要推荐的数量
+		if (list.size() <= num) {
+			return new ArrayList<>(list);
 		}
-		if (null == lastRecommendList || lastRecommendList.isEmpty()) {
-			int length = recommendListCopy.size() > recommendNum ? recommendNum : recommendListCopy.size();
-			return new FilterResult(new ArrayList<>(recommendListCopy.subList(0, length))
-					, new ArrayList<>(indexList.subList(0, length)));
+		
+		int recommendNum = list.size() < num ? list.size() : num;
+		//已推荐列表为空
+		if (null == recommendedList || recommendedList.isEmpty()) {
+			return new ArrayList<>(list.subList(0, recommendNum));
 		}
-		if (recommendListCopy.size() <= recommendNum) {
-			return new FilterResult(recommendListCopy, indexList);
-		}
-
-		for (String lastRecommend : lastRecommendList) {
-			int index = recommendListCopy.indexOf(lastRecommend);
-			if (index != -1) {
-				indexList.remove(index);
-				recommendListCopy.remove(lastRecommend);
-				if (recommendListCopy.size() <= recommendNum) {
-					return new FilterResult(recommendListCopy, indexList);
+		
+		List<String> result = new ArrayList<>();
+		List<String> copyList = new ArrayList<>(list);
+		List<String> copyRecommendedList = new ArrayList<>(recommendedList);
+		
+		//判断是否有新加入活动
+		copyList.removeAll(copyRecommendedList);
+		if (copyList.size() > 0) {
+			for (String recommend : copyList) {
+				result.add(recommend);
+				copyRecommendedList.add(0, recommend);
+				if (--recommendNum == 0) {
+					break;
 				}
 			}
 		}
-		return new FilterResult(new ArrayList<>(recommendListCopy.subList(0, recommendNum)), indexList);
+		
+		//本次推荐的活动（需要考虑上一个推荐的刚好是新活动，此时刚好完成一轮，下一轮需要从高优先级开始）
+		copyList = new ArrayList<>(list);
+		//删除所有已完成、停止的已推荐活动
+		copyRecommendedList.retainAll(copyList);
+		for (int i = 0; i < recommendNum; i++) {
+			String nextRecommand = getNextRecommend(copyList, copyRecommendedList);
+			result.add(nextRecommand);
+			copyRecommendedList.add(0, nextRecommand);
+		}
+		return result;
 	}
 	
-	/**
-	 * @Description: 追加本次推荐产品到已推荐列表的头部
-	 * 
-	 * @param recommendList			本次推荐产品列表
-	 * @param lastRecommendList		已推荐产品列表
-	 * @param limit					已推荐产品保存长度限制
-	 * @return
-	 */
-	public static List<String> offerLastRecommend(final List<String> recommendList, final List<String> lastRecommendList, final int limit) {
+	//追加本次推荐产品到已推荐列表的头部
+	protected List<String> offerLastRecommend(final List<String> recommendList, final List<String> lastRecommendList, final int limit) {
 		
 		if (null == recommendList || recommendList.isEmpty()) {
 			return lastRecommendList;
@@ -121,6 +122,79 @@ public class RecommendExample {
 		return new ArrayList<>(lastRecommendListCopy.subList(0, lastRecommendListCopy.size() > limit ? limit : lastRecommendListCopy.size()));
 	}
 	
+	//返回下一个待推荐活动，需要判断是否刚推荐过
+	protected String getNextRecommend(List<String> list, List<String> recommendedList) {
+		
+		String nextRecommand = nextRecommend(list, recommendedList);
+		int index = list.indexOf(nextRecommand);
+		for (int i = 0; index < list.size() && i < recommendedList.size(); i++, index++) {
+			if (!list.get(index).equals(recommendedList.get(i))) {
+				return list.get(index);
+			}
+		}
+		return list.get(0);
+	}
+	
+	//返回下一个待推荐活动(需要考虑刚好完成一轮的情况)
+	protected String nextRecommend(List<String> list, List<String> recommendedList) {
+		
+		//已推荐列表为空，直接返回第一个
+		if (recommendedList.size() == 0) {
+			return list.get(0);
+		}
+		
+		//判断上次推荐活动是否是个只推荐过一次的活动
+		if (isNewRecommend(recommendedList, recommendedList.get(0))) {
+			//返回上上次推荐的产品
+			return nextRecommend(list, new ArrayList<>(recommendedList.subList(1, recommendedList.size())));
+		}
+		
+		//上次推荐活动不止推荐过一次，说明当前已推荐活动在第2 - n 轮推荐序列中，从待推荐列表中找到该活动index，继续往后推荐
+		int index = list.indexOf(recommendedList.get(0));
+		//已是最后一个待推荐活动，直接返回第一个
+		if (index == (list.size() - 1)) {
+			return list.get(0);
+		}
+		
+		//取下一个推荐序列
+		while ((index + 1) < list.size() 
+				&& isNewRecommend(recommendedList, list.get(index + 1))) {
+			
+			if (!isFullRound(list, recommendedList, index)) {
+				index++;
+				continue;
+			}
+			return list.get(index + 1);
+		}
+		if (index == (list.size() - 1)) {
+			return list.get(0);
+		}
+		return list.get(index + 1);
+	}
+	
+	//判断当前推荐活动是否只推荐过一次
+	protected boolean isNewRecommend(List<String> recommendedList, String recommend) {
+		
+		if (recommendedList.size() == 1) {
+			return true;
+		}
+		List<String> copyRecommandedList = new ArrayList<>(recommendedList);
+		copyRecommandedList.remove(recommend);
+		return !copyRecommandedList.contains(recommend);
+	}	
+	
+	//当前轮次是否被插入新活动
+	protected boolean isFullRound(List<String> list, List<String> recommandedList, int index) {
+		
+		for (int i = index, j = 0; i >= 0 && j < recommandedList.size(); i--, j++) {
+			if (!list.get(i).equals(recommandedList.get(j))) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
 	/**
 	 * @Description: 获取redis中已推荐列表
 	 * 
@@ -128,42 +202,8 @@ public class RecommendExample {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<String> getLastRecommend(final JedisCluster jedisCluster, final String phone) {
+	public List<String> getLastRecommend(final JedisCluster jedisCluster, final String phone) {
 		return (List<String>) serializer.deserialize(jedisCluster.get(("recommend:" + phone).getBytes()));
-	}
-
-	/**
-	 * @Description: 过滤结果
-	 * 
-	 * @author       zq
-	 * @date         2017年8月31日  下午1:15:30
-	 * Copyright: 	  北京亚信智慧数据科技有限公司
-	 */
-	static class FilterResult {
-		
-		List<String> result;
-		List<Integer> index;
-		
-		FilterResult() {
-			this.result = new ArrayList<>();
-			this.index = new ArrayList<>();
-		}
-		FilterResult(List<String> result, List<Integer> index) {
-			this.result = result;
-			this.index = index;
-		}
-		public List<String> getResult() {
-			return result;
-		}
-		public void setResult(List<String> result) {
-			this.result = result;
-		}
-		public List<Integer> getIndex() {
-			return index;
-		}
-		public void setIndex(List<Integer> index) {
-			this.index = index;
-		}
 	}
 	
 	/**

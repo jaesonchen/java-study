@@ -24,7 +24,7 @@ public abstract class BaseDaoImpl<M extends java.io.Serializable, PK extends jav
 	 * 构造方法，根据实例类自动获取实体类类型 
 	 */
 	@SuppressWarnings("unchecked")
-	public BaseDaoImpl() {  
+	public BaseDaoImpl() {
 		
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();  
 		this.entityClass = (Class<M>) type.getActualTypeArguments()[0];
