@@ -4,10 +4,10 @@ package com.asiainfo.fileservice.format;
  * @Description: TODO
  * 
  * @author       zq
- * @date         2017年6月10日  下午2:52:39
+ * @date         2017年6月16日  下午6:20:42
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class DefaultStringFormatService implements IopFormatService {
+public class Any2EmptyFormatServiceImpl implements IopFormatService {
 
 	/* 
 	 * @Description: TODO
@@ -17,6 +17,6 @@ public class DefaultStringFormatService implements IopFormatService {
 	 */
 	@Override
 	public String format(Object obj) {
-		return null == obj ? null : String.valueOf(obj);
+		return "";
 	}
 }

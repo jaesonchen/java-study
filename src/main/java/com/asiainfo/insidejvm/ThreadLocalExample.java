@@ -1,5 +1,7 @@
 package com.asiainfo.insidejvm;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * 
  * 首先，ThreadLocal 不是用来解决共享对象的多线程访问问题的，一般情况下，通过ThreadLocal.set() 到线程中的对象是该线程自己使用的对象，
@@ -23,25 +25,32 @@ package com.asiainfo.insidejvm;
  * 
  * protected T initialValue()返回该线程局部变量的初始值，该方法是一个protected的方法，显然是为了让子类覆盖而设计的。
  * 这个方法是一个延迟调用方法，在线程第1次调用get()或set(Object)时才执行，并且仅执行1次。ThreadLocal中的缺省实现直接返回一个null。
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:40:37
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class ThreadLocalExample {
 	
 	public static void main(String[] args) {
-		//通过匿名内部类覆盖ThreadLocal的initialValue()方法，指定初始值  
+		//通过匿名内部类覆盖ThreadLocal的initialValue()方法，指定初始值 
 		ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>() {
+			@Override
 			public Integer initialValue() {
 				return 0;
 			}
 		};
-		new Thread(new TestThread(threadLocal, 100)).start();
-		new Thread(new TestThread(threadLocal, 1000)).start();
-		new Thread(new TestThread(threadLocal, 10000)).start();
+		
+		ThreadPoolUtils.getInstance().newThread(new TestThread(threadLocal, 100)).start();
+		ThreadPoolUtils.getInstance().newThread(new TestThread(threadLocal, 1000)).start();
+		ThreadPoolUtils.getInstance().newThread(new TestThread(threadLocal, 10000)).start();
 		
 		System.out.println(threadLocal.get());
 	}
 } 
 
 class TestThread extends Thread {
+	
 	private ThreadLocal<Integer> local;
 	private Integer seq;
 	public TestThread(ThreadLocal<Integer> local, Integer seq) {
@@ -50,6 +59,12 @@ class TestThread extends Thread {
 		//在这里set会出现bug，因为new对象的时候还处于main的线程里，所以会将seq设置到main线程的threadLocals中
 		//this.local.set(seq);
 	}
+	
+	public void remove() {
+		local.remove();
+	}
+	
+	@Override
 	public void run() {
 		int i = 3;
 		this.local.set(this.seq);

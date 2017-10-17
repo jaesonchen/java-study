@@ -102,8 +102,13 @@ public class Handler implements Runnable {
 
 }
 enum State{
-
+	/**
+	 * read
+	 */
 	READING(SelectionKey.OP_READ),
+	/**
+	 * write
+	 */
 	WRITING(SelectionKey.OP_WRITE);
 		
 	private final int op;

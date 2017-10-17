@@ -1,7 +1,5 @@
 package com.asiainfo.util;
 
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +10,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-//import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -29,13 +26,13 @@ public class SequenceUtil {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	private static final Map<String, Object> map = new HashMap<String, Object>();
+	private static final Map<String, Object> MAP = new HashMap<String, Object>();
 	
 	private synchronized static Object getLock(String key) {
-		if (null == map.get(key)) {
-			map.put(key, new Object());
+		if (null == MAP.get(key)) {
+			MAP.put(key, new Object());
 		}
-		return map.get(key);
+		return MAP.get(key);
 	}
 	
 	
@@ -113,7 +110,13 @@ public class SequenceUtil {
 		return UUID.randomUUID().toString();
 	}
 	
-	//从数据库中取得当前的重传序列号，没有时为0，并修改数据库序列号
+	/**
+	 * 
+	 * @Description: 从数据库中取得当前的重传序列号，没有时为0，并修改数据库序列号
+	 * 
+	 * @param key
+	 * @return
+	 */
 	private Integer getCurrentSequence(String key) {
 		
 		String sql = "select sequence_value from iop_sequence_info where sequence_key=?";
@@ -132,7 +135,14 @@ public class SequenceUtil {
 		return (null == list || list.isEmpty()) ? null : new Integer(String.valueOf(list.get(0).get("sequence_value")));
 	}
 	
-	//修改数据库中序列号的当前值
+	/**
+	 * 
+	 * @Description: 修改数据库中序列号的当前值
+	 * 
+	 * @param key
+	 * @param sequence
+	 * @param insert
+	 */
 	private void saveCurrentSequency(String key, int sequence, boolean insert) {
 		
 		try {

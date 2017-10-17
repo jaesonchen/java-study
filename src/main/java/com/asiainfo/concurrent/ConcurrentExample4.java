@@ -14,12 +14,14 @@ public class ConcurrentExample4 {
 		
 		ObservableSet<Integer> set = new ObservableSet<Integer>();
 		set.addObserver(new SetObserver<Integer>() {
+			@Override
 	    	public void added(ObservableSet<Integer> s, Integer e) {
 	    		System.out.println("print = " + e);
 	    	}
 		});
 		
 		set.addObserver(new SetObserver<Integer>() {
+			@Override
 	    	public void added(ObservableSet<Integer> s, Integer e) {
 	    		System.out.println("remove = " + e);
 	    		if(e > 30) {

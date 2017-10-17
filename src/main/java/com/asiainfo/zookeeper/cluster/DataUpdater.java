@@ -61,12 +61,13 @@ public class DataUpdater implements Watcher {
 	 */
 	public void run() throws InterruptedException, KeeperException {
 		
+		int max = 5;
 		int count = 0;
-		while (true && ++count < 5) {
+		while (true && ++count < max) {
 			String uuid = UUID.randomUUID().toString();
 			System.out.println("uuid=" + uuid);
-			byte zoo_data[] = uuid.getBytes();
-			zk.setData(root, zoo_data, -1);
+			byte zooData[] = uuid.getBytes();
+			zk.setData(root, zooData, -1);
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException ex) {

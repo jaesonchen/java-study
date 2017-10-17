@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface IopFormatter {
 	int value();
-	Class<?> clazz() default DefaultStringFormatService.class;
+	Class<?> clazz() default DefaultStringFormatServiceImpl.class;
 }

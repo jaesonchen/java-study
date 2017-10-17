@@ -7,7 +7,7 @@ package com.asiainfo.fileservice.format;
  * @date         2017年6月17日  下午3:27:38
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class Boolean2CodeFormatService implements IopFormatService {
+public class Boolean2CodeFormatServiceImpl implements IopFormatService {
 
 	/* 
 	 * @Description: TODO

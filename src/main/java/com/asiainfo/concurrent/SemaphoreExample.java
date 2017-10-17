@@ -1,9 +1,10 @@
 package com.asiainfo.concurrent;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * 
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class SemaphoreExample {
 	
 	private static final int THREAD_COUNT = 30;
-	private static ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_COUNT);	
+	private static ExecutorService threadPool = ThreadPoolUtils.getInstance().fixedThreadPool(THREAD_COUNT);	
 	private static Semaphore semaphore = new Semaphore(10);
 	
 	public static void main(String[] args) {

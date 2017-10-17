@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
  * @date         2017年6月10日  下午2:34:00
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class Date2StringFormatService implements IopFormatService {
+public class Date2StringFormatServiceImpl implements IopFormatService {
 
 	private String pattern = "yyyyMMddHHmmss";
 

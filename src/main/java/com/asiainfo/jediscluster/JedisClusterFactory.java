@@ -25,8 +25,9 @@ public class JedisClusterFactory {
 	 * @return
 	 */
 	public synchronized static JedisCluster getJedisCluster() {
-		if (jedisCluster == null)
+		if (jedisCluster == null) {
 			jedisCluster = genJedisCluster();
+		}
 		return jedisCluster;
 	}
 
@@ -41,7 +42,8 @@ public class JedisClusterFactory {
 			if (haps != null) {
 				GenericObjectPoolConfig config = new GenericObjectPoolConfig();
 				config.setEvictionPolicyClassName("org.apache.commons.pool2.impl.DefaultEvictionPolicy");
-				config.setSoftMinEvictableIdleTimeMillis(900000);//15分钟
+				//15分钟
+				config.setSoftMinEvictableIdleTimeMillis(900000);
 				config.setMaxWaitMillis(5000);
 				//最大连接数, 默认8个
 				config.setMaxTotal(100);

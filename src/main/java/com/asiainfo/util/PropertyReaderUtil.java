@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class PropertyReaderUtil {
 	
-    static final String properiesName = "config.properties";
+    static final String PROPERTIES_NAME = "config.properties";
     private Properties properties = new Properties();
     
     static class PropertyReaderUtilHolder {
@@ -26,7 +26,7 @@ public class PropertyReaderUtil {
     }
     
     private PropertyReaderUtil() {
-    	this(properiesName);
+    	this(PROPERTIES_NAME);
     }
     
     private PropertyReaderUtil(String fileName) {

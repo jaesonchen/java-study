@@ -1,6 +1,17 @@
 package com.asiainfo.lambda;
 
 public enum TaskType {
-
-	READING, CODING, BLOGGING
+	
+	/**
+	 * reading
+	 */
+	READING, 
+	/**
+	 * coding
+	 */
+	CODING, 
+	/**
+	 * blogging
+	 */
+	BLOGGING
 }

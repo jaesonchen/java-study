@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import com.asiainfo.util.ThreadPoolUtils;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -18,9 +19,7 @@ import redis.clients.jedis.JedisCluster;
  */
 public class RecommendExample {
 
-	static final Serializer<Object> serializer = new JdkSerializer();
-	static final int lastRecommendLimit = 5;
-	static final int recommendNum = 1;
+	static Serializer<Object> serializer = new JdkSerializer();
 	
 	/** 
 	 * @Description: TODO
@@ -30,7 +29,7 @@ public class RecommendExample {
 	 */
 	public static void main(String[] args) throws InterruptedException {
 		
-		final ExecutorService service = Executors.newFixedThreadPool(10);
+		final ExecutorService service = ThreadPoolUtils.getInstance().fixedThreadPool(10);
 		final JedisCluster jedisCluster = JedisClusterFactory.getJedisCluster();
 		
 		RecommendExample test = new RecommendExample();
@@ -59,7 +58,15 @@ public class RecommendExample {
 		}*/
 	}
 	
-	//获取本次循环推荐列表
+	/**
+	 * 
+	 * @Description: 获取本次循环推荐列表
+	 * 
+	 * @param list
+	 * @param recommendedList
+	 * @param num
+	 * @return
+	 */
 	protected List<String> filter(List<String> list, List<String> recommendedList, final int num) {
 		
 		//待推荐列表为空
@@ -106,7 +113,15 @@ public class RecommendExample {
 		return result;
 	}
 	
-	//追加本次推荐产品到已推荐列表的头部
+	/**
+	 * 
+	 * @Description: 追加本次推荐产品到已推荐列表的头部
+	 * 
+	 * @param recommendList
+	 * @param lastRecommendList
+	 * @param limit
+	 * @return
+	 */
 	protected List<String> offerLastRecommend(final List<String> recommendList, final List<String> lastRecommendList, final int limit) {
 		
 		if (null == recommendList || recommendList.isEmpty()) {
@@ -122,7 +137,14 @@ public class RecommendExample {
 		return new ArrayList<>(lastRecommendListCopy.subList(0, lastRecommendListCopy.size() > limit ? limit : lastRecommendListCopy.size()));
 	}
 	
-	//返回下一个待推荐活动，需要判断是否刚推荐过
+	/**
+	 * 
+	 * @Description: 返回下一个待推荐活动，需要判断是否刚推荐过
+	 * 
+	 * @param list
+	 * @param recommendedList
+	 * @return
+	 */
 	protected String getNextRecommend(List<String> list, List<String> recommendedList) {
 		
 		String nextRecommand = nextRecommend(list, recommendedList);
@@ -135,7 +157,14 @@ public class RecommendExample {
 		return list.get(0);
 	}
 	
-	//返回下一个待推荐活动(需要考虑刚好完成一轮的情况)
+	/**
+	 * 
+	 * @Description: 返回下一个待推荐活动(需要考虑刚好完成一轮的情况)
+	 * 
+	 * @param list
+	 * @param recommendedList
+	 * @return
+	 */
 	protected String nextRecommend(List<String> list, List<String> recommendedList) {
 		
 		//已推荐列表为空，直接返回第一个
@@ -172,7 +201,14 @@ public class RecommendExample {
 		return list.get(index + 1);
 	}
 	
-	//判断当前推荐活动是否只推荐过一次
+	/**
+	 * 
+	 * @Description: 判断当前推荐活动是否只推荐过一次
+	 * 
+	 * @param recommendedList
+	 * @param recommend
+	 * @return
+	 */
 	protected boolean isNewRecommend(List<String> recommendedList, String recommend) {
 		
 		if (recommendedList.size() == 1) {
@@ -183,7 +219,15 @@ public class RecommendExample {
 		return !copyRecommandedList.contains(recommend);
 	}	
 	
-	//当前轮次是否被插入新活动
+	/**
+	 * 
+	 * @Description: 当前轮次是否被插入新活动
+	 * 
+	 * @param list
+	 * @param recommandedList
+	 * @param index
+	 * @return
+	 */
 	protected boolean isFullRound(List<String> list, List<String> recommandedList, int index) {
 		
 		for (int i = index, j = 0; i >= 0 && j < recommandedList.size(); i--, j++) {

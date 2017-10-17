@@ -24,7 +24,7 @@ import com.asiainfo.fileservice.parse.IopParseException;
 import com.asiainfo.fileservice.parse.IopParseResult;
 import com.asiainfo.fileservice.parse.IopParseService;
 import com.asiainfo.fileservice.parse.IopParser;
-import com.asiainfo.fileservice.parse.String2IntParseService;
+import com.asiainfo.fileservice.parse.String2IntParseServiceImpl;
 
 
 /**
@@ -38,8 +38,8 @@ public class FileReaderWriterUtil {
 	
 	static final Logger logger = LoggerFactory.getLogger(FileReaderWriterUtil.class);
 	
-	static final byte seperator = (byte) 0x80;
-	static final byte[] newLine = new byte[] {0x0d, 0x0a};
+	static final byte SEPERATOR = (byte) 0x80;
+	static final byte[] NEW_LINE = new byte[] {0x0d, 0x0a};
 	
 	public static int countRow(File file) throws Exception {
 		
@@ -54,15 +54,15 @@ public class FileReaderWriterUtil {
 			while(buff.hasRemaining()) {
 				byte bt = buff.get();
 				//分隔符
-				if (bt == seperator) {
+				if (bt == SEPERATOR) {
 					prefix = bt;
 				//\r
-				} else if (bt == newLine[0]) {
+				} else if (bt == NEW_LINE[0]) {
 					prefix = bt;
 				//\n
-				} else if (bt == newLine[1]) {
+				} else if (bt == NEW_LINE[1]) {
 					//\r\n
-					if (prefix == newLine[0]) {
+					if (prefix == NEW_LINE[0]) {
 						prefix = 0;
 						count++;
 					} else {
@@ -77,7 +77,7 @@ public class FileReaderWriterUtil {
 		}
 		raf.close();
 		//最后一行可能没有换行，直接是eof，也可能最后一个直接是分隔符
-		if (prefix == seperator) {
+		if (prefix == SEPERATOR) {
 			count++;
 		}
 		return count;
@@ -106,22 +106,22 @@ public class FileReaderWriterUtil {
 			while(buff.hasRemaining()) {
 				byte bt = buff.get();
 				//分隔符
-				if (bt == seperator) {
+				if (bt == SEPERATOR) {
 					line.add(index == 0 ? null : new String(word, 0, index, encode));
 					word = new byte[10240];
 					prefix = bt;
 					index = 0;
 				//\r
-				} else if (bt == newLine[0]) {
-					if (prefix == newLine[0]) {
+				} else if (bt == NEW_LINE[0]) {
+					if (prefix == NEW_LINE[0]) {
 						word[index++] = prefix;
 					} else {
 						prefix = bt;
 					}
 				//\n
-				} else if (bt == newLine[1]) {
+				} else if (bt == NEW_LINE[1]) {
 					//\r\n
-					if (prefix == newLine[0]) {
+					if (prefix == NEW_LINE[0]) {
 						prefix = 0;
 						line.add(index == 0 ? null : new String(word, 0, index, encode));
 						result.add(line);
@@ -145,7 +145,7 @@ public class FileReaderWriterUtil {
 			buff.clear();
 		}
 		//最后一行可能没有换行，直接是eof，也可能最后一个直接是分隔符
-		if (index > 0 || prefix == seperator) {
+		if (index > 0 || prefix == SEPERATOR) {
 			line.add(index == 0 ? null : new String(word, 0, index, encode));
 			result.add(line);
 		}
@@ -174,7 +174,7 @@ public class FileReaderWriterUtil {
 			} catch (IopParseException ex) {
 				int row = 0;
 				try {
-					row = new String2IntParseService().parse(rowList.get(i).get(0));
+					row = new String2IntParseServiceImpl().parse(rowList.get(i).get(0));
 				} catch (Exception e) {
 					row = i + 1;
 				}
@@ -251,7 +251,7 @@ public class FileReaderWriterUtil {
 	 */
 	public static List<Method> generateSetterMethod(Class<?> t) {
 
-		Map<Integer, Method> map = new HashMap<Integer, Method>();
+		Map<Integer, Method> map = new HashMap<Integer, Method>(16);
 		for (Method method : t.getDeclaredMethods()) {
 			IopParser parser = method.getAnnotation(IopParser.class);
 			if (null == parser) {
@@ -322,7 +322,7 @@ public class FileReaderWriterUtil {
 			//是否设置行号
 			if (needRowId) {
 				buff.put(String.valueOf(rowId++).getBytes(encode));
-				buff.put(seperator);
+				buff.put(SEPERATOR);
 			}
 			//写一行
 			for (int i = 0; i < row.size(); ) {
@@ -331,9 +331,9 @@ public class FileReaderWriterUtil {
 				}
 				//最后一列
 				if (++i == row.size()) {
-					buff.put(newLine);
+					buff.put(NEW_LINE);
 				} else {
-					buff.put(seperator);
+					buff.put(SEPERATOR);
 				}
 			}
 			//把buff写入channel
@@ -366,7 +366,7 @@ public class FileReaderWriterUtil {
 			//是否设置行号
 			if (needRowId) {
 				buff.put(String.valueOf(rowId++).getBytes(encode));
-				buff.put(seperator);
+				buff.put(SEPERATOR);
 			}
 			//写一行
 			for (int i = 0; i < row.size(); ) {
@@ -375,9 +375,9 @@ public class FileReaderWriterUtil {
 				}
 				//最后一列
 				if (++i == row.size()) {
-					buff.put(newLine);
+					buff.put(NEW_LINE);
 				} else {
-					buff.put(seperator);
+					buff.put(SEPERATOR);
 				}
 			}
 			//把buff写入channel
@@ -441,7 +441,7 @@ public class FileReaderWriterUtil {
 	public static List<Method> generateGetterMethod(Class<?> t) {
 
 		List<Method> result = new ArrayList<Method>();
-		Map<Integer, Method> map = new HashMap<Integer, Method>();
+		Map<Integer, Method> map = new HashMap<Integer, Method>(16);
 		for (Method method : t.getDeclaredMethods()) {
 			IopFormatter formatter = method.getAnnotation(IopFormatter.class);
 			if (null == method.getAnnotation(IopFormatter.class)) {

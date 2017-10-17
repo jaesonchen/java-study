@@ -20,7 +20,7 @@ public class PermGenOOM {
              enhancer.setSuperclass(OOMObject.class);
              enhancer.setUseCache(false);
              enhancer.setCallback(new MethodInterceptor() {
-                //@Override
+                @Override
                 public Object intercept(Object arg0, Method arg1, Object[] arg2, MethodProxy arg3) throws Throwable {
                 	return arg3.invokeSuper(arg0, arg2);
                 }

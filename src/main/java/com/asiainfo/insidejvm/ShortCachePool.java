@@ -5,17 +5,19 @@ package com.asiainfo.insidejvm;
  */
 public class ShortCachePool {
 	
-	private static final Short[] shortCacheObjects = new Short[10000];
+	private static Short[] shortCacheObjects = new Short[10000];
 	
 	static {
-		for (int i = 0; i < 10000; i++)
+		for (int i = 0; i < 10000; i++) {
 			shortCacheObjects[i] = new Short((short) i);
+		}
 	}
 	
 	public static Short valueOf(short s) {
 		
-		if (s < 0 || s > 9999)
+		if (s < 0 || s > 9999) {
 			throw new IndexOutOfBoundsException("ShortCache只缓存0-9999之间的Short对象");
+		}
 		return shortCacheObjects[s];
 	}
 	

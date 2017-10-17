@@ -1,5 +1,7 @@
 package com.asiainfo.concurrent;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * 多线程同步 synchronized方法和代码块：每个对象都有一个锁，当线程进入对象的synchronized方法或代码块时，
  * 该线程获得对象的锁，其他线程在访问该对象的任何synchronized方法或代码块时无法获得锁被挂起等待。对象的
@@ -11,11 +13,11 @@ public class ProducerAndConsumer {
 	public static void main(String[] args) {
 		
 		Storage storage = new Storage(); 
-		Thread producer1 = new Thread(new Producer(storage, "producer1"));  
-		Thread producer2 = new Thread(new Producer(storage, "producer2")); 
-		Thread producer3 = new Thread(new Producer(storage, "producer3"));  
-		Thread consumer1 = new Thread(new Consumer(storage, "Consumer1"));  
-		Thread consumer2 = new Thread(new Consumer(storage, "Consumer2"));
+		Thread producer1 = ThreadPoolUtils.getInstance().newThread(new Producer(storage, "producer1"));  
+		Thread producer2 = ThreadPoolUtils.getInstance().newThread(new Producer(storage, "producer2")); 
+		Thread producer3 = ThreadPoolUtils.getInstance().newThread(new Producer(storage, "producer3"));  
+		Thread consumer1 = ThreadPoolUtils.getInstance().newThread(new Consumer(storage, "Consumer1"));  
+		Thread consumer2 = ThreadPoolUtils.getInstance().newThread(new Consumer(storage, "Consumer2"));
 		
 		producer1.start();
 		producer2.start();

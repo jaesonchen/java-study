@@ -9,7 +9,7 @@ import java.text.NumberFormat;
  * @date         2017年6月16日  下午6:22:18
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class Double2StringFormatService implements IopFormatService {
+public class Double2StringFormatServiceImpl implements IopFormatService {
 
 	/* 
 	 * @Description: TODO

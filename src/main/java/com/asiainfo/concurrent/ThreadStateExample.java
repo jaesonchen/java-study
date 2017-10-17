@@ -3,6 +3,7 @@ package com.asiainfo.concurrent;
 import java.util.concurrent.TimeUnit;
 
 import com.asiainfo.util.ServiceUtil;
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * 
@@ -28,11 +29,11 @@ public class ThreadStateExample {
 	
 	public static void main(String[] args) {
 		
-		new Thread(new TimeWaiting(),"TimeWaitingThread").start();
-		new Thread(new Waiting(),"WaitingThread").start();
+		ThreadPoolUtils.getInstance().newThread(new TimeWaiting(), "TimeWaitingThread").start();
+		ThreadPoolUtils.getInstance().newThread(new Waiting(), "WaitingThread").start();
 		//使用两个Blocked线程，一个获取锁成功，另一个被阻塞
-		new Thread(new Blocked(),"BlockedThread-1").start();
-		new Thread(new Blocked(),"BlockedThread-2").start();
+		ThreadPoolUtils.getInstance().newThread(new Blocked(),"BlockedThread-1").start();
+		ThreadPoolUtils.getInstance().newThread(new Blocked(),"BlockedThread-2").start();
 	}
 	
 	//该线程不断进行睡眠

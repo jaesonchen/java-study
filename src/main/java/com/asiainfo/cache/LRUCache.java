@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class LRUCache<K, V> {
 
-	private static final float factor = 0.75f;
+	private static final float FACTOR = 0.75f;
 	private LinkedHashMap<K, V> map;
 	private int total;
 	
@@ -25,9 +25,9 @@ public class LRUCache<K, V> {
 	@SuppressWarnings("serial")
 	public LRUCache(int total) {
 		this.total = total;
-		int capacity = (int) Math.ceil(total / factor) + 1;
+		int capacity = (int) Math.ceil(total / FACTOR) + 1;
 		//false=按插入顺序排序、true=按访问顺序排序
-		this.map = new LinkedHashMap<K, V>(capacity, factor, true) {
+		this.map = new LinkedHashMap<K, V>(capacity, FACTOR, true) {
 			@Override
 			protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
 				return size() > LRUCache.this.total;

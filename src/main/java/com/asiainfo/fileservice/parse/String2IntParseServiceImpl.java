@@ -7,7 +7,7 @@ package com.asiainfo.fileservice.parse;
  * @date         2017年6月4日  下午2:09:28
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class String2IntParseService implements IopParseService<Integer> {
+public class String2IntParseServiceImpl implements IopParseService<Integer> {
 
 	private IopParseService<?> delegate = null;
 

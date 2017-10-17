@@ -2,6 +2,8 @@ package com.asiainfo.concurrent;
 
 import java.util.concurrent.TimeUnit;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * 线程状态：New -> Runnable -> Running -> Blocked (WAITING、TIME_WAITING、Blocked) -> Dead
  * 
@@ -24,21 +26,20 @@ public class ThreadInterruptedExample {
 	public static void main(String[] args) throws Exception {
 		
 		Runner one = new Runner();
-		Thread countThread = new Thread(one, "CountTHread 1");
+		Thread countThread = ThreadPoolUtils.getInstance().newThread(one, "CountTHread 1");
 		countThread.start();
 		//睡眠1秒，main线程对CountThread进行中断，使CountThread能够感知中断而结束
 		TimeUnit.SECONDS.sleep(1);
 		countThread.interrupt();
 
 		Runner two = new Runner();
-		countThread = new Thread(two, "CountThread 2");
+		countThread = ThreadPoolUtils.getInstance().newThread(two, "CountThread 2");
 		countThread.start();
 		//睡眠1秒，main线程对Runner two进行取消，使CountThread能够感知on为false而结束
 		TimeUnit.SECONDS.sleep(1);
 		two.cancel();
 		
-		//
-		Thread t = new Thread(new Worker());
+		Thread t = ThreadPoolUtils.getInstance().newThread(new Worker());
 		t.start();
 		Thread.sleep(200);
 		t.interrupt();
@@ -65,6 +66,7 @@ public class ThreadInterruptedExample {
 	
 	static class Worker implements Runnable {
 		
+		@Override
         public void run() {
             System.out.println("Worker started.");
               

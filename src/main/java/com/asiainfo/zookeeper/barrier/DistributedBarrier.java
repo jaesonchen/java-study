@@ -15,6 +15,8 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * @Description: 在分布式系统中，屏障是这样一种语义: 客户端需要等待多个进程完成各自的任务，然后才能继续往前进行下一步。
  * 	Client在ZooKeeper上创建屏障结点/barrier/my_barrier，并启动执行各个任务的进程Client通过exist()来Watch /barrier/my_barrier结点。
@@ -29,6 +31,7 @@ public class DistributedBarrier implements Watcher, Barrier {
 
 	final Logger logger = LoggerFactory.getLogger(getClass());
 	
+	static final String SLASH = "/";
 	static final int SESSION_TIMEOUT = 60000;
 	static final String BASE_PATH = "/barrier";
 	static final String BARRIER_PREFIX ="bn-";
@@ -58,9 +61,9 @@ public class DistributedBarrier implements Watcher, Barrier {
 			logger.info("{} created!", BASE_PATH);
 		}
 		// Ensure the barrier znode exists
-		if (this.zk.exists(BASE_PATH + "/" + BARRIER, false) == null) {
-			this.zk.create(BASE_PATH + "/" + BARRIER, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-			logger.info("barrier {} created!", BASE_PATH + "/" + BARRIER);
+		if (this.zk.exists(BASE_PATH + SLASH + BARRIER, false) == null) {
+			this.zk.create(BASE_PATH + SLASH + BARRIER, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+			logger.info("barrier {} created!", BASE_PATH + SLASH + BARRIER);
 		}
 	}
 	
@@ -117,15 +120,15 @@ public class DistributedBarrier implements Watcher, Barrier {
 	
 	public static void main(String[] args) throws Exception {
 		
-		new Thread(new LockThread(new DistributedBarrier(5))).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new DistributedBarrier(5))).start();
 		Thread.sleep(1000);
-		new Thread(new LockThread(new DistributedBarrier(5))).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new DistributedBarrier(5))).start();
 		Thread.sleep(1000);
-		new Thread(new LockThread(new DistributedBarrier(5))).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new DistributedBarrier(5))).start();
 		Thread.sleep(1000);
-		new Thread(new LockThread(new DistributedBarrier(5))).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new DistributedBarrier(5))).start();
 		Thread.sleep(1000);
-		new Thread(new LockThread(new DistributedBarrier(5))).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new DistributedBarrier(5))).start();
 	}
 	
 	static class LockThread implements Runnable {

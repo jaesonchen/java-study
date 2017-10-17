@@ -7,7 +7,7 @@ package com.asiainfo.jdbc.converter;
  * @date         2017年6月25日  下午1:51:12
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class String2StringArrayConvertService implements IConvertService<String[]> {
+public class String2StringArrayConvertServiceImpl implements IConvertService<String[]> {
 
 	private IConvertService<?> delegate;
 	

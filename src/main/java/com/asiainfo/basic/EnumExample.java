@@ -35,7 +35,7 @@ public class EnumExample {
 	public static void printName(WeekDay day) {
 		
 		switch (day) {
-        	case MONDAY: //无需使用WeekDay进行引用
+        	case MONDAY:
         		System.out.println(day.getChnName());
         		break;
             case TUESDAY:
@@ -61,7 +61,9 @@ public class EnumExample {
 }
 
 enum WeekDay {
-	
+	/**
+	 * monday
+	 */
     MONDAY("星期一"), 
     TUESDAY("星期二"), 
     WEDNESDAY("星期三"), 
@@ -105,18 +107,33 @@ enum WeekDay {
 }*/
 
 enum Operation {
-	
+
+	/**
+	 * plus
+	 */
 	PLUS("+") {
-		public double apply(double x, double y) { return x + y; }
+		@Override
+		public double apply(double x, double y) { 
+			return x + y;
+		}
 	},
 	MINUS("-") {
-		public double apply(double x, double y) { return x - y; }
+		@Override
+		public double apply(double x, double y) {
+			return x - y;
+		}
 	},
 	TIMES("*") {
-		public double apply(double x, double y) { return x * y; }
+		@Override
+		public double apply(double x, double y) {
+			return x * y;
+		}
 	},
 	DIVIDE("/") {
-		public double apply(double x, double y) { return x / y; }
+		@Override
+		public double apply(double x, double y) {
+			return x / y;
+		}
 	};
 	
 	private final String symbol;
@@ -134,10 +151,16 @@ enum Operation {
 interface Food {
 	
 	enum Appetizer implements Food {
+		/**
+		 * foods
+		 */
 	    SALAD, SOUP, SPRING_ROLLS;
 	}
 	
 	enum Coffee implements Food {
+		/**
+		 * Foods
+		 */
 	    BLACK_COFFEE, ESPRESSO, LATTE, TEA;
 	}
 }

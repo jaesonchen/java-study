@@ -1,5 +1,7 @@
 package com.asiainfo.concurrent;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * 对于共享的可变数据访问如果不同步，则会引起意想不到的结果。
  * 没有同步共享变量的访问，虚拟机将循环代码：
@@ -19,11 +21,13 @@ public class ConcurrentExample {
 	
 	public static void main(String[] args) throws Exception {
 		
-		Thread bgThread = new Thread(new Runnable() {
+		Thread bgThread = ThreadPoolUtils.getInstance().newThread(new Runnable() {
+			@Override
 			public void run() {
 				long i = 0L;
-				while (!stopRequested)
+				while (!stopRequested) {
 					i++;
+				}
 				System.out.println("i = " + i);
 			}
 		});

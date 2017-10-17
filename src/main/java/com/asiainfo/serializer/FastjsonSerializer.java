@@ -15,7 +15,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 public class FastjsonSerializer implements Serializer<Object> {
 
 	static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    static final SerializerFeature[] features = {SerializerFeature.WriteClassName};
+    static final SerializerFeature[] FEATURES = {SerializerFeature.WriteClassName};
     
 	/* 
 	 * @Description: TODO
@@ -31,7 +31,7 @@ public class FastjsonSerializer implements Serializer<Object> {
             return new byte[0];
         }
         try {
-            return JSON.toJSONBytes(t, features);
+            return JSON.toJSONBytes(t, FEATURES);
         } catch (Exception ex) {
             throw new SerializationException("Could not write JSON: " + ex.getMessage(), ex);
         }

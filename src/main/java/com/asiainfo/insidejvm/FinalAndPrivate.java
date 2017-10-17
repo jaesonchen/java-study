@@ -1,6 +1,7 @@
 package com.asiainfo.insidejvm;
 
 /**
+ * 
  * static方法不能被覆盖，因为方法覆盖是基于运行时动态绑定的，而static方法是编译时静态绑定的。
  * 子类中可以创建相同签名static的方法，但是不会覆盖父类的static方法，只会隐藏父类的方法。
  * 不能创建相同签名的非static方法，编译器会认为试图覆盖static方法而报错。
@@ -21,6 +22,10 @@ package com.asiainfo.insidejvm;
  * 就是说可以使用该方法的功能但是不可以改变其功能，这就是private方法和final方法的最大区别。
  * 
  * final的方法可以内联(inline)优化，private的和static的也可以进行同样的优化。
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:54:25
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class FinalAndPrivate {
 	
@@ -81,7 +86,8 @@ class FAP extends FAPParent {
 	private void show() {
 		System.out.println("FAP.show() is calling...");
 	}
-	//override
+	
+	@Override
 	public void call() {
 		System.out.println("FAP.call() is calling...");
 		this.show();

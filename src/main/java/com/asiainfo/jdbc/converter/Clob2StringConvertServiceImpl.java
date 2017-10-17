@@ -1,19 +1,16 @@
 package com.asiainfo.jdbc.converter;
 
-import java.text.SimpleDateFormat;
+import com.asiainfo.jdbc.util.ConvertUtil;
 
 /**
  * @Description: TODO
  * 
  * @author       zq
- * @date         2017年6月25日  上午11:51:18
+ * @date         2017年6月25日  下午12:01:40
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class Date2StringConvertService implements IConvertService<String> {
+public class Clob2StringConvertServiceImpl implements IConvertService<String> {
 
-	private IConvertService<?> delegate;
-	private String pattern = "yyyyMMddHHmmss";
-	
 	/* 
 	 * @Description: TODO
 	 * @return
@@ -21,9 +18,9 @@ public class Date2StringConvertService implements IConvertService<String> {
 	 */
 	@Override
 	public Class<?> getClazz() {
-		return null == this.delegate ? java.sql.Date.class : this.delegate.getClazz();
+		return java.sql.Clob.class;
 	}
-	
+
 	/* 
 	 * @Description: TODO
 	 * @param obj
@@ -32,12 +29,7 @@ public class Date2StringConvertService implements IConvertService<String> {
 	 */
 	@Override
 	public String convert(Object obj) {
-		try {
-			return new SimpleDateFormat(this.pattern).format(null == this.delegate ? obj : this.delegate.convert(obj));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return null;
+		return ConvertUtil.clob2String((java.sql.Clob) obj);
 	}
 
 	/* 
@@ -47,6 +39,6 @@ public class Date2StringConvertService implements IConvertService<String> {
 	 */
 	@Override
 	public void setDelegate(IConvertService<?> delegate) {
-		this.delegate = delegate;
+		throw new UnsupportedOperationException("ClobConverter do not support delegate!");
 	}
 }

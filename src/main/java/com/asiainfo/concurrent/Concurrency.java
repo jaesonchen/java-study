@@ -1,6 +1,9 @@
 package com.asiainfo.concurrent;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
+ * 
  * 同步访问共享的可变数据：当多个线程共享可变数据的时候，每个读或者写数据的线程都必须进行同步。
  * 
  * 		关键字synchronized可以保证在同一时刻，只有一个线程可以执行对象的某个方法或者代码库。
@@ -38,6 +41,10 @@ package com.asiainfo.concurrent;
  * 现代的VM在初始化holder class的时候，同步域的访问，一旦这个类被初始化，VM将修补代码，以便后续对该域的访问不会导致同步。
  * 
  * ***************************************************************************
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午5:29:38
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class Concurrency {
 	
@@ -54,17 +61,19 @@ public class Concurrency {
 	
 	//lazy initialization holder class模式
 	private static class FieldHolder {
-		static final FieldType field = new FieldType();
+		static final FieldType INSTANCE = new FieldType();
 	}
 	//不需要使用synchronized同步
-	static FieldType getField() { return FieldHolder.field; }
+	static FieldType getField() { return FieldHolder.INSTANCE; }
 	
 	public static void main(String[] args) throws InterruptedException {
-		Thread backgroundThread = new Thread(new Runnable() {
+		Thread backgroundThread = ThreadPoolUtils.getInstance().newThread(new Runnable() {
+			@Override
 			public void run() {
 				int i = 0;
-				while (!stopRequested())
+				while (!stopRequested()) {
 					i++;
+				}
 				System.out.println("i=" + i);
 			}
 		});

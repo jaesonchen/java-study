@@ -6,7 +6,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +43,12 @@ public class Reactor implements Runnable {
 		try {
 			while (!Thread.interrupted()) {
 				selector.select();
-				Set<SelectionKey> selected = selector.selectedKeys();
-				Iterator<SelectionKey> it = selected.iterator();
+				//Set<SelectionKey> selected = selector.selectedKeys();
+				Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 				while (it.hasNext()) {
 					dispatch((SelectionKey) (it.next()));
 				}
-				selected.clear();
+				selector.selectedKeys().clear();
 			}
 		} catch (IOException ex) {
 			logger.error("error on dispatch io event", ex);

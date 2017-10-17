@@ -49,6 +49,7 @@ interface B {
 
 class C implements A, B {
 	
+	@Override
 	public void show() {
 		System.out.println("default method C.show()");
 		A.super.show();

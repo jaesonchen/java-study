@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * @Description: TODO
  * 
@@ -22,7 +24,7 @@ public class AtomicIntegerExample {
 		List<Thread> list = new ArrayList<>();
 		long start = System.currentTimeMillis();
 		for (int j = 0; j < 100; j++) {
-			list.add(new Thread(new Runnable() {
+			list.add(ThreadPoolUtils.getInstance().newThread(new Runnable() {
 				@Override
 				public void run() {
 					for (int i = 0; i < 10000; i++) {

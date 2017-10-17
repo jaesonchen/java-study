@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午12:38:18
+ * Copyright: 	  北京亚信智慧数据科技有限公司
+ */
 public class ReadonlyCollection {
 
 	public static void main(String[] args) {

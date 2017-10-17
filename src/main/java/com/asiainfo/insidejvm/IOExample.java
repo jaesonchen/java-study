@@ -3,6 +3,14 @@ package com.asiainfo.insidejvm;
 import java.io.*;
 import java.util.zip.*;
 
+/**
+ * 
+ * @Description: TODO
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:58:24
+ * Copyright: 	  北京亚信智慧数据科技有限公司
+ */
 public class IOExample {
 
 	//跨平台的文件分割符
@@ -73,10 +81,11 @@ public class IOExample {
 		if (f != null) {
             if (f.isDirectory()) {
                 File[] fileArray = f.listFiles();
-                if (fileArray != null)
-                    for (int i = 0; i < fileArray.length; i++)
+                if (fileArray != null) {
+                    for (int i = 0; i < fileArray.length; i++) {
                         print(fileArray[i]);
-
+                    }
+                }
             } else {
                 System.out.println(f);
             }
@@ -146,8 +155,9 @@ public class IOExample {
 		char[] ch = new char[1024];
 		int temp = 0;
         int i = 0;
-        while((temp = in.read()) != -1 && i < 1024)
+        while((temp = in.read()) != -1 && i < 1024) {
             ch[i++] = (char) temp;
+        }
         in.close();
         System.out.println(new String(ch, 0, i));
 	}
@@ -158,8 +168,9 @@ public class IOExample {
 		InputStream in = new FileInputStream(new File(fileName1));
         OutputStream out = new FileOutputStream(new File(fileName2));
         int temp=0;
-        while((temp = in.read()) != -1)
+        while((temp = in.read()) != -1) {
         	out.write(temp);
+        }
         in.close();
         out.close(); 
 	}
@@ -178,8 +189,9 @@ public class IOExample {
         char[] ch = new char[1024];
         int temp = 0;
         int i = 0;
-        while((temp = in.read()) != -1 && i < 1024)
+        while((temp = in.read()) != -1 && i < 1024) {
             ch[i++] = (char) temp;
+        }
         in.close();
         System.out.println(new String(ch, 0, i));
 	}
@@ -265,8 +277,9 @@ public class IOExample {
         // 合并流
         SequenceInputStream sis = new SequenceInputStream(input1, input2);
         int temp = 0;
-        while ((temp = sis.read()) != -1)
+        while ((temp = sis.read()) != -1) {
             output.write(temp);
+        }
         input1.close();
         input2.close();
         output.close();
@@ -282,8 +295,9 @@ public class IOExample {
         // 设置注释
         zipOut.setComment("hello world");
         int temp = 0;
-        while ((temp = input.read()) != -1)
+        while ((temp = input.read()) != -1) {
             zipOut.write(temp);
+        }
         input.close();
         zipOut.close();
 	}
@@ -302,8 +316,9 @@ public class IOExample {
                 zipOut.putNextEntry(new ZipEntry(file.getName()
                         + File.separator + files[i].getName()));
                 int temp = 0;
-                while ((temp = input.read()) != -1)
+                while ((temp = input.read()) != -1) {
                 	zipOut.write(temp);
+                }
                 input.close();
             }
         }
@@ -324,15 +339,18 @@ public class IOExample {
 	            outFile = new File("C:" + File.separator + "hello" 
 	            		+ File.separator + "extract" + File.separator + entry.getName());
 
-	            if (!outFile.getParentFile().exists())
+	            if (!outFile.getParentFile().exists()) {
 	                outFile.getParentFile().mkdir();
-	            if (!outFile.exists())
+	            }
+	            if (!outFile.exists()) {
 	                outFile.createNewFile();
+	            }
 	            input = zipFile.getInputStream(entry);
 	            output = new FileOutputStream(outFile);
 	            int temp = 0;
-	            while ((temp = input.read()) != -1)	
+	            while ((temp = input.read()) != -1)	{
 	            	output.write(temp);
+	            }
 	            input.close();
 	            output.close();
 	     }

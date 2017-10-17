@@ -23,6 +23,11 @@ public class DatabaseUtil {
 	public static final String MYSQL = "MYSQL";
 	public static final String DB2 = "DB2";
 	
+	static Pattern pTime1 = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}\\s+\\d{1,2}:\\d{1,2}:\\d{1,2}");
+	static Pattern pTime2 = Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}\\s+\\d{1,2}:\\d{1,2}:\\d{1,2}");
+	static Pattern pDate1 = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}");
+	static Pattern pDate2 = Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}");
+	
 	@Value("${env.mcd.db.type}")
 	public static String dbType = ORACLE;
 	public void setDbType(String db) {
@@ -177,8 +182,9 @@ public class DatabaseUtil {
 				result.replace(result.length() - 1, result.length(), ")");
 			}
 		} else if (MYSQL.equalsIgnoreCase(dbType)) {
+			/**
 			//mysql必须转换为int类型分区，5.5以后支持date分区，为了兼容低版本string转换为int
-			/*result.append(" partition by range (cast(" + column + " as unsigned)) ( ");
+			result.append(" partition by range (cast(" + column + " as unsigned)) ( ");
 			for (String partition : partitionArr) {
 				result.append(" partition p_" + partition + " values less than (" + Long.parseLong(partition) + "),");
 			}
@@ -521,16 +527,11 @@ public class DatabaseUtil {
 			 return null;
 		 }
 		 
-		 //格式为空时，尝试格式化"yyyy-MM-dd hh:mm:ss" 和 "yyyy-MM-dd"
-		 Pattern pTime1 = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}\\s+\\d{1,2}:\\d{1,2}:\\d{1,2}");
-		 Pattern pTime2 = Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}\\s+\\d{1,2}:\\d{1,2}:\\d{1,2}");
-		 Pattern pDate1 = Pattern.compile("^\\d{4}-\\d{1,2}-\\d{1,2}");
-		 Pattern pDate2 = Pattern.compile("^\\d{4}/\\d{1,2}/\\d{1,2}");
 		 try {
 			 if (StringUtils.isNotEmpty(format)) {
 				 return new SimpleDateFormat(format).parse(dateStr);
 			 }
-			 
+			 //格式为空时，尝试格式化"yyyy-MM-dd hh:mm:ss" 和 "yyyy-MM-dd"
 			 if (pTime1.matcher(dateStr).find()) {
 				 return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateStr);
 			 } else if (pTime2.matcher(dateStr).find()) {

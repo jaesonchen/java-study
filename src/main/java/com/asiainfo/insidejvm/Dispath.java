@@ -41,6 +41,8 @@ public class Dispath {
 	}
 	
 	static class Son extends Father {
+		
+		@Override
 		void hello(String name) {
 			System.out.println("Son say hello " + name);
 		}

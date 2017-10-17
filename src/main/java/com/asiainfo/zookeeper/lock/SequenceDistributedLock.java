@@ -16,6 +16,8 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * @Description:  利用临时顺序节点实现共享锁
  * 	Zookeeper中有一种节点叫做顺序节点，ZooKeeper集群会按照提起创建的顺序来创建节点，还有一种名为临时节点的节点，临时节点由某个客户端创建，
@@ -134,11 +136,11 @@ public class SequenceDistributedLock implements Watcher, DistributedLock {
 	
 	public static void main(String[] args) throws Exception {
 		
-		new Thread(new LockThread(new SequenceDistributedLock())).start();
-		new Thread(new LockThread(new SequenceDistributedLock())).start();
-		new Thread(new LockThread(new SequenceDistributedLock())).start();
-		new Thread(new LockThread(new SequenceDistributedLock())).start();
-		new Thread(new LockThread(new SequenceDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new SequenceDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new SequenceDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new SequenceDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new SequenceDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new SequenceDistributedLock())).start();
 	}
 	
 	static class LockThread implements Runnable {

@@ -13,6 +13,8 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * @Description: 水平触发(level-triggered，也被称为条件触发)LT:只要满足条件，就触发一个事件(只要有数据没有被获取，内核就不断通知你)。
  * 				  边缘触发(edge-triggered)ET: 每当状态变化时，触发一个事件。
@@ -196,6 +198,6 @@ public class NioServer implements Runnable {
      * @param args
      */
     public static void main(String[] args) {
-    	new Thread(new NioServer()).start();
+    	ThreadPoolUtils.getInstance().newThread(new NioServer()).start();
     }
 }

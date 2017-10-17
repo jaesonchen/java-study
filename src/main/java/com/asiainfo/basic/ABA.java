@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * AtomicStampedReference原子类是一个带有时间戳的对象引用，在每次修改后，AtomicStampedReference不仅会设置新值而且还会记录更改的时间。
  * 当AtomicStampedReference设置对象值时，对象值以及时间戳都必须满足期望值才能写入成功。
@@ -20,7 +22,7 @@ public class ABA {
     static AtomicStampedReference<Integer> atomicStampedR =
             new AtomicStampedReference<Integer>(200, 0);
 
-    static Thread t1 = new Thread(new Runnable() {
+    static Thread t1 = ThreadPoolUtils.getInstance().newThread(new Runnable() {
         @Override
         public void run() {
             //更新为200
@@ -30,7 +32,7 @@ public class ABA {
         }
     });
 
-    static Thread t2 = new Thread(new Runnable() {
+    static Thread t2 = ThreadPoolUtils.getInstance().newThread(new Runnable() {
         @Override
         public void run() {
             try {
@@ -43,7 +45,7 @@ public class ABA {
         }
     });
 
-    static Thread t3 = new Thread(new Runnable() {
+    static Thread t3 = ThreadPoolUtils.getInstance().newThread(new Runnable() {
         @Override
         public void run() {
             int time = atomicStampedR.getStamp();
@@ -55,7 +57,7 @@ public class ABA {
         }
     });
 
-    static Thread t4 = new Thread(new Runnable() {
+    static Thread t4 = ThreadPoolUtils.getInstance().newThread(new Runnable() {
         @Override
         public void run() {
             int time = atomicStampedR.getStamp();

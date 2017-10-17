@@ -162,10 +162,10 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 		protected void initialize(Class<T> mappedClass) {
 			
 			this.mappedClass = mappedClass;
-			this.mappedFields = new HashMap<String, PropertyDescriptor>();
+			this.mappedFields = new HashMap<String, PropertyDescriptor>(16);
 			this.mappedProperties = new HashSet<String>();
-			this.mappedConverter = new HashMap<>();
-			this.mappedEmbedded = new HashMap<>();
+			this.mappedConverter = new HashMap<>(16);
+			this.mappedEmbedded = new HashMap<>(16);
 			PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(mappedClass);
 			for (PropertyDescriptor pd : pds) {
 				if (pd.getWriteMethod() != null) {
@@ -205,9 +205,19 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 			}
 		}
 		
-		//获取@Embedded描述的实体类，暂时没有实现递归embedded
-		protected void mappedEmbedded(PropertyDescriptor embeddedDescriptor, Map<String, PropertyDescriptor> _mappedFields, Set<String> _mappedProperties, 
-				Map<String, IConvertService<?>> _mappedConverter, Map<String, PropertyDescriptor> _mappedEmbedded) {
+		/**
+		 * 
+		 * @Description: 获取@Embedded描述的实体类，暂时没有实现递归embedded
+		 * 
+		 * @param embeddedDescriptor
+		 * @param _mappedFields
+		 * @param _mappedProperties
+		 * @param _mappedConverter
+		 * @param _mappedEmbedded
+		 */
+		protected void mappedEmbedded(PropertyDescriptor embeddedDescriptor, Map<String, PropertyDescriptor> embeddedMappedFields, 
+				Set<String> embeddedMappedProperties, Map<String, IConvertService<?>> embeddedMappedConverter, 
+				Map<String, PropertyDescriptor> embeddedMappedEmbedded) {
 			
 			PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(embeddedDescriptor.getPropertyType());
 			for (PropertyDescriptor pd : pds) {
@@ -219,34 +229,42 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 					//如果field上标有@Column，则使用column中标记的列名
 					Column column = this.getFieldAnnotation(embeddedDescriptor.getPropertyType(), pd.getName(), Column.class);
 					if (null != column) {
-						_mappedFields.put(lowerCaseName(column.name()), pd);
-						_mappedEmbedded.put(lowerCaseName(column.name()), embeddedDescriptor);
+						embeddedMappedFields.put(lowerCaseName(column.name()), pd);
+						embeddedMappedEmbedded.put(lowerCaseName(column.name()), embeddedDescriptor);
 					} else {
-						_mappedFields.put(lowerCaseName(pd.getName()), pd);
-						_mappedEmbedded.put(lowerCaseName(pd.getName()), embeddedDescriptor);
+						embeddedMappedFields.put(lowerCaseName(pd.getName()), pd);
+						embeddedMappedEmbedded.put(lowerCaseName(pd.getName()), embeddedDescriptor);
 						String underscoredName = underscoreName(pd.getName());
 						if (!lowerCaseName(pd.getName()).equals(underscoredName)) {
-							_mappedFields.put(underscoredName, pd);
-							_mappedEmbedded.put(underscoredName, embeddedDescriptor);
+							embeddedMappedFields.put(underscoredName, pd);
+							embeddedMappedEmbedded.put(underscoredName, embeddedDescriptor);
 						}
 					}
 					//如果setter上标有@Converter，则使用setter上的方法进行转换
 					Converter convert = pd.getWriteMethod().getAnnotation(Converter.class);
 					if (null != convert) {
 						try {
-							_mappedConverter.put(pd.getName(), this.generateConvertService(convert));
+							embeddedMappedConverter.put(pd.getName(), this.generateConvertService(convert));
 						} catch (InstantiationException | IllegalAccessException e) {
 							e.printStackTrace();
 						}
 					}
 					
 					//保存映射属性名
-					_mappedProperties.add(pd.getName());
+					embeddedMappedProperties.add(pd.getName());
 				}
 			}
 		}
 		
-		//生成converter实例
+		/**
+		 * 
+		 * @Description: 生成converter实例
+		 * 
+		 * @param convertAnnotation
+		 * @return
+		 * @throws InstantiationException
+		 * @throws IllegalAccessException
+		 */
 		protected IConvertService<?> generateConvertService(Converter convertAnnotation) throws InstantiationException, IllegalAccessException {
 			
 			Class<?>[] clazzArray = convertAnnotation.value();
@@ -262,7 +280,15 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 			return service;
 		}
 		
-		//获取指定属性的注解
+		/**
+		 * 
+		 * @Description: 获取指定属性的注解
+		 * 
+		 * @param clazz
+		 * @param propertyName
+		 * @param annotationClazz
+		 * @return
+		 */
 		protected <M extends Annotation> M getFieldAnnotation(Class<?> clazz, String propertyName, Class<M> annotationClazz) {
 			Field[] fields = clazz.getDeclaredFields();
 			for (Field field : fields) {
@@ -328,7 +354,7 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 			int columnCount = rsmd.getColumnCount();
 			Set<String> populatedProperties = (isCheckFullyPopulated() ? new HashSet<String>() : null);
 
-			Map<PropertyDescriptor, BeanWrapper> embeddedObjectMap = new HashMap<>();
+			Map<PropertyDescriptor, BeanWrapper> embeddedObjectMap = new HashMap<>(16);
 			for (int index = 1; index <= columnCount; index++) {
 				String column = JdbcUtils.lookupColumnName(rsmd, index);
 				String field = lowerCaseName(column.replaceAll(" ", ""));

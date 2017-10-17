@@ -9,9 +9,12 @@ import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
 
 /**
- * 
  * 在真实开发当中,在使用动态代理进行方法请求拦截时,可能会需要判断调用的方法然后决定拦截的逻辑,
  * 也就是同一个代理类在调用不同的方法时拦截的逻辑都不相同,CGLIB提供了CallbackFilter来帮助我们实现这一功能 
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午1:39:25
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class BusinessCglibProxyFilter {
 
@@ -60,10 +63,12 @@ public class BusinessCglibProxyFilter {
 			 * 是则执行callback1,也就是数组下标为0的逻辑,  
 			 * 否则执行Other逻辑 
 			 */  
-			if ("execute".equals(method.getName()))  
-				return EXECUTE_METHOD;  
-			else  
-				return OTHER_METHOD;  
+			if ("execute".equals(method.getName())) {
+				return EXECUTE_METHOD;
+			}
+			else {
+				return OTHER_METHOD;
+			}
 		}  
 	};
 	

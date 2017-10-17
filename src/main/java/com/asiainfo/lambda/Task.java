@@ -3,6 +3,14 @@ package com.asiainfo.lambda;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * 
+ * @Description: TODO
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午1:32:07
+ * Copyright: 	  北京亚信智慧数据科技有限公司
+ */
 public class Task {
 
     private final String id;
@@ -75,8 +83,12 @@ public class Task {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+        	return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+        	return false;
+        }
         Task task = (Task) o;
         return Objects.equals(title, task.title) &&
                 Objects.equals(type, task.type);

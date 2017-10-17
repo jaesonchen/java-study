@@ -7,6 +7,8 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * @Description: TODO
  * 
@@ -37,7 +39,7 @@ public class BioServer implements Runnable {
 			while (!Thread.interrupted()) {
 				Socket socket = ss.accept();
 				logger.info("connection established, remote address={} ...", socket.getRemoteSocketAddress());
-				new Thread(new BioHandler(socket)).start();
+				ThreadPoolUtils.getInstance().newThread(new BioHandler(socket)).start();
 			}
         } catch (IOException ex) {
         	logger.error("error on accept connection!", ex);
@@ -58,6 +60,6 @@ public class BioServer implements Runnable {
 	 * @param args
 	 */
     public static void main(String[] args) {
-        new Thread(new BioServer(8080)).start();
+    	ThreadPoolUtils.getInstance().newThread(new BioServer(8080)).start();
     }
 }

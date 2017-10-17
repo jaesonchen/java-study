@@ -1,16 +1,25 @@
 package com.asiainfo.fileservice.parse;
 
+import org.springframework.util.Assert;
+
 /**
  * @Description: TODO
  * 
  * @author       zq
- * @date         2017年6月9日  下午4:05:18
+ * @date         2017年6月4日  下午1:32:51
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class String2LongParseService implements IopParseService<Long> {
-	
-	private IopParseService<?> delegate = null;
+public class Null2DefaultParseServiceImpl implements IopParseService<String> {
 
+	private IopParseService<?> delegate = null;
+	private String replaceStr = "";
+	
+	public Null2DefaultParseServiceImpl() {}
+	public Null2DefaultParseServiceImpl(String replaceStr) {
+		Assert.isTrue(null != replaceStr, "代替字符不能是null");
+		this.replaceStr = replaceStr;
+	}
+	
 	/* 
 	 * @Description: TODO
 	 * @param str
@@ -18,16 +27,11 @@ public class String2LongParseService implements IopParseService<Long> {
 	 * @see com.asiainfo.fileservice.parse.IopParseService#parse(java.lang.String)
 	 */
 	@Override
-	public Long parse(String str) {
-		
+	public String parse(String str) {
+
 		Object result = (null == this.delegate) ? str : this.delegate.parse(str);
-		try {
-			return Long.parseLong(String.valueOf(result));
-		} catch (Exception ex) {
-			throw new IopParseException(ErrorCodes.RECORD_RESULTCODE_ERROR_TYPE, "不能包含非数字字符！");
-		}
+		return (null == result) ? this.replaceStr : String.valueOf(result);
 	}
-	
 	/* 
 	 * @Description: TODO
 	 * @param delegate

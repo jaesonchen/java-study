@@ -12,13 +12,13 @@ import org.springframework.util.Assert;
  * @date         2017年6月4日  下午1:35:07
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class String2DateParseService implements IopParseService<Date> {
+public class String2DateParseServiceImpl implements IopParseService<Date> {
 
 	private IopParseService<?> delegate;
 	private String pattern = "yyyyMMddHHmmss";
 	
-	public String2DateParseService() {}
-	public String2DateParseService(String pattern) {
+	public String2DateParseServiceImpl() {}
+	public String2DateParseServiceImpl(String pattern) {
 		Assert.hasLength(pattern, "日期格式不能为null或者空字符串.");
 		this.pattern = pattern;
 	}

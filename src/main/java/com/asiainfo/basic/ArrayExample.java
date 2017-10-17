@@ -49,8 +49,12 @@ public class ArrayExample {
 	
 	public Class<?> getClass(String className) throws ClassNotFoundException {
 
-		if ("int" .equals(className)) return int .class;
-		if ("long".equals(className)) return long.class;
+		if ("int" .equals(className)) {
+			return int .class;
+		}
+		if ("long".equals(className)) {
+			return long.class;
+		}
 		return Class.forName(className);
 	}
 	
@@ -65,8 +69,8 @@ public class ArrayExample {
 	        throw new IllegalArgumentException("anArray is not an array");
 	    }
 
-	    Map<Object, Integer> map = new HashMap<Object, Integer>();
 	    int length = Array.getLength(anArray);
+	    Map<Object, Integer> map = new HashMap<Object, Integer>(length);
 	    for (int i = 0; i < length; i++) {
 	        Object dup = Array.get(anArray, i);         
 	        Integer count = map.get(dup);

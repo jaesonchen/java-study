@@ -7,7 +7,7 @@ package com.asiainfo.fileservice.parse;
  * @date         2017年6月4日  下午1:25:35
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class NotNullParseService implements IopParseService<String> {
+public class NotNullParseServiceImpl implements IopParseService<String> {
 
 	private IopParseService<?> delegate = null;
 

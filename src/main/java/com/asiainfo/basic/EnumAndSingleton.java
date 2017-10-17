@@ -24,6 +24,9 @@ public class EnumAndSingleton {
 }
 
 enum SingletonEnum {
+	/**
+	 * single instance
+	 */
     INSTANCE;
     private String name;
     public String getName() {

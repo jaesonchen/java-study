@@ -7,12 +7,15 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs.Ids;
+import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.asiainfo.util.ThreadPoolUtils;
+
 
 /**
  * @Description: 利用节点名称的唯一性来实现共享锁
@@ -116,11 +119,11 @@ public class UniqueDistributedLock implements Watcher, DistributedLock {
 	
 	public static void main(String[] args) throws Exception {
 		
-		new Thread(new LockThread(new UniqueDistributedLock())).start();
-		new Thread(new LockThread(new UniqueDistributedLock())).start();
-		new Thread(new LockThread(new UniqueDistributedLock())).start();
-		new Thread(new LockThread(new UniqueDistributedLock())).start();
-		new Thread(new LockThread(new UniqueDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new UniqueDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new UniqueDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new UniqueDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new UniqueDistributedLock())).start();
+		ThreadPoolUtils.getInstance().newThread(new LockThread(new UniqueDistributedLock())).start();
 	}
 	
 	static class LockThread implements Runnable {

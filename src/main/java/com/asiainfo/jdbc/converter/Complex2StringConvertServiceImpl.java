@@ -7,7 +7,7 @@ package com.asiainfo.jdbc.converter;
  * @date         2017年7月2日  上午10:38:20
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class Complex2StringConvertService implements IConvertService<String> {
+public class Complex2StringConvertServiceImpl implements IConvertService<String> {
 
 	/* 
 	 * @Description: TODO

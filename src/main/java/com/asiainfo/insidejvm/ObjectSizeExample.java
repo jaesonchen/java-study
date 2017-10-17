@@ -13,8 +13,13 @@ import java.util.Set;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 
-/*
+/**
+ * 
  * -javaagent:SizeOf.jar -XX:+UseCompressedOops
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:56:47
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 @SuppressWarnings("unused")
 public class ObjectSizeExample {
@@ -137,8 +142,9 @@ public class ObjectSizeExample {
     	
     	for (int i = 0; i < 10000; i++) {
     		
-    		for (int j = 0; j < 100; j++)
+    		for (int j = 0; j < 100; j++) {
     			result.add(num++);
+    		}
     	}
     	
     	return result;
@@ -154,8 +160,9 @@ public class ObjectSizeExample {
     	for (int i = 0; i < 100; i++) {
     		
     		//num = 13522587;
-    		for (int j = 0; j < 10000; j++)
+    		for (int j = 0; j < 10000; j++) {
     			result.add("" + num++ + "1");
+    		}
     	}
     		
     	
@@ -170,8 +177,9 @@ public class ObjectSizeExample {
     	
     	for (int i = 0; i < 10000; i++) {
     		
-    		for (int j = 0; j < 100; j++)
+    		for (int j = 0; j < 100; j++) {
     			result.add(num++);
+    		}
     	}
     	
     	return result;

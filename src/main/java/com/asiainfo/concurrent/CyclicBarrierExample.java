@@ -5,6 +5,7 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 import com.asiainfo.util.ServiceUtil;
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * 
@@ -22,7 +23,7 @@ public class CyclicBarrierExample {
 	
 	public static void main(String[] args) {
 		
-		new Thread(new Runnable() {
+		ThreadPoolUtils.getInstance().newThread(new Runnable() {
 			@Override
 			public void run() {
 				try {

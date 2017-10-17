@@ -4,6 +4,14 @@ import java.io.*;
 import java.util.*;
 import java.math.*;
 
+/**
+ * 
+ * @Description: TODO
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午5:00:22
+ * Copyright: 	  北京亚信智慧数据科技有限公司
+ */
 @SuppressWarnings("all")
 public class Puzzlers {
 
@@ -435,6 +443,7 @@ public class Puzzlers {
 //一个方法可以抛出的被检查异常集合是它所适用的所有类型声明要抛出的被检查异常集合的交集，而不是合集。
 //多个继承而来的throws 子句的交集，将减少而不是增加方法允许抛出的异常数量。
 class Type3 implements Type1, Type2 {
+	@Override
 	public void f() {
 		System.out.println("do not need throws any Exception");
 	}

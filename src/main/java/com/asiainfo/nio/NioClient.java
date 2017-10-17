@@ -8,7 +8,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @Description: TODO
@@ -33,11 +32,12 @@ public class NioClient {
 		Selector selector = Selector.open();
 		socketChannel.connect(new InetSocketAddress("localhost", 8080));
 		socketChannel.register(selector, SelectionKey.OP_CONNECT);
+		final int max = 10;
 		int loop = 0;
-		while(true && loop < 10) {
+		while(true && loop < max) {
 			selector.select();
-			Set<SelectionKey> selectedKeys = selector.selectedKeys();
-			Iterator<SelectionKey> it = selectedKeys.iterator();
+			//Set<SelectionKey> selectedKeys = selector.selectedKeys();
+			Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 			while (it.hasNext()) {
 				SelectionKey key = it.next();
 				it.remove();

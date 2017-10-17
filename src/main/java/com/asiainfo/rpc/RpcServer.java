@@ -6,7 +6,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +51,12 @@ public class RpcServer implements Runnable {
 		try {
 			while (!Thread.interrupted()) {
 				this.selector.select();
-				Set<SelectionKey> selected = this.selector.selectedKeys();
-				Iterator<SelectionKey> it = selected.iterator();
+				//Set<SelectionKey> selected = this.selector.selectedKeys();
+				Iterator<SelectionKey> it = this.selector.selectedKeys().iterator();
 				while (it.hasNext()) {
 					this.dispatch((SelectionKey) (it.next()));
 				}
-				selected.clear();
+				this.selector.selectedKeys().clear();
 			}
 		} catch (IOException ex) {
 			logger.error("error on dispatch io event", ex);

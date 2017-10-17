@@ -2,6 +2,8 @@ package com.asiainfo.concurrent;
 
 import java.util.concurrent.CountDownLatch;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  *  
  * CountDownLatch示例:
@@ -19,7 +21,7 @@ public class CountDownLatchExample {
 	
 	public static void main(String[] args) {
 		
-		new Thread(new Runnable() {
+		ThreadPoolUtils.getInstance().newThread(new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("1");

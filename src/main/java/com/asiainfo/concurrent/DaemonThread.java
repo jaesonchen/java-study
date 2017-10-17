@@ -3,6 +3,7 @@ package com.asiainfo.concurrent;
 import java.util.concurrent.TimeUnit;
 
 import com.asiainfo.util.ServiceUtil;
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * java中的守护线程(Daemon Thread) 指的是一类特殊的Thread，其优先级特别低(低到甚至可以被JVM自动终止)，
@@ -22,7 +23,7 @@ public class DaemonThread {
 	
 	public static void main(String[] args) {
 		
-		Thread thread = new Thread(new DaemonRunner(), "DaemonRunner");
+		Thread thread = ThreadPoolUtils.getInstance().newThread(new DaemonRunner(), "DaemonRunner");
 		thread.setDaemon(true);
 		thread.start();
 		//ServiceUtil.waitFor(1, TimeUnit.SECONDS);

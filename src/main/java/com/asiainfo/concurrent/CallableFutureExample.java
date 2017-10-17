@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * Callable接口类似于Runnable，从名字就可以看出来了，但是Runnable不会返回结果，并且无法抛出返回结果的异常，
@@ -48,7 +49,7 @@ public class CallableFutureExample {
 	 */
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		
-		ExecutorService service = Executors.newCachedThreadPool();
+		ExecutorService service = ThreadPoolUtils.getInstance().cachedThreadPool();
 		List<Future<String>> futures = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
 			futures.add(service.submit(new Task(String.valueOf(i))));

@@ -9,9 +9,7 @@ import java.io.*;
  * 二进制文件就是用01二进制编码来存贮文件。可执行文件，图象文件，word,excel,ppt这些"带格式"的文档都应该以二进制对象存储。
  * InputStream和OutputStream提供了很多面向byte的I/O功能.
  * Reader和Writer则提供了Unicode兼容的面向字符的I/O功能。
- */
-
-/**常用转换：
+ 	常用转换：
 	
 	FileReader——>BufferedReader
 	
@@ -45,7 +43,10 @@ import java.io.*;
 	FileOutputStream——>BufferedOutputStream——>DataOutputStream
 	
 		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream("Data.txt"))); 
-
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:57:57
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class IOStreamExample {
 
@@ -111,32 +112,36 @@ public class IOStreamExample {
 			
 			try {
 				
-				if(in != null)
+				if(in != null) {
 					in.close();
+				}
 			} catch (IOException e) {
 				throw new RuntimeException("读取关闭失败");
 			}
 			
 			try {
 				
-				if(out != null)
+				if(out != null) {
 					out.close();
+				}
 			} catch (IOException e) {
 				throw new RuntimeException("写入关闭失败");
 			}
 		
 			try {
 				
-				if(bin != null)
+				if(bin != null) {
 					bin.close();
+				}
 			} catch (IOException e) {
 				throw new RuntimeException("读取关闭失败");
 			}
 			
 			try {
 				
-				if(bout != null)
+				if(bout != null) {
 					bout.close();
+				}
 			} catch (IOException e) {
 				throw new RuntimeException("写入关闭失败");
 			}	

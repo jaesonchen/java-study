@@ -57,8 +57,9 @@ public class RpcHandler implements Runnable {
 			logger.error("error on handle request!", ex);
 		} finally {
 			try {
-				if (this.channel != null)
+				if (this.channel != null) {
 					this.channel.close();
+				}
 			} catch (Exception ex) {
 				logger.error("error on close socketChannel!", ex);
 			}

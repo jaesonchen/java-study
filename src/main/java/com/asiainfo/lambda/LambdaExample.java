@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.asiainfo.util.ThreadPoolUtils;
+
 /**
  * 函数接口（Functional Interface）：只包含一个抽象方法的接口，所以也称为SAM（Single Abstract Method）类型的接口。
  * 例如我们比较熟悉的Runnable接口，只定义了唯一的一个抽象方法run()，就是函数接口。
@@ -37,11 +39,12 @@ public class LambdaExample {
 	public static void main(String[] args) {
 		
 		// lambda express
-		new Thread(() -> System.out.println("lambda express!")).start();
+		ThreadPoolUtils.getInstance().newThread(() -> System.out.println("lambda express!")).start();
 		
 		// Comparator
 		List<String> list = new ArrayList<>(Arrays.asList(new String[] {"aaa", "bbb", "ccc"}));
-		/*Collections.sort(list, new Comparator<String>() {
+		/*
+		 Collections.sort(list, new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
 				return o1.hashCode() - o2.hashCode();
@@ -98,9 +101,9 @@ public class LambdaExample {
 	    System.out.printf("Original List : %s, filtered list : %s %n", strList, filtered);
 	    
 	    // Collectors
-	    List<String> G7 = Arrays.asList("USA", "Japan", "France", "Germany", "Italy", "U.K.","Canada");
-	    String G7Countries = G7.stream().map(x -> x.toUpperCase()).collect(Collectors.joining(", "));
-	    System.out.println(G7Countries);
+	    List<String> g7 = Arrays.asList("USA", "Japan", "France", "Germany", "Italy", "U.K.","Canada");
+	    String g7Countries = g7.stream().map(x -> x.toUpperCase()).collect(Collectors.joining(", "));
+	    System.out.println(g7Countries);
 	    
 	    // distinct
 	    List<Integer> numbers = new ArrayList<>(Arrays.asList(9, 10, 3, 4, 7, 3, 4));

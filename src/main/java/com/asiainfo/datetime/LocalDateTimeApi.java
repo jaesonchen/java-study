@@ -65,8 +65,8 @@ public class LocalDateTimeApi {
         System.out.println("Current Date=" + today);
  
         //Creating LocalDate by providing input arguments
-        LocalDate firstDay_2014 = LocalDate.of(2014, Month.JANUARY, 1);
-        System.out.println("Specific Date=" + firstDay_2014);
+        LocalDate firstDay2014 = LocalDate.of(2014, Month.JANUARY, 1);
+        System.out.println("Specific Date=" + firstDay2014);
  
         //Try creating date by providing invalid inputs
         //LocalDate feb29_2014 = LocalDate.of(2014, Month.FEBRUARY, 29);

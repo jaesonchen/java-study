@@ -36,10 +36,12 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
 		final Node predecessor() throws NullPointerException {
 	        	
 			Node p = prev;
-			if (p == null)
+			if (p == null) {
 				throw new NullPointerException();
-			else
+			}
+			else {
 				return p;
+			}
 		}
 
 		Node() {}
@@ -54,12 +56,12 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
 		}
 	}
 	
-	private static final Unsafe unsafe = Unsafe.getUnsafe();
-    private static final long stateOffset;
-    private static final long headOffset;
-    private static final long tailOffset;
-    private static final long waitStatusOffset;
-    private static final long nextOffset;
+	private static Unsafe unsafe = Unsafe.getUnsafe();
+    private static long stateOffset;
+    private static long headOffset;
+    private static long tailOffset;
+    private static long waitStatusOffset;
+    private static long nextOffset;
 
     static {
         try {
@@ -134,9 +136,11 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
     	
         for (;;) {
             Node t = tail;
-            if (t == null) { // Must initialize
-                if (compareAndSetHead(new Node()))
+            // Must initialize
+            if (t == null) {
+                if (compareAndSetHead(new Node())) {
                     tail = head;
+                }
             } else {
                 node.prev = t;
                 if (compareAndSetTail(t, node)) {
@@ -171,15 +175,17 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
     
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
-            acquireQueued(addWaiter(), arg))
+            acquireQueued(addWaiter(), arg)) {
             selfInterrupt();
+        }
     }
 
     public final boolean release(int arg) {
         if (tryRelease(arg)) {
             Node h = head;
-            if (h != null && h.waitStatus != 0)
+            if (h != null && h.waitStatus != 0) {
                 unparkSuccessor(h);
+            }
             return true;
         }
         return false;
@@ -193,8 +199,9 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
          * fails or if status is changed by waiting thread.
          */
         int ws = node.waitStatus;
-        if (ws < 0)
+        if (ws < 0) {
             compareAndSetWaitStatus(node, ws, 0);
+        }
 
         /*
          * Thread to unpark is held in successor, which is normally
@@ -205,12 +212,15 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         Node s = node.next;
         if (s == null || s.waitStatus > 0) {
             s = null;
-            for (Node t = tail; t != null && t != node; t = t.prev)
-                if (t.waitStatus <= 0)
+            for (Node t = tail; t != null && t != node; t = t.prev) {
+                if (t.waitStatus <= 0) {
                     s = t;
+                }
+            }
         }
-        if (s != null)
+        if (s != null) {
             LockSupport.unpark(s.thread);
+        }
     }
     
     final boolean acquireQueued(final Node node, int arg) {
@@ -222,17 +232,20 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
                 final Node p = node.predecessor();
                 if (p == head && tryAcquire(arg)) {
                     setHead(node);
-                    p.next = null; // help GC
+                    // help GC
+                    p.next = null;
                     failed = false;
                     return interrupted;
                 }
                 if (shouldParkAfterFailedAcquire(p, node) &&
-                    parkAndCheckInterrupt())
+                    parkAndCheckInterrupt()) {
                     interrupted = true;
+                }
             }
         } finally {
-            if (failed)
+            if (failed) {
                 cancelAcquire(node);
+            }
         }
     }
     
@@ -244,12 +257,13 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
     	
         int ws = pred.waitStatus;
-        if (ws == Node.SIGNAL)
+        if (ws == Node.SIGNAL) {
             /*
              * This node has already set status asking a release
              * to signal it, so it can safely park.
              */
             return true;
+        }
         if (ws > 0) {
             /*
              * Predecessor was cancelled. Skip over predecessors and
@@ -273,15 +287,16 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
     private void cancelAcquire(Node node) {
     	
         // Ignore if node doesn't exist
-        if (node == null)
+        if (node == null) {
             return;
-
+        }
         node.thread = null;
 
         // Skip cancelled predecessors
         Node pred = node.prev;
-        while (pred.waitStatus > 0)
+        while (pred.waitStatus > 0) {
             node.prev = pred = pred.prev;
+        }
 
         // predNext is the apparent node to unsplice. CASes below will
         // fail if not, in which case, we lost race vs another cancel
@@ -305,13 +320,14 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
                  (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &&
                 pred.thread != null) {
                 Node next = node.next;
-                if (next != null && next.waitStatus <= 0)
+                if (next != null && next.waitStatus <= 0) {
                     compareAndSetNext(pred, predNext, next);
+                }
             } else {
                 unparkSuccessor(node);
             }
-
-            node.next = node; // help GC
+            // help GC
+            node.next = node;
         }
     }
     

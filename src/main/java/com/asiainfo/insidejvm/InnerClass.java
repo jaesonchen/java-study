@@ -15,6 +15,10 @@ package com.asiainfo.insidejvm;
  * 内部类拥有对其他内部类的所有成员的访问权限。
  * 
  * 当我们从外部类继承的时候，没有任何额外的内部类继续下去。在继承类中使用同名内部类不会覆盖基类的内部类，必须使用SubInner extends Parent.Inner。
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:55:50
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class InnerClass {
  
@@ -72,6 +76,7 @@ class Outer {
 		private void show() {
 			System.out.println("私有内部类InnerPrivate的private方法show()");
 		}
+		@Override
 		public void test() {
 			System.out.println("私有内部类InnerPrivate的public方法test()访问外部类Outer的私有变量" + name);
 		}
@@ -108,9 +113,11 @@ class Outer {
 			{
 				this.str = "by anonymous class initial block";
 				this.name = "anonymous name";
-				if(this.str != null)
+				if(this.str != null) {
 					System.out.println("匿名内部类实例初始化：" + this.str + ", " + this.name);
+				}
 			}
+			@Override
 			public void test() {
 				System.out.println("匿名内部类的public方法test()访问外部类Outer的成员变量：" + Outer.this.name);
 				//访问在匿名内部类外部定义的一个对象，则编译器要求外部对象为final属性。

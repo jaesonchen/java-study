@@ -21,17 +21,17 @@ package com.asiainfo.insidejvm;
 public class InitialOrder extends Parent {
 
 	// 静态变量
-	 public static String s_StaticField = "subclass--static variable";
-	 // 变量
-	 public String s_Field = "subclass--variable";
+	public static String sStaticField = "subclass--static variable";
+	// 变量
+	public String sField = "subclass--variable";
 	 // 静态初始化块
 	 static {
-		 System.out.println(s_StaticField);
+		 System.out.println(sStaticField);
 		 System.out.println("subclass--static block init");
 	 }
 	 // 初始化块
 	 {
-		 System.out.println(s_Field);
+		 System.out.println(sField);
 		 System.out.println("subclass--block init");
 	 }
 	
@@ -58,7 +58,7 @@ class Parent {
 	 // 静态变量
 	 public static String p_StaticField = "parentclass--static variable";
 	 // 变量
-	 public String p_Field = "parentclass--variable";
+	 public String pField = "parentclass--variable";
 	 protected int i = 1;
 	 protected int j = 1;
 	 // 静态初始化块
@@ -68,7 +68,7 @@ class Parent {
 	 }
 	 // 初始化块
 	 {
-		 System.out.println(p_Field);
+		 System.out.println(pField);
 		 System.out.println("parentclass--block init");
 	 }
 	 // 构造器

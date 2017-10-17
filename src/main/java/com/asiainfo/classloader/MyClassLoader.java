@@ -16,6 +16,7 @@ import java.net.URLConnection;
  */
 public class MyClassLoader extends ClassLoader {
 
+	final String CLASS_NAME = "reflection.MyObject";
 	public MyClassLoader(ClassLoader parent) {
 		super(parent);
 	}
@@ -23,9 +24,9 @@ public class MyClassLoader extends ClassLoader {
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
 
-		if (!"reflection.MyObject".equals(name))
+		if (!CLASS_NAME.equals(name)) {
 			return super.loadClass(name);
-
+		}
 		try {
 			String url = "file:C:/data/projects/tutorials/web/WEB-INF/classes/reflection/MyObject.class";
 			URL myUrl = new URL(url);
@@ -39,7 +40,7 @@ public class MyClassLoader extends ClassLoader {
 			}
 			input.close();
 			byte[] classData = buffer.toByteArray();
-			return defineClass("reflection.MyObject", classData, 0, classData.length);
+			return defineClass(CLASS_NAME, classData, 0, classData.length);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

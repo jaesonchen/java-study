@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class ValidatorUtil {
+	
+	private static Pattern domain = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
 
 	public static boolean isEmpty(String str) {
 		return (null == str || "".equals(str));
@@ -153,10 +155,10 @@ public class ValidatorUtil {
      * @return 
      */
     public static String getDomain(String url) {
-        Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
+        //Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
         // 获取完整的域名 
         // Pattern p=Pattern.compile("[^//]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = p.matcher(url);
+        Matcher matcher = domain.matcher(url);
         matcher.find();
         return matcher.group();
     }

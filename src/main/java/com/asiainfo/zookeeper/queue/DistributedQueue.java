@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.asiainfo.rpc.JdkSerializer;
 import com.asiainfo.rpc.Serializer;
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * @Description: 基于zookeeper 提供的一致性保证，实现分布式队列DistributedQueue。
@@ -348,11 +349,16 @@ public class DistributedQueue<E> implements Watcher, Queue<E> {
 	public static void main(String[] args) throws Exception {
 		
 		Serializer<Object> serial = new JdkSerializer();
-		new Thread(new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("1", "11"))).start();
-		new Thread(new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("2", "22"))).start();
-		new Thread(new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("3", "33"))).start();
-		new Thread(new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("4", "44"))).start();
-		new Thread(new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("5", "55"))).start();
+		ThreadPoolUtils.getInstance().newThread(
+				new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("1", "11"))).start();
+		ThreadPoolUtils.getInstance().newThread(
+				new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("2", "22"))).start();
+		ThreadPoolUtils.getInstance().newThread(
+				new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("3", "33"))).start();
+		ThreadPoolUtils.getInstance().newThread(
+				new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("4", "44"))).start();
+		ThreadPoolUtils.getInstance().newThread(
+				new LockThread<>(new DistributedQueue<Object>(serial), new QueueElement("5", "55"))).start();
 	}
 	
 	static class LockThread<T> implements Runnable {

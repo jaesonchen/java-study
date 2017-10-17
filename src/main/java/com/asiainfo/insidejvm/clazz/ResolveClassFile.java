@@ -7,6 +7,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+/**
+ * 
+ * @Description: TODO
+ * 
+ * @author       zq
+ * @date         2017年10月16日  下午4:32:12
+ * Copyright: 	  北京亚信智慧数据科技有限公司
+ */
 public class ResolveClassFile {
 
 	public static void resolveClassFile(File file) {
@@ -34,12 +42,12 @@ public class ResolveClassFile {
 		
 				//Resolve Constant pool
 				dis.read(itemBuf, 0, 2);
-				String pool_count = bytesToHexString(itemBuf, 2);
-				int constant_pool_count =bytesToInt(itemBuf, 2);
-				System.out.println("Constant pool count:" + pool_count + " " + constant_pool_count);
+				String poolCount = bytesToHexString(itemBuf, 2);
+				int constantPoolCount =bytesToInt(itemBuf, 2);
+				System.out.println("Constant pool count:" + poolCount + " " + constantPoolCount);
 		
 				ArrayList<ConstantPoolType> pool = new ArrayList<ConstantPoolType>();
-				for (int i = 0; i < constant_pool_count-1; i++) {
+				for (int i = 0; i < constantPoolCount-1; i++) {
 					dis.read(itemBuf, 0, 1);
 					int tag = bytesToInt(itemBuf, 1);
 					switch (tag) {
@@ -81,19 +89,19 @@ public class ResolveClassFile {
 							break;
 						case 7:
 							dis.read(itemBuf, 0, 2);
-							int class_index = bytesToInt(itemBuf, 2);
+							int classIndex = bytesToInt(itemBuf, 2);
 							CONSTANT_Class_Info classinfo = new CONSTANT_Class_Info();
-							classinfo.setIndex(class_index);
+							classinfo.setIndex(classIndex);
 							pool.add(classinfo);
-							printConstantPoolVal(i, "class_index", class_index + "");
+							printConstantPoolVal(i, "class_index", classIndex + "");
 							break;
 						case 8:
 							dis.read(itemBuf, 0, 2);
-							int str_index = bytesToInt(itemBuf, 2);
+							int strIndex = bytesToInt(itemBuf, 2);
 							CONSTANT_String_Info strindex = new CONSTANT_String_Info();
-							strindex.setIndex(str_index);
+							strindex.setIndex(strIndex);
 							pool.add(strindex);
-							printConstantPoolVal(i, "string_index", str_index + "");
+							printConstantPoolVal(i, "string_index", strIndex + "");
 							break;
 						case 9:
 							int[] fieldIndexes = getTwoIndexes(itemBuf, dis);
@@ -119,6 +127,8 @@ public class ResolveClassFile {
 							pool.add(nameTypeValue);
 							printConstantPoolVal(i, "nameType_indexes", nameTypeInfo[0] + " " + nameTypeInfo[1]);
 							break;
+						default:
+							
 					}
 				}
 		
@@ -128,13 +138,13 @@ public class ResolveClassFile {
 				
 				//resolve this_class
 				dis.read(itemBuf,0,2);
-				int this_class_index = bytesToInt(itemBuf, 2);
-				System.out.println("This class index is:    " + this_class_index);
+				int thisClassIndex = bytesToInt(itemBuf, 2);
+				System.out.println("This class index is:    " + thisClassIndex);
 				
 				//resolve super_class
 				dis.read(itemBuf, 0, 2);
-				int super_class_index = bytesToInt(itemBuf,2);
-				System.out.println("The super class index is:    " + super_class_index);
+				int superClassIndex = bytesToInt(itemBuf,2);
+				System.out.println("The super class index is:    " + superClassIndex);
 				
 				//resolve interfaces
 				dis.read(itemBuf, 0, 2);
@@ -163,12 +173,12 @@ public class ResolveClassFile {
 	private static int[] getTwoIndexes(byte[] itemBuf, DataInputStream dis) throws IOException {
 
 		dis.read(itemBuf, 0, 2);
-		int classref_index = bytesToInt(itemBuf, 2);
+		int classrefIndex = bytesToInt(itemBuf, 2);
 		dis.read(itemBuf, 0, 2);
-		int nameTyperef_index = bytesToInt(itemBuf, 2);
+		int nameTyperefIndex = bytesToInt(itemBuf, 2);
 		int[] result = new int[2];
-		result[0] = classref_index;
-		result[1] = nameTyperef_index;
+		result[0] = classrefIndex;
+		result[1] = nameTyperefIndex;
 		return result;
 	}
 
@@ -184,32 +194,40 @@ public class ResolveClassFile {
 	}
   
 	private static int getInt(byte[] itemBuf, DataInputStream dis) throws IOException {
-		dis.read(itemBuf,0,2);
-		return bytesToInt(itemBuf,2);
+		dis.read(itemBuf, 0, 2);
+		return bytesToInt(itemBuf, 2);
 	}
   
 	private static void resolveFlags(byte[] bytes) {
 		
 		byte first = bytes[0];
 		ArrayList<AccesFlags> flags = new ArrayList<AccesFlags>();
-		if ((first & (1 << 1)) != 0)
+		if ((first & (1 << 1)) != 0) {
 			flags.add(AccesFlags.ACC_INTERFACE);
-		if ((first & (1 << 2)) != 0)
+		}
+		if ((first & (1 << 2)) != 0) {
 			flags.add(AccesFlags.ACC_ABSTRACT);
-		if ((first & (1 << 4)) != 0)
+		}
+		if ((first & (1 << 4)) != 0) {
 			flags.add(AccesFlags.ACC_SYNTHETIC);
-		if ((first & (1 << 5)) != 0)
+		}
+		if ((first & (1 << 5)) != 0) {
 			flags.add(AccesFlags.ACC_ANNOTATION);
-		if ((first & (1 << 6)) != 0)
+		}
+		if ((first & (1 << 6)) != 0) {
 			flags.add(AccesFlags.ACC_ENUM);
+		}
 
 		byte second=bytes[1];
-		if ((second & 1) != 0 )
+		if ((second & 1) != 0 ) {
 			flags.add(AccesFlags.ACC_PUBLIC);
-		if ((second & (1 << 4)) != 0)
+		}
+		if ((second & (1 << 4)) != 0) {
 			flags.add(AccesFlags.ACC_FINAL);
-		if ((second & (1 << 5)) != 0)
+		}
+		if ((second & (1 << 5)) != 0) {
 			flags.add(AccesFlags.ACC_SUPER);
+		}
 
 		StringBuilder sb = new StringBuilder();
 		for (AccesFlags flag : flags) {
@@ -284,12 +302,13 @@ public class ResolveClassFile {
 
 	private static final String bytesToHexString(byte[] bArray, int length) {
 		
-		StringBuffer sb=new StringBuffer(bArray.length);
+		StringBuffer sb = new StringBuffer(bArray.length);
 		String sTemp;
 		for (int i = 0; i < bArray.length && i<length; i++) {
-			sTemp=Integer.toHexString((int)(0xFF & bArray[i]));
-			if (sTemp.length() < 2)
+			sTemp=Integer.toHexString((int) (0xFF & bArray[i]));
+			if (sTemp.length() < 2) {
 				sb.append(0);
+			}
 			sb.append(sTemp.toUpperCase());
 		}
 		return sb.toString();
@@ -302,7 +321,7 @@ public class ResolveClassFile {
 	private static final int bytesToInt(byte[] bArray, int length) {
 		
 		int result = bArray[length-1] & 0xFF;
-		for (int i = length-2; i >= 0; i--) {
+		for (int i = length - 2; i >= 0; i--) {
 			result = result | (bArray[i] & 0xFF) << 8 * (length - 1 - i);
 		}
 		return result;
@@ -311,9 +330,9 @@ public class ResolveClassFile {
 	private static final long bytesToLong(byte[] bArray) {
 		
 		int length = 8;
-		long result =bArray[length-1] & 0xFF;
-		for(int i=length-2;i>=0;i--){
-			result=result | (bArray[i] & 0xFF) << 8*(length-1-i);
+		long result = bArray[length - 1] & 0xFF;
+		for(int i = length - 2; i >= 0; i--){
+			result = result | (bArray[i] & 0xFF) << 8 * (length - 1 - i);
 		}
 		return result;
 	}
@@ -331,6 +350,9 @@ public class ResolveClassFile {
 	}
 
 	public enum AccesFlags {
+		/**
+		 * public
+		 */
 		ACC_PUBLIC, ACC_FINAL, ACC_SUPER, ACC_INTERFACE, ACC_ABSTRACT, 
 		ACC_SYNTHETIC, ACC_ANNOTATION, ACC_ENUM, ACC_PRIVATE, ACC_PROTECTED, 
 		ACC_STATIC, ACC_VOLATILE, ACC_TRANSPARENT

@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface IopParser {
 	int value();
-	Class<?>[] clazz() default Null2DefaultParseService.class;
+	Class<?>[] clazz() default Null2DefaultParseServiceImpl.class;
 }

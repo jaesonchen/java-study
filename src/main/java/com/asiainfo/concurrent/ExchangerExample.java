@@ -2,7 +2,8 @@ package com.asiainfo.concurrent;
 
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import com.asiainfo.util.ThreadPoolUtils;
 
 /**
  * Exchanger示例 
@@ -18,17 +19,17 @@ import java.util.concurrent.Executors;
  */
 public class ExchangerExample {
 	
-	private static final Exchanger<String> exchanger = new Exchanger<>();
-	private static ExecutorService threadPool = Executors.newFixedThreadPool(2);
+	private static Exchanger<String> exchanger = new Exchanger<>();
+	private static ExecutorService threadPool = ThreadPoolUtils.getInstance().fixedThreadPool(2);
 
 	public static void main(String[] args) {
 		
 		threadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				String A = "银行流水A";
+				String aA = "银行流水A";
 				try {
-					String x = exchanger.exchange(A);
+					String x = exchanger.exchange(aA);
 					System.out.println("A线程得到的交换数据 : " + x);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -39,10 +40,10 @@ public class ExchangerExample {
 		threadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				String B = "银行流水B";
+				String bB = "银行流水B";
 				try {
-					String A = exchanger.exchange(B);
-					System.out.println("A和B数据是否一致 ： " + A.equals(B) + " , A录入的是 ： " + A + " , B录入的是 : " + B);
+					String aA = exchanger.exchange(bB);
+					System.out.println("A和B数据是否一致 ： " + aA.equals(bB) + " , A录入的是 ： " + aA + " , B录入的是 : " + bB);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

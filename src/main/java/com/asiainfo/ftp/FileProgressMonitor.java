@@ -1,12 +1,14 @@
 package com.asiainfo.ftp;
 
 import java.text.DecimalFormat;
-import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.asiainfo.util.ThreadPoolUtils;
 import com.jcraft.jsch.SftpProgressMonitor;
 
 public class FileProgressMonitor extends TimerTask implements SftpProgressMonitor {
@@ -20,7 +22,8 @@ public class FileProgressMonitor extends TimerTask implements SftpProgressMonito
 
 	private final long fileSize; // 记录文件总大小
 
-	private Timer timer; // 定时器对象
+	//private Timer timer; // 定时器对象
+	private ScheduledExecutorService timer;
 
 	private boolean isScheduled = false; // 记录是否已启动timer记时器
 
@@ -50,8 +53,7 @@ public class FileProgressMonitor extends TimerTask implements SftpProgressMonito
 	public void stop() {
 		log.debug("Try to stop progress monitor.");
 		if (timer != null) {
-			timer.cancel();
-			timer.purge();
+			ThreadPoolUtils.shutdown(timer);
 			timer = null;
 			isScheduled = false;
 		}
@@ -61,9 +63,9 @@ public class FileProgressMonitor extends TimerTask implements SftpProgressMonito
 	public void start() {
 		log.debug("Try to start progress monitor.");
 		if (timer == null) {
-			timer = new Timer();
+			timer = ThreadPoolUtils.getInstance().scheduledThreadPool(1);
 		}
-		timer.schedule(this, 1000, progressInterval);
+		timer.scheduleAtFixedRate(this, 1000, progressInterval, TimeUnit.MILLISECONDS);
 		isScheduled = true;
 		log.debug("Progress monitor started.");
 	}
@@ -86,6 +88,7 @@ public class FileProgressMonitor extends TimerTask implements SftpProgressMonito
 	/**
 	 * 实现了SftpProgressMonitor接口的count方法
 	 */
+	@Override
 	public boolean count(long count) {
 		if (isEnd()) {
 			return false;
@@ -100,6 +103,7 @@ public class FileProgressMonitor extends TimerTask implements SftpProgressMonito
 	/**
 	 * 实现了SftpProgressMonitor接口的end方法
 	 */
+	@Override
 	public void end() {
 		setEnd(true);
 		log.debug("transfering end.");
@@ -124,7 +128,7 @@ public class FileProgressMonitor extends TimerTask implements SftpProgressMonito
 	private synchronized boolean isEnd() {
 		return isEnd;
 	}
-
+	@Override
 	public void init(int op, String src, String dest, long max) {
 		// Not used for putting InputStream
 	}
