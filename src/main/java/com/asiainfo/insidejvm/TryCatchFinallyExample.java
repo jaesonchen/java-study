@@ -80,4 +80,15 @@ public class TryCatchFinallyExample {
 			return "return in finally";
 		}
 	}
+	
+	//自动判断丢出的异常类型
+	static void testThrowable() {
+		try {
+			//throw new Exception();
+			throw new RuntimeException();
+		} catch (Exception ex) {
+			throw ex;
+			//throw new RuntimeException(ex);
+		}
+	}
 }
