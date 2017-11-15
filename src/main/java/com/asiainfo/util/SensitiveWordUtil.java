@@ -1,9 +1,13 @@
 package com.asiainfo.util;
 
 import java.util.*;
+
 /**
  * 过滤敏感词语
- * @author zq
+ * 
+ * @author       zq
+ * @date         2017年11月15日  下午5:12:21
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class SensitiveWordUtil {
 
