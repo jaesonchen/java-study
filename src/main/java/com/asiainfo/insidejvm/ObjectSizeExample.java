@@ -27,7 +27,9 @@ public class ObjectSizeExample {
 	public static void main(String[] args) {
 		
 		List<String> list = getStringList();
+		System.out.println("List<String>=" + deepSizeOf(list));
 		System.out.println("List<Long>=" + deepSizeOf(getLongList()));
+		System.out.println("List<Integer>=" + deepSizeOf(getIntList()));
 		System.out.println("Set<Long>=" + deepSizeOf(getLongSet()));
 		/*System.out.println("List<String>=" + deepSizeOf(list));
 		System.out.println("List<Long>=" + deepSizeOf(getLongList()));
@@ -148,6 +150,22 @@ public class ObjectSizeExample {
     	}
     	
     	return result;
+    }
+
+    private static List<Integer> getIntList() {
+        
+        List<Integer> result = new ArrayList<Integer>();
+        
+        int num = 522587602;
+        
+        for (int i = 0; i < 10000; i++) {
+            
+            for (int j = 0; j < 100; j++) {
+                result.add(num++);
+            }
+        }
+        
+        return result;
     }
     
     private static List<String> getStringList() {

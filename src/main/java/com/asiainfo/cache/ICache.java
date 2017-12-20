@@ -27,7 +27,7 @@ public interface ICache<K, V> {
 	 * @param key
 	 * @return
 	 */
-	public V get(K key);
+	public ValueWrapper<V> get(K key);
 	
 	/**
 	 * 取得缓存项，超过指定时间的返回null
@@ -37,14 +37,14 @@ public interface ICache<K, V> {
 	 * @param unit
 	 * @return
 	 */
-	public V get(K key, long expire, TimeUnit unit);
+	public ValueWrapper<V> get(K key, long expire, TimeUnit unit);
 	
 	/**
 	 * 删除缓存项
 	 * 
 	 * @param key
 	 */
-	public void remove(Object key);
+	public void remove(K key);
 	
 	/**
 	 * 清除整个缓存
@@ -59,11 +59,29 @@ public interface ICache<K, V> {
 	public Set<K> keySet();
 	
 	/**
+	 * 返回所有key，排除失效
+	 * 
+	 * @param expire
+	 * @param unit
+	 * @return
+	 */
+	public Set<K> keySet(long expire, TimeUnit unit);
+	
+	/**
 	 * 返回所有value
 	 * 
 	 * @return
 	 */
-	public Collection<V> values();
+	public Collection<ValueWrapper<V>> values();
+	
+	/**
+	 * 返回所有value，排除失效
+	 * 
+	 * @param expire
+	 * @param unit
+	 * @return
+	 */
+	public Collection<ValueWrapper<V>> values(long expire, TimeUnit unit);
 	
 	/**
 	 * 是否包含key
@@ -71,7 +89,17 @@ public interface ICache<K, V> {
 	 * @param key
 	 * @return
 	 */
-	public boolean containsKey(Object key);
+	public boolean containsKey(K key);
+	
+	/**
+	 * 是否包含key，判断失效
+	 * 
+	 * @param key
+	 * @param expire
+	 * @param unit
+	 * @return
+	 */
+	public boolean containsKey(K key, long expire, TimeUnit unit);
 	
 	/**
 	 * 是否包含value
@@ -79,7 +107,17 @@ public interface ICache<K, V> {
 	 * @param value
 	 * @return
 	 */
-	public boolean containsValue(Object value);
+	public boolean containsValue(V value);
+	
+	/**
+	 * 是否包含value，判断失效
+	 * 
+	 * @param value
+	 * @param expire
+	 * @param unit
+	 * @return
+	 */
+	public boolean containsValue(V value, long expire, TimeUnit unit);
 	
 	/**
 	 * 缓存大小

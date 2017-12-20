@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.Transient;
 import javax.persistence.Embedded;
+import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +25,6 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
@@ -495,7 +494,7 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 		 * (with the mapped class specified only once).
 		 * @param mappedClass the class that each row should be mapped to
 		 */
-		public static <T> BeanPropertyRowMapper<T> newInstance(Class<T> mappedClass) {
-			return new BeanPropertyRowMapper<T>(mappedClass);
+		public static <T> EnhanceBeanPropertyRowMapper<T> newInstance(Class<T> mappedClass) {
+			return new EnhanceBeanPropertyRowMapper<T>(mappedClass);
 		}
 	}

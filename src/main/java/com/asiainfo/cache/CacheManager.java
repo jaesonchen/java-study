@@ -10,9 +10,9 @@ package com.asiainfo.cache;
 public class CacheManager {
 
 	private static class CacheHolder {
-		static ICache<String, Object> cache = new SimpleCache();
+		static final ICache<String, Object> CACHE = new SimpleCache();
 	}
 	public static ICache<String, Object> getInstance() {
-		return CacheHolder.cache;
+		return CacheHolder.CACHE;
 	}
 }
