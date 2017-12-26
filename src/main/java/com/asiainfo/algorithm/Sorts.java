@@ -1,7 +1,8 @@
 package com.asiainfo.algorithm;
 
 public class Sorts {
-	private Strategy strategy;
+    
+	private Strategy<Object> strategy;
 	
 	/* 直接插入排序是一种最简单的插入排序方法，它的基本思想是：仅有一个元素的序列总
 	 * 是有序的，因此，对n 个记录的序列，可从第二个元素开始直到第n 个元素，逐个向有序序

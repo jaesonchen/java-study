@@ -1,5 +1,8 @@
 package com.asiainfo.algorithm;
 
+import com.asiainfo.datastructure.ArrayStack;
+import com.asiainfo.datastructure.Stack;
+
 /**
  * 迷宫路径
  */
@@ -8,7 +11,7 @@ public class Maze {
 	public static void mazeExit(char[][] maze, int sx, int sy, int ex, int ey) {
 		Cell[][] cells = createMaze(maze); //创建化迷宫
 		printMaze(cells); //打印迷宫
-		Stack s = new StackArray(); //构造堆栈
+		Stack<Cell> s = new ArrayStack<>(); //构造堆栈
 		Cell startCell = cells[sx][sy]; //起点
 		Cell endCell = cells[ex][ey]; //终点
 		s.push(startCell); //起点入栈
@@ -16,7 +19,7 @@ public class Maze {
 		while (!s.isEmpty()) {
 			Cell current = (Cell)s.peek();
 			if (current == endCell){ //路径找到
-				System.out.println("共有" + s.getSize() + "步");
+				System.out.println("共有" + s.size() + "步");
 				while(!s.isEmpty()){
 					
 					Cell cell = (Cell)s.pop();//沿路返回将路径上的单元设为*

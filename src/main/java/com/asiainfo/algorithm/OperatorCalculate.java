@@ -1,9 +1,12 @@
 package com.asiainfo.algorithm;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+
+import com.asiainfo.datastructure.ArrayStack;
+import com.asiainfo.datastructure.Stack;
 
 public class OperatorCalculate {
 
@@ -16,8 +19,8 @@ public class OperatorCalculate {
 	public static double calculate(String express) {
 		
 		Map<String, Operator> operatorMap = getOperator();
-		Stack numStack = new StackArray();
-		Stack operStack = new StackArray();
+		Stack<Double> numStack = new ArrayStack<>();
+		Stack<Operator> operStack = new ArrayStack<>();
 		StringTokenizer token = new StringTokenizer(express, "+-*/()", true); 
 		
 		String current;
@@ -73,6 +76,7 @@ public class OperatorCalculate {
 	}
 	
 	public static Map<String, Operator> getOperator() {
+	    
 		return new HashMap<String, Operator>() {
 			private static final long serialVersionUID = 7706718608122369958L;
 			{
@@ -89,14 +93,14 @@ public class OperatorCalculate {
 	 * @param numStack
 	 * @param operStack
 	 */
-	public static void calculate(Stack numStack, Stack operStack) {
+	public static void calculate(Stack<Double> numStack, Stack<Operator> operStack) {
 		
 		// 弹出数字栈最顶上的数字作为运算的第二个数字 
 		Double num2 = (Double) numStack.pop();
 		// 弹出数字栈最顶上的数字作为运算的第一个数字
 		Double num1 = (Double) numStack.pop();
 		// 弹出操作栈最顶上的运算符进行计算
-		Double result = ((Operator)operStack.pop()).calculate(num1, num2);
+		Double result = ((Operator) operStack.pop()).calculate(num1, num2);
 		// 把计算结果重新放到队列的末端 
 		numStack.push(result);
 	}
@@ -105,19 +109,18 @@ public class OperatorCalculate {
 }
 
 enum Operator {
+    
 	PLUS("+") {
-		
+	    
 		@Override
 		public int priority() { return 1; }
-
 		@Override
 		public double calculate(double x, double y) { return x + y; }
 	},
 	MINUS("-") {
-		
+	    
 		@Override
 		public int priority() { return 1; }
-		
 		@Override
 		public double calculate(double x, double y) { return x - y; }
 	},
@@ -125,7 +128,6 @@ enum Operator {
 		
 		@Override
 		public int priority() { return 2; }
-		
 		@Override
 		public double calculate(double x, double y) { return x * y; }
 	},
@@ -133,21 +135,20 @@ enum Operator {
 		
 		@Override
 		public int priority() { return 2; }
-		
 		@Override
 		public double calculate(double x, double y) { return x / y; }
 	},
 	LEFT_BRACKET("(") {
+	    
 		@Override
 		public int priority() { return 0; }
-		
 		@Override
 		public double calculate(double x, double y) { return Double.NaN; }
 	},
 	RIGHT_BRACKET(")") {
+	    
 		@Override
 		public int priority() { return 0; }
-		
 		@Override
 		public double calculate(double x, double y) { return Double.NaN; }
 	};
