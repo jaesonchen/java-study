@@ -20,7 +20,7 @@ public interface Map<K, V> {
     List<V> values();
     Set<Map.Entry<K, V>> entrySet();
     
-    interface Entry<K,V> {
+    interface Entry<K, V> {
         K getKey();
         V getValue();
         V setValue(V value);

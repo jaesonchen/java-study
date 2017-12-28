@@ -3,290 +3,422 @@ package com.asiainfo.datastructure;
 import java.util.Comparator;
 
 /**
- * 二分数
+ * 二叉树
  * 
  * @author       zq
  * @date         2017年12月25日  下午4:43:17
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class BinaryTree<T> {
+public class BinaryTree<T extends Comparable<T>> {
     
+    private Comparator<T> comparator;
 	private BinaryTreeNode<T> root;
 	
 	public BinaryTree() {
 	    this(null);
 	}
 	public BinaryTree(BinaryTreeNode<T> root) {
-		this.root = root;
+		this(root, null);
 	}
+	public BinaryTree(BinaryTreeNode<T> root, Comparator<T> comparator) {
+        this.root = root;
+        this.comparator = comparator;
+    }
 	
-	//先序遍历二叉树
-	public MyIterator<BinaryTreeNode<T>> preOrder() {
+	public Comparator<T> getComparator() {
+        return comparator;
+    }
+    public void setComparator(Comparator<T> comparator) {
+        this.comparator = comparator;
+    }
+    public BinaryTreeNode<T> getRoot() {
+        return root;
+    }
+    public void setRoot(BinaryTreeNode<T> root) {
+        this.root = root;
+    }
+    
+    /**
+     * 先序遍历(中左右)
+     * 
+     * @return
+     */
+	public List<BinaryTreeNode<T>> preOrder() {
 		
 	    List<BinaryTreeNode<T>> list = new LinkedList<>();
 		preOrderRecursion(this.root, list);
 		//preOrderTraverse (root,list);
-		return list.iterator();
+		return list;
 	}
-	//先序遍历的递归算法
-	protected void preOrderRecursion(BinaryTreeNode<T> current, List<BinaryTreeNode<T>> list) {
+	/**
+	 * 先序遍历的递归算法
+	 * 
+	 * @param node
+	 * @param list
+	 */
+	protected void preOrderRecursion(BinaryTreeNode<T> node, List<BinaryTreeNode<T>> list) {
 	    
-		if (current == null) {
+		if (null == node) {
 		    return;
 		}
-		list.add(current);
-		preOrderRecursion(current.getLeft(), list);
-		preOrderRecursion(current.getRight(), list);
+		list.add(node);
+		preOrderRecursion(node.getLeft(), list);
+		preOrderRecursion(node.getRight(), list);
 	}
-	//先序遍历的非递归算法
-	protected void preOrderTraverse(BinaryTreeNode<T> current, List<BinaryTreeNode<T>> list) {
+	/**
+	 * 先序遍历的非递归算法
+	 * 
+	 * @param node
+	 * @param list
+	 */
+	protected void preOrderTraverse(BinaryTreeNode<T> node, List<BinaryTreeNode<T>> list) {
 	    
-		if (current == null) {
+		if (null == node) {
 		    return;
 		}
-		BinaryTreeNode<T> node = current;
+		BinaryTreeNode<T> current = node;
 		Stack<BinaryTreeNode<T>> stack = new ArrayStack<>();
-		while (node != null || !stack.isEmpty()) {
-			while (node != null) {
-				list.add(node);
-				if (node.hasRight()) {
-				    stack.push(node.getRight());
+		while (current != null || !stack.isEmpty()) {
+			while (current != null) {
+				list.add(current);
+				if (current.getRight() != null) {
+				    stack.push(current.getRight());
 				}
-				node = node.getLeft();
+				current = current.getLeft();
 			}
 			if (!stack.isEmpty()) {
-			    node = stack.pop();
+			    current = stack.pop();
 			}
 		}
 	}
-	//中序遍历二叉树
-	public MyIterator<BinaryTreeNode<T>> inOrder() {
+	/**
+	 * 中序遍历(左中右)
+	 * 
+	 * @return
+	 */
+	public List<BinaryTreeNode<T>> midOrder() {
 	    
 	    List<BinaryTreeNode<T>> list = new LinkedList<>();
-		inOrderTraverse(this.root, list);
-		return list.iterator();
+	    midOrderTraverse(this.root, list);
+		return list;
 	}
-	//中序遍历的非递归算法
-	private void inOrderTraverse(BinaryTreeNode<T> current, List<BinaryTreeNode<T>> list) {
+	/**
+	 * 中序遍历的非递归算法
+	 * 
+	 * @param node
+	 * @param list
+	 */
+	protected void midOrderTraverse(BinaryTreeNode<T> node, List<BinaryTreeNode<T>> list) {
 	    
-	    if (current == null) {
+	    if (null == node) {
             return;
         }
-	    BinaryTreeNode<T> node = current;
+	    BinaryTreeNode<T> current = node;
         Stack<BinaryTreeNode<T>> stack = new ArrayStack<>();
-        while (node != null || !stack.isEmpty()) {
-            while (node != null) {
-                stack.push(node);
-                node = node.getLeft();
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = current.getLeft();
             }
             if (!stack.isEmpty()) {
-                node = stack.pop();
-                list.add(node);
-                node = node.getRight();
+                current = stack.pop();
+                list.add(current);
+                current = current.getRight();
             }
         }
 	}
-	//后序遍历二叉树
-	public MyIterator<BinaryTreeNode<T>> postOrder() {
+	/**
+	 * 后序遍历(左右中)
+	 * 
+	 * @return
+	 */
+	public List<BinaryTreeNode<T>> postOrder() {
 
 	    List<BinaryTreeNode<T>> list = new LinkedList<>();
 		postOrderTraverse (this.root,list);
-		return list.iterator();
+		return list;
 	}
-	//后序遍历的非递归算法
-	private void postOrderTraverse(BinaryTreeNode<T> current, List<BinaryTreeNode<T>> list) {
+	/**
+	 * 后序遍历的非递归算法
+	 * 
+	 * @param node
+	 * @param list
+	 */
+	protected void postOrderTraverse(BinaryTreeNode<T> node, List<BinaryTreeNode<T>> list) {
 	    
-	    if (current == null) {
+	    if (null == node) {
             return;
         }
-        BinaryTreeNode<T> node = current;
+        BinaryTreeNode<T> current = node;
         Stack<BinaryTreeNode<T>> stack = new ArrayStack<>();
-        while (node != null || !stack.isEmpty()) {
-            while (node != null) {
-                stack.push(node);
-                node = node.hasLeft() ? node.getLeft() : node.getRight();
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = null != current.getLeft() ? current.getLeft() : current.getRight();
             }
             if (!stack.isEmpty()) {
-                node = stack.pop();
-                list.add(node);
+                current = stack.pop();
+                list.add(current);
             }
-            while (!stack.isEmpty() && ((BinaryTreeNode<T>) stack.peek()).getRight() == node) {
-                node = stack.pop();
-                list.add(node);
+            while (!stack.isEmpty() && (stack.peek()).getRight() == current) {
+                current = stack.pop();
+                list.add(current);
             }
-            node = stack.isEmpty() ? null : stack.peek().getRight();
+            current = stack.isEmpty() ? null : stack.peek().getRight();
         }
 	}
-	//按层遍历二叉树
-	public MyIterator<BinaryTreeNode<T>> levelOrder() {
+	/**
+	 * 按层遍历
+	 * 
+	 * @return
+	 */
+	public List<BinaryTreeNode<T>> levelOrder() {
 
 	    List<BinaryTreeNode<T>> list = new LinkedList<>();
 		levelOrderTraverse(this.root, list);
-		return list.iterator();
+		return list;
 	}
-	//使用队列完成二叉树的按层遍历
-	private void levelOrderTraverse(BinaryTreeNode<T> current, List<BinaryTreeNode<T>> list) {
+	/**
+	 * 使用队列完成二叉树的按层遍历
+	 * 
+	 * @param node
+	 * @param list
+	 */
+	protected void levelOrderTraverse(BinaryTreeNode<T> node, List<BinaryTreeNode<T>> list) {
 
-        if (current == null) {
+        if (null == node) {
             return;
         }
         Queue<BinaryTreeNode<T>> queue = new LinkedQueue<>();
-        queue.offer(current);
+        queue.offer(node);
 		while (!queue.isEmpty()) {
-			BinaryTreeNode<T> node = queue.poll();
-			list.add(node);
-			if (node.hasLeft()) {
-			    queue.offer(node.getLeft());
+			BinaryTreeNode<T> current = queue.poll();
+			list.add(current);
+			if (null != current.getLeft()) {
+			    queue.offer(current.getLeft());
 			}
-			if (node.hasRight()) {
-			    queue.offer(node.getRight());
+			if (null != current.getRight()) {
+			    queue.offer(current.getRight());
 			}
 		}
 	}
-	//在树中查找元素e，返回其所在结点
+	/**
+	 * 在树中查找元素，返回其所在结点
+	 * 
+	 * @param element
+	 * @return
+	 */
 	public BinaryTreeNode<T> find(T element) {
 		return searchElement(this.root, element);
 	}
-	//递归查找元素e
-	private BinaryTreeNode<T> searchElement(BinaryTreeNode<T> current, T element) {
+	/**
+	 * 递归查找元素
+	 * 
+	 * @param node
+	 * @param element
+	 * @return
+	 */
+	protected BinaryTreeNode<T> searchElement(BinaryTreeNode<T> node, T element) {
 	    
-		if (current == null) {
+		if (null == node) {
 			return null;
 		}
-		if (null == element && null == current.getData() 
-		        || element.equals(current.getData())) {
-		    return current;
+		if (null == element && null == node.getData() 
+		        || element.equals(node.getData())) {
+		    return node;
 		}
-		BinaryTreeNode<T> result = searchElement(current.getLeft(), element);
+		BinaryTreeNode<T> result = searchElement(node.getLeft(), element);
 		if (result == null) {
-			result = searchElement(current.getRight(), element);
+			result = searchElement(node.getRight(), element);
 		}
 		return result;
 	}
-	//二叉树查找
-	private Node<T> binaryTreeSearch(BinaryTreeNode<T> current, T element, Comparator<T> comparator) {
+	/**
+	 * 二叉树查找
+	 * 
+	 * @param node
+	 * @param element
+	 * @param comparator
+	 * @return
+	 */
+	protected BinaryTreeNode<T> binarySearch(BinaryTreeNode<T> node, T element) {
 	    
-		if (current == null)  {
+		if (null == node)  {
 		    return null;
 		}
-		switch(comparator.compare(element, current.getData())) {
-			case 0 : return current;
-			case -1: return binaryTreeSearch(current.getLeft(), element, comparator);
-			default: return binaryTreeSearch(current.getRight(), element, comparator);
-		}
+		//Comparator && Comparable
+		int cmp = compare(element, node.getData());
+    	if (cmp > 0) {
+    		return binarySearch(node.getRight(), element);
+    	} else if (cmp < 0) {
+    		return binarySearch(node.getLeft(), element);
+    	} else {
+    		return node;
+    	}
 	}
-	//在二叉查找树中插入ele
-	public void insert(T element, Comparator<T> comparator) {
+	/**
+	 * 节点值比较
+	 * 
+	 * @param element
+	 * @param data
+	 * @return
+	 */
+	protected int compare(T element, T data) {
+	    return null != this.comparator ? comparator.compare(element, data) : element.compareTo(data);
+	}
+	/**
+	 * 在二叉查找树中插入节点
+	 * 
+	 * @param element
+	 * @param allowDup
+	 * @return
+	 */
+	public BinaryTreeNode<T> insert(T element, boolean allowDup) {
 	    
-		BinaryTreeNode<T> node = null;
+		BinaryTreeNode<T> parent = null;
 		BinaryTreeNode<T> current = this.root;
 		while (current != null) {
-		    node = current;
-			if (comparator.compare(element, current.getData()) < 0) {
+		    parent = current;
+		    int cmp = compare(element, current.getData());
+			if (cmp < 0) {
 				current = current.getLeft();
-			} else {
+			} else if (cmp > 0) {
 			    current = current.getRight();
+			} else if (allowDup) {
+			    current = current.getRight();
+			} else {
+			    current.setData(element);
+			    return null;
 			}
 		}
 		BinaryTreeNode<T> newNode = new BinaryTreeNode<T>(element);
-		if (node == null) {
+		newNode.setParent(parent);
+		if (null == parent) {
 			this.root = newNode;
-		} else if (comparator.compare(element, node.getData()) < 0) {
-		    node.setLeft(newNode);
+		} else if (compare(element, parent.getData()) < 0) {
+		    parent.setLeft(newNode);
 		} else {
-		    node.setRight(newNode);
+		    parent.setRight(newNode);
 		}
-		newNode.updateHeight();
+		return newNode;
 	}
-	//在v 为根的二叉查找树中最小元素的位置
-	public Node<T> max(BinaryTreeNode<T> element) {
+	/**
+	 * 删除节点
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public BinaryTreeNode<T> remove(T element) {
 	    
-	    BinaryTreeNode<T> node = element;
-		if (node != null) {
-			while (node.hasRight()) {
-			    node = node.getRight();
+	    BinaryTreeNode<T> node = find(element);
+	    if (null != node) {
+	        BinaryTreeNode<T> subRoot = removeNode(node);
+	        if (node == root) {
+	            subRoot.setParent(null);
+	            root = subRoot;
+	        } else if (node.isLeft()) {
+	            subRoot.setParent(node.getParent());
+	            node.getParent().setLeft(subRoot);
+	        } else {
+	            subRoot.setParent(node.getParent());
+                node.getParent().setRight(subRoot);
+	        }
+	    }
+	    return node;
+	}
+	/**
+	 * 删除节点，返回重排序后的节点树
+	 * 
+	 * @param node
+	 * @return
+	 */
+	protected BinaryTreeNode<T> removeNode(BinaryTreeNode<T> node) {
+	    
+	    if (null == node.getRight()) {
+	        return node.getLeft();
+	    }
+	    if (null == node.getLeft()) {
+	        return node.getRight();
+	    }
+	    List<BinaryTreeNode<T>> list = new ArrayList<>();
+	    this.midOrderTraverse(node, list);
+	    list.remove(node);
+	    BinaryTree<T> tree = new BinaryTree<>(list.get(0));
+	    for (int i = 1; i < list.size(); i++) {
+	        tree.insert(list.get(i).getData(), true);
+	    }
+	    return tree.getRoot();
+	}	
+	/**
+	 * 二叉查找树中最大节点
+	 * 
+	 * @param node
+	 * @return
+	 */
+	protected BinaryTreeNode<T> max(BinaryTreeNode<T> node) {
+	    
+	    BinaryTreeNode<T> current = node;
+		if (current != null) {
+			while (current.getRight() != null) {
+			    current = current.getRight();
 			}
 		}
-		return node;
+		return current;
 	}
-	//在v 为根的二叉查找树中最大元素的位置
-	public Node<T> min(BinaryTreeNode<T> element) {
+	/**
+	 * 二叉查找树中最小节点
+	 * 
+	 * @param node
+	 * @return
+	 */
+	protected BinaryTreeNode<T> min(BinaryTreeNode<T> node) {
 
-        BinaryTreeNode<T> node = element;
-        if (node != null) {
-            while (node.hasLeft()) {
-                node = node.getLeft();
+        BinaryTreeNode<T> current = node;
+        if (current != null) {
+            while (current.getLeft() != null) {
+                current = current.getLeft();
             }
         }
-        return node;
+        return current;
 	}
-	//返回v 在中序遍历序列中的后续结点
-	protected BinaryTreeNode<T> getSuccessor(BinaryTreeNode<T> element) {
+	/**
+	 * 在中序遍历序列中的后续结点
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public BinaryTreeNode<T> successor(BinaryTreeNode<T> node) {
 	    
-		if (element == null) {
+		if (null == node) {
 		    return null;
 		}
-		if (element.hasRight()) {
-		    return (BinaryTreeNode<T>) min(element.getRight());
+		if (null != node.getRight()) {
+		    return min(node.getRight());
 		}
-		BinaryTreeNode<T> node = element;
-		while (node.isRight()) {
-		    node = node.getRight();
+		BinaryTreeNode<T> current = node;
+		while (current.isRight()) {
+		    current = current.getParent();
 		}
-		return node.parent();
+		return current.getParent();
 	}
-	protected BinaryTreeNode<T> getPredecessor(BinaryTreeNode<T> element) {
+	/**
+	 * 在中序遍历序列中的前续结点
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public BinaryTreeNode<T> predecessor(BinaryTreeNode<T> node) {
 	    
-		if (element == null) {
-		    return null;
+        if (null == node) {
+            return null;
+        }
+		if (null != node.getLeft()) {
+		    return max(node.getLeft());
 		}
-		if (element.hasLeft()) {
-		    return (BinaryTreeNode<T>) max(element.getLeft());
+		BinaryTreeNode<T> current = node;
+		while (current.isLeft()) {
+		    current = current.getParent();
 		}
-		BinaryTreeNode<T> node = element;
-		while (node.isLeft()) {
-		    node = node.parent();
-		}
-		return node.parent();
-	}
-	//在二叉查找树中删除ele
-	public T remove(T element) {
-	    
-	    BinaryTreeNode<T> result = (BinaryTreeNode<T>) binaryTreeSearch(this.root, element, (Comparator<T>) null);
-		if (result == null) {
-		    return null;
-		}
-		BinaryTreeNode<T> del = null;
-		BinaryTreeNode<T> subTree = null;
-		if (!result.hasLeft() || !result.hasRight()) {
-			del = result;
-		} else {
-			del = getPredecessor(result);
-			T old = result.getData();
-			result.setData(del.getData());
-			del.setData(old);
-		}
-		if (del.hasLeft()) {
-		    subTree = del.getLeft();
-		} else {
-		    subTree = del.getRight();
-		}
-		if (del == root) {
-			if (subTree != null) {
-			    subTree.breakOff();
-			}
-			root = subTree;
-		} else {
-			if (subTree != null) {
-				if (del.isLeft()) {
-					del.parent().setLeft(subTree);
-				} else {
-					del.parent().setRight(subTree);
-				}
-			} else {
-				del.breakOff();
-			}
-		}
-		return del.getData();
+		return current.getParent();
 	}
 }
