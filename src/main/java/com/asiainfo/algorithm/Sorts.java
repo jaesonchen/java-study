@@ -8,17 +8,19 @@ public class Sorts {
 	 * 是有序的，因此，对n 个记录的序列，可从第二个元素开始直到第n 个元素，逐个向有序序
 	 * 列中执行插入操作，从而得到n 个元素按关键字有序的序列。
 	 */
-	public void insertSort(Object[] r, int low, int high){
-		for (int i = low + 1; i <= high; i++)
-			if (strategy.compare(r[i], r[i-1]) < 0) { //小于时，需将r[i]插入有序表
+	public void insertSort(Object[] r, int low, int high) {
+	    
+		for (int i = low + 1; i <= high; i++) {
+			if (strategy.compare(r[i], r[i - 1]) < 0) { //小于时，需将r[i]插入有序表
 				Object temp = r[i];
-
 				r[i] = r[i - 1];
 				int j = i - 2;
-				for ( ; j >= low && strategy.compare(temp, r[j]) < 0; j--)
-					r[j+1] = r[j]; //记录后移
-				r[j+1] = temp; //插入到正确位置
+				for ( ; j >= low && strategy.compare(temp, r[j]) < 0; j--) {
+					r[j + 1] = r[j]; //记录后移
+				}
+				r[j + 1] = temp; //插入到正确位置
 			}
+		}
 	}
 	
 	//折半插入排序
@@ -99,4 +101,18 @@ public class Sorts {
 			}//end of if
 		}//end of for(int k=0…
 	}//end of selectSort
+	
+    public static <T> void printArray(T[] t) {
+        
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0, len = t.length; i < len; i++) {
+            if(i == 0) {
+                sb.append(t[i]);
+            } else {
+                sb.append(", " + t[i]);
+            }
+        }
+        sb.append("]");
+        System.out.println(sb.toString());
+    }
 }

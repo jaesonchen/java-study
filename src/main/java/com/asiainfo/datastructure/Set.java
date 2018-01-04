@@ -15,6 +15,7 @@ public interface Set<E> extends Iterable<E> {
     MyIterator<E> iterator();
     E[] toArray();
     boolean add(E e);
+    boolean addAll(Iterable<? extends E> it);
     boolean remove(Object o);
     void clear();
 }

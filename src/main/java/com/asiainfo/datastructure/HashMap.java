@@ -30,7 +30,7 @@ public class HashMap<K, V> implements Map<K, V> {
     public HashMap(int initialCapacity, float loadFactor) {
         
         this.loadFactor = loadFactor;
-        this.threshold = (int) (initialCapacity/loadFactor);
+        this.threshold = (int) (initialCapacity / loadFactor);
         this.table = (Node<K, V>[]) new Node[threshold];
     }
     
@@ -94,11 +94,7 @@ public class HashMap<K, V> implements Map<K, V> {
         V oldValue = null;
         if (null == node) {
             Node<K, V> first = table[hash % table.length];
-            if (null == first) {
-                table[hash % table.length] = new Node<K, V>(hash, key, value, null);
-            } else {
-                table[hash % table.length] = new Node<K, V>(hash, key, value, first);
-            }
+            table[hash % table.length] = new Node<K, V>(hash, key, value, null == first ? null : first);
             size++;
         } else {
             oldValue = node.getValue();
@@ -107,6 +103,20 @@ public class HashMap<K, V> implements Map<K, V> {
         return oldValue;
     }
 
+    /* 
+     * TODO
+     * @param map
+     * @see com.asiainfo.datastructure.Map#putAll(com.asiainfo.datastructure.Map)
+     */
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+
+        checkCapacity(size + map.size());
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+    
     /* 
      * TODO
      * @param key
@@ -211,8 +221,8 @@ public class HashMap<K, V> implements Map<K, V> {
         
         if (newCapacity > this.threshold) {
             int capacity = table.length;
-            capacity = capacity >> 1;
-            this.threshold = (int)(capacity / this.loadFactor) < newCapacity ? newCapacity : (int) (capacity / this.loadFactor);
+            capacity = capacity << 1;
+            this.threshold = (int) (capacity / this.loadFactor) < newCapacity ? newCapacity : (int) (capacity / this.loadFactor);
             resize(this.threshold);
         }
     }
@@ -220,7 +230,7 @@ public class HashMap<K, V> implements Map<K, V> {
     protected void resize(int capacity) {
         
         @SuppressWarnings("unchecked")
-        Node<K, V>[] newTable = (Node<K, V>[]) new Object[(int) (capacity * this.loadFactor)];
+        Node<K, V>[] newTable = (Node<K, V>[]) new Node[(int) (capacity * this.loadFactor)];
         for (Map.Entry<K, V> entry : entrySet()) {
             addToTable(newTable, entry.getKey(), entry.getValue());
         }
@@ -231,11 +241,7 @@ public class HashMap<K, V> implements Map<K, V> {
         
         int hash = hash(key);
         Node<K, V> first = newTable[hash % newTable.length];
-        if (null == first) {
-            newTable[hash % newTable.length] = new Node<K, V>(hash, key, value, null);
-        } else {
-            table[hash % table.length] = new Node<K, V>(hash, key, value, first);
-        }
+        newTable[hash % newTable.length] = new Node<K, V>(hash, key, value, null == first ? null : first);
     }
     
     protected Node<K, V> getNode(int hash, Object key) {
@@ -315,6 +321,18 @@ public class HashMap<K, V> implements Map<K, V> {
         map.put("key14", "value14");
         map.put("key15", "value15");
         map.put("key16", "value16");
+        map.put("key17", "value16");
+        map.put("key18", "value16");
+        map.put("key19", "value16");
+        map.put("key20", "value16");
+        map.put("key21", "value16");
+        map.put("key22", "value16");
+        map.put("key23", "value16");
+        map.put("key24", "value16");
+        map.put("key25", "value16");
+        map.put("key26", "value16");
+        map.put("key27", "value16");
+        map.put("key28", "value16");
         System.out.println(map.size());
         System.out.println(map.containsKey("key2"));
         System.out.println(map.remove("key10"));

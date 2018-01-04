@@ -104,6 +104,21 @@ public class ArrayList<E> implements List<E> {
     
     /* 
      * TODO
+     * @param it
+     * @see com.asiainfo.datastructure.List#addAll(java.lang.Iterable)
+     */
+    @Override
+    public void addAll(Iterable<? extends E> it) {
+        
+        if (null != it) {
+            for (E e : it) {
+                add(e);
+            }
+        }
+    }
+    
+    /* 
+     * TODO
      * @param index
      * @return
      * @see com.asiainfo.datastructure.List#get(int)

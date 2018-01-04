@@ -47,6 +47,13 @@ public interface List<E> extends Iterable<E> {
 	 * @throws OutOfBoundaryException
 	 */
 	void add(int index, E element);
+	
+	/**
+	 * 添加多个
+	 * 
+	 * @param it
+	 */
+	void addAll(Iterable<? extends E> it);
 
     /**
      * 添加元素

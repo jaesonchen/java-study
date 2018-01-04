@@ -135,6 +135,21 @@ public class HashSet<E> implements Set<E> {
 
     /* 
      * TODO
+     * @param it
+     * @return
+     * @see com.asiainfo.datastructure.Set#addAll(java.lang.Iterable)
+     */
+    @Override
+    public boolean addAll(Iterable<? extends E> it) {
+        
+        for (E e : it) {
+            map.put(e, DEFAULT_VALUE);
+        }
+        return true;
+    }
+    
+    /* 
+     * TODO
      * @param o
      * @return
      * @see com.asiainfo.datastructure.Set#remove(java.lang.Object)

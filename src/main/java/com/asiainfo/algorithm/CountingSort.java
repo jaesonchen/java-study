@@ -1,22 +1,26 @@
 package com.asiainfo.algorithm;
 
 /**
- * 计数排序： 计数排序的核心在于将输入的数据转化为键存储在额外开辟的数组空间中。（要求输入的数据必须是有确定范围的整数）
- * 计数排序是一种稳定的排序算法。计数排序使用一个额外的数组C，其中第i个元素是待排序数组A中值等于i元素的个数。然后根据
- * 数组C来将A中的元素排到正确的位置。它只能对整数进行排序。
+ * 计数排序： 计数排序是一个非基于比较的排序算法，它的优势在于在对一定范围内的整数排序时，它的复杂度为Ο(n+k)（其中k是整数的范围），快于任何比较排序算法。
+ * 这是一种牺牲空间换取时间的做法，而且当O(k)>O(n*log(n))的时候其效率反而不如基于比较的排序（基于比较的排序的时间复杂度在理论上的下限是O(n*log(n))。
+ * 计数排序是一种非常快捷的稳定性强的排序方法，时间复杂度O(n+k),其中n为要排序的数的个数，k为要排序的数的组大值。
+ * 计数排序对一定量的整数排序时候的速度非常快，一般快于其他排序算法。但计数排序局限性比较大，只限于对整数进行排序。
  * 
- * 具体算法描述如下： <1>. 找出待排序的数组中最大和最小的元素； <2>. 统计数组中每个值为i的元素出现的次数，存入数组C的第i项； <3>.
- * 对所有的计数累加（从C中的第一个元素开始，每一项和前一项相加）； <4>.
- * 反向填充目标数组：将每个元素i放在新数组的第C(i)项，每放一个元素就将C(i)减去1。
+ * 具体算法描述如下：
+ *  <1>. 找出待排序的数组中最大和最小的元素； 
+ *  <2>. 统计数组中每个值为i的元素出现的次数，存入数组C的第i项；
+ *  <3>. 对所有的计数累加（从C中的第一个元素开始，每一项和前一项相加）； 
+ *  <4>. 反向填充目标数组：将每个元素i放在新数组的第C(i)项，每放一个元素就将C(i)减去1。
  * 
- * @author liujianzhu
- * @date 2017年7月21日 下午1:39:24
+ * @author       zq
+ * @date         2017年12月29日  下午3:58:24
+ * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class CountingSort {
 
 	public static void countingSort(Integer[] arr) {
+	    
 		long beginTime = System.nanoTime();
-		
 		int len = arr.length, min = arr[0], max = min;
 		// 1.找出最大/最小元素
 		for (int i = 0; i < len; i++) {
@@ -36,25 +40,12 @@ public class CountingSort {
 				C[k]--;
 			}
 		}
-		
 		System.out.println("排序算法耗时: " + (System.nanoTime() - beginTime) + " ns");
 	}
 
 	public static void main(String[] args) {
-		Integer[] arr = new Integer[] { 2, 2, 3, 8, 7, 1, 2, 2, 2, 7, 3, 9, 8, 2, 1, 4, 2, 4, 6, 9, 2 };
+		Integer[] arr = new Integer[] {2, 2, 3, 8, 7, 1, 2, 2, 2, 7, 3, 9, 8, 2, 1, 4, 2, 4, 6, 9, 2};
 		CountingSort.countingSort(arr);
-		printArray(arr);
-	}
-
-	private static <T> void printArray(T[] t) {
-		StringBuilder sb = new StringBuilder("[");
-		for (int i = 0, len = t.length; i < len; i++) {
-			if (i == 0)
-				sb.append(t[i]);
-			else
-				sb.append("," + t[i]);
-		}
-		sb.append("]");
-		System.out.println(sb.toString());
+		Sorts.printArray(arr);
 	}
 }

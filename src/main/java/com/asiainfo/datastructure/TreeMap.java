@@ -83,6 +83,19 @@ public class TreeMap<K, V> implements Map<K, V> {
 
     /* 
      * TODO
+     * @param map
+     * @see com.asiainfo.datastructure.Map#putAll(com.asiainfo.datastructure.Map)
+     */
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+    
+    /* 
+     * TODO
      * @param key
      * @return
      * @see com.asiainfo.datastructure.Map#remove(java.lang.Object)

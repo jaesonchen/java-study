@@ -14,6 +14,7 @@ public interface Map<K, V> {
     boolean containsKey(Object key);
     V get(Object key);
     V put(K key, V value);
+    void putAll(Map<? extends K, ? extends V> map);
     V remove(Object key);
     void clear();
     Set<K> keySet();
