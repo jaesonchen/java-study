@@ -1,11 +1,16 @@
 package com.asiainfo.algorithm;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 import com.asiainfo.datastructure.ArrayList;
 import com.asiainfo.datastructure.HashSet;
 import com.asiainfo.datastructure.List;
 import com.asiainfo.datastructure.Set;
 
 /**
+ * 协同推荐slopeone算法
  * rb = (n * (ra - R(A->B)) + m * (rc + R(B->C)))/(m+n)
  * 
  * @author       zq
@@ -14,36 +19,33 @@ import com.asiainfo.datastructure.Set;
  */
 public class SlopeOne {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         
-        List<Rating> ratings = generateRating(100, 10);
-        System.out.println(recommend("user1", 1, ratings));
-        System.out.println(recommend("user10", 3, ratings));
-        System.out.println(recommend("user50", 5, ratings));
-        System.out.println(recommend("user99", 9, ratings));
+        List<Rating> ratings = generateRating();
+        
+        System.out.println(recommend("user1", 10006, ratings));
+        System.out.println(recommend("user999", 10001, ratings));
     }
     
     /**
-     * 模拟评分数据
+     * 评分数据
      * 
-     * @param userNum
-     * @param itemNum
      * @return
+     * @throws Exception 
      */
-    protected static List<Rating> generateRating(long userNum, int itemNum) {
+    protected static List<Rating> generateRating() throws Exception {
         
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/main/java/com/asiainfo/algorithm/slopeone.data")));
         List<Rating> list = new ArrayList<>();
-        java.util.Random random = new java.util.Random();
-        for (long i = 0L; i < userNum; i++) {
-            for (int j = 0; j < itemNum; j++) {
-                list.add(new Rating("user" + (i + 1), j + 1, (50 + random.nextInt(50)) / 10));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            String[] fields = line.split("\\s+");
+            Rating rating = new Rating(fields[0], Long.parseLong(fields[1]), Double.parseDouble(fields[2]));
+            if (!list.contains(rating)) {
+                list.add(rating);
             }
         }
+        reader.close();
         return list;
     }
 
@@ -59,7 +61,7 @@ public class SlopeOne {
         
         Set<Rating> userRatings = userRating(userId, data);
         Set<Diff> allDiff = allDiff(data);
-        Set<Long> allItem = allItem(data);
+        Set<Long> allItem = allItem(userRatings);
         List<AverageDiff> averageList = new ArrayList<>();
         for (Long origin : allItem) {
             if (origin.longValue() != item) {
@@ -170,15 +172,15 @@ public class SlopeOne {
     }
     
     /**
-     * 所有item
+     * user可以参考的所有item
      * 
-     * @param list
+     * @param userRatings
      * @return
      */
-    protected static Set<Long> allItem(List<Rating> list) {
+    protected static Set<Long> allItem(Set<Rating> userRatings) {
         
         Set<Long> result = new HashSet<>();
-        for (Rating rating : list) {
+        for (Rating rating : userRatings) {
             result.add(rating.item);
         }
         return result;
