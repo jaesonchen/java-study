@@ -1,4 +1,4 @@
-package com.asiainfo.json;
+package com.asiainfo.json.jackson;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -45,8 +45,9 @@ public class JacksonExample {
 		user.setAccounts(accounts);
 		
 		ObjectMapper mapper = new ObjectMapper();
-		String json = mapper.writeValueAsString(user);
-		System.out.println("json=" + json);
+		// 格式化输出
+		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user);
+		System.out.println("json=\n" + json);
 		
 		user = mapper.readValue(json, User.class);
 		System.out.println("user=" + user);
@@ -57,9 +58,12 @@ public class JacksonExample {
 		list.add(user);
 		String listJson = mapper.writeValueAsString(list);
 		System.out.println("list json=" + listJson);
-		System.out.println("list user=" + readGeneric(listJson, List.class, User.class));
-		
-		System.out.println("list user=" + readGeneric(listJson, list.getClass()));
+		// 由于类型erasure，反序列化时为java.util.LinkedHashMap
+		List<?> userList = readGeneric(listJson, list.getClass());
+		System.out.println("list.class=" + userList.get(0).getClass());
+		// 指定JavaType泛型参数类型时正确解析
+		List<User> genericList = readGeneric(listJson, List.class, User.class);
+		System.out.println("list user=" + genericList);
 	}
 	
 	public static <T> T readGeneric(String jsonStr, Class<?> collectionClass, Class<?>... elementClasses) throws Exception {

@@ -1,4 +1,4 @@
-package com.asiainfo.json;
+package com.asiainfo.json.jackson;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

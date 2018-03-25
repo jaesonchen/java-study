@@ -1,4 +1,4 @@
-package com.asiainfo.json;
+package com.asiainfo.json.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -35,7 +35,7 @@ public class JacksonJsonUtils {
         mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         // 序列化BigDecimal时之间输出原始数字还是科学计数，默认false，即是否以toPlainString()科学计数方式来输出
         mapper.configure(Feature.WRITE_BIGDECIMAL_AS_PLAIN, false);
-        //设定是否使用Enum的toString函数来读取Enum, 为False时使用Enum的name()函数来读取Enum,
+        //设定是否使用Enum的toString函数来读取Enum, 为false时使用Enum的name()函数来读取Enum,
         mapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
         // 如果输入不存在的字段时不会报错
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

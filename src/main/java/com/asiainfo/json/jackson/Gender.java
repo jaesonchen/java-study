@@ -1,4 +1,4 @@
-package com.asiainfo.json;
+package com.asiainfo.json.jackson;
 
 /**
  * @Description: TODO
