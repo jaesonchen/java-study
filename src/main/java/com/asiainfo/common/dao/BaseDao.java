@@ -2,6 +2,15 @@ package com.asiainfo.common.dao;
 
 import java.util.List; 
 
+/**
+ * 
+ * @Description: hibernate dao 公共父类
+ * 
+ * @author chenzq  
+ * @date 2019年3月21日 下午1:05:58
+ * @version V1.0
+ * @Copyright: Copyright(c) 2019 jaesonchen.com Inc. All rights reserved.
+ */
 public interface BaseDao<M extends java.io.Serializable, PK extends java.io.Serializable> {
 
 	/** 

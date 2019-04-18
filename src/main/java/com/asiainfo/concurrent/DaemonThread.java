@@ -1,8 +1,5 @@
 package com.asiainfo.concurrent;
 
-import java.util.concurrent.TimeUnit;
-
-import com.asiainfo.util.ServiceUtil;
 import com.asiainfo.util.ThreadPoolUtils;
 
 /**
@@ -15,7 +12,7 @@ import com.asiainfo.util.ThreadPoolUtils;
  * 
  * 注意：在构建Daemon线程时，不能依靠finally块中的内容来确保执行关闭或清理资源的逻辑
  * 
- * @author liujianzhu
+ * @author zq
  * @date 2016年7月18日 下午9:35:33
  *
  */
@@ -24,9 +21,10 @@ public class DaemonThread {
 	public static void main(String[] args) {
 		
 		Thread thread = ThreadPoolUtils.getInstance().newThread(new DaemonRunner(), "DaemonRunner");
+		// 设置线程为守护线程
 		thread.setDaemon(true);
 		thread.start();
-		//ServiceUtil.waitFor(1, TimeUnit.SECONDS);
+		// jvm退出时执行
 		Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -40,7 +38,8 @@ public class DaemonThread {
 		public void run() {
 			try{
 				System.out.println("DaemonThread run start.");
-				ServiceUtil.waitFor(1, TimeUnit.SECONDS);
+				int i = 0;
+				while (i++ < 1000000) {}
 				System.out.println("DaemonThread run end.");
 			} finally {
 				System.out.println("DaemonThread finally run.");

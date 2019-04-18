@@ -138,13 +138,8 @@ public class DistributedBarrier implements Watcher, Barrier {
 			this.barrier = barrier;
 		}
 		
-		/* 
-		 * @Description: TODO
-		 * @see java.lang.Runnable#run()
-		 */
 		@Override
 		public void run() {
-			
 			try {
 				this.barrier.start();
 				barrier.logger.info("start work!");

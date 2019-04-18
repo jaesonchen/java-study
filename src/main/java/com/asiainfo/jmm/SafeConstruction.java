@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @Description: Don't publish the "this" reference during construction
+ * Don't publish the "this" reference during construction
+ * 不要在构造函数运行期间向外传递this引用。
  * 
  * @author       zq
  * @date         2017年9月27日  下午3:50:41
@@ -14,8 +15,8 @@ import java.util.Set;
 public class SafeConstruction {
 	
 	protected Object me;
-	protected Set<Object> set = new HashSet<>();
-	protected Thread thread;
+	private Set<Object> set = new HashSet<>();
+	private Thread thread;
 	 
 	public SafeConstruction() {
 		
@@ -53,7 +54,7 @@ class UnsafeConstruction {
 	public UnsafeConstruction() {
 		
 		// Unsafe because anInstance is globally visible
-		anInstance = this;
+	    UnsafeConstruction.anInstance = this;
 	 
 	    // Unsafe because SomeOtherClass.anInstance is globally visible
 	    SomeOtherClass.anInstance = this;
@@ -69,8 +70,8 @@ class UnsafeConstruction {
 	    mySet.add(this);
 	    SomeOtherClass.someMethod(mySet);
 	 
-	    // Unsafe because the "this" object will be visible from the new
-	    // thread before the constructor completes
+	    // Unsafe because the "this" object will be visible from the new thread
+	    // before the constructor completes
 	    thread = new MyThread(this);
 	    thread.start();
 	}

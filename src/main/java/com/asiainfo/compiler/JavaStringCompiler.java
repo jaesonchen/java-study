@@ -12,8 +12,8 @@ import javax.tools.JavaCompiler.CompilationTask;
 
 /**
  * 
- * @Description: In-memory compile Java source code as String.
- * 
+ * @Description: 内存中编译字符串java 类 In-memory compile Java source code as String.
+ *               
  * @author       zq
  * @date         2017年9月15日  下午5:15:37
  * Copyright: 	  北京亚信智慧数据科技有限公司
@@ -41,6 +41,7 @@ public class JavaStringCompiler {
 	 *             If compile error.
 	 */
 	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
+	    
 		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(stdManager)) {
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
 			CompilationTask task = compiler.getTask(null, manager, null, null, null, Arrays.asList(javaFileObject));

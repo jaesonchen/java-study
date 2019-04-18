@@ -14,18 +14,14 @@ package com.asiainfo.designpattern.structure;
  */
 public class Decorator {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
         IReader reader = new FileReader();
         IReader upper = new UpperReader(new BufferedReader(reader));
-        IReader lower = new UpperReader(new BufferedReader(reader));
+        IReader lower = new LowerReader(new BufferedReader(reader));
+        String str = null;
         while (true) {
-            String str = reader.readLine();
+            str = reader.readLine();
             if ("eof".equals(str)) {
                 break;
             }
@@ -55,7 +51,7 @@ public class Decorator {
         int index;
         @Override
         public String readLine() {
-            return index >= 24 ? "eof" : new String("line " + (++index));
+            return index >= 25 ? "eof" : new String("Line " + (++index));
         }
     }
     
@@ -65,31 +61,35 @@ public class Decorator {
         String[] buffer;
         int index;
         int max;
+        boolean eof;
         IReader reader;
         public BufferedReader(IReader reader) {
             this.reader = reader;
             this.buffer = new String[8];
             this.index = 0;
-            this.max = -1;
+            this.max = 0;
+            this.eof = false;
         }
         
         @Override
         public String readLine() {
             
-            if (this.index > this.max && (this.max == (this.buffer.length - 1) || this.max == -1)) {
-                System.out.println("read max 8 line for buffer!");
+            // no buffer
+            if (this.index == this.max && !this.eof) {
+                System.out.println("read max " + this.buffer.length + " line for buffer!");
                 this.index = 0;
-                this.max = -1;
+                this.max = 0;
                 for (int i = 0; i < this.buffer.length; i++) {
                     String str = this.reader.readLine();
                     if ("eof".equals(str)) {
+                        this.eof = true;
                         break;
                     }
                     this.buffer[i] = str;
                     this.max++;
                 }
             }
-            return this.index > this.max ? "eof" : this.buffer[this.index++];
+            return this.index == this.max && this.eof ? "eof" : this.buffer[this.index++];
         }
     }
     
@@ -103,7 +103,6 @@ public class Decorator {
         
         @Override
         public String readLine() {
-
             String str = this.reader.readLine();
             return "eof".equals(str) ? "eof" : (null == str ? null : str.toUpperCase());
         }
@@ -119,7 +118,6 @@ public class Decorator {
         
         @Override
         public String readLine() {
-
             String str = this.reader.readLine();
             return "eof".equals(str) ? "eof" : (null == str ? null : str.toLowerCase());
         }

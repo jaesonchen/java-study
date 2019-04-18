@@ -32,5 +32,4 @@ public class MemoryClassLoader extends URLClassLoader {
 		classBytes.remove(name);
 		return defineClass(name, buf, 0, buf.length);
 	}
-
 }

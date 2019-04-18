@@ -29,12 +29,12 @@ public class NioClient {
 		
 		SocketChannel socketChannel = SocketChannel.open();
 		socketChannel.configureBlocking(false);
-		Selector selector = Selector.open();
 		socketChannel.connect(new InetSocketAddress("localhost", 8080));
+		Selector selector = Selector.open();
 		socketChannel.register(selector, SelectionKey.OP_CONNECT);
 		final int max = 10;
 		int loop = 0;
-		while(true && loop < max) {
+		while (true && loop < max) {
 			selector.select();
 			//Set<SelectionKey> selectedKeys = selector.selectedKeys();
 			Iterator<SelectionKey> it = selector.selectedKeys().iterator();
@@ -63,8 +63,6 @@ public class NioClient {
 					int count = 0;
 					while ((count = channel.read(buff)) > 0) {
 			            buff.flip();
-			            //byte[] bt = new byte[buff.remaining()];
-			            //buff.get(bt);
 			            result.write(buff.array(), 0, count);
 			            buff.clear();
 					}

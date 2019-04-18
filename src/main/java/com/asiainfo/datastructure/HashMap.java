@@ -3,7 +3,7 @@ package com.asiainfo.datastructure;
 import java.util.Objects;
 
 /**
- * TODO
+ * key 哈希map实现
  * 
  * @author       zq
  * @date         2017年12月26日  下午2:25:03

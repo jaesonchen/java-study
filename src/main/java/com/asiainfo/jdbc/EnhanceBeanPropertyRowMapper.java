@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.NotWritablePropertyException;
@@ -35,7 +36,7 @@ import com.asiainfo.jdbc.converter.Converter;
 import com.asiainfo.jdbc.converter.IConvertService;
 
 /**
- * @Description: TODO
+ * @Description: BeanPropertyRowMapper 增强工具，提供Convert、Blob、Clob、Embedded等支持
  * 
  * @author       zq
  * @date         2017年6月25日  下午12:34:50
@@ -168,19 +169,20 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 			PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(mappedClass);
 			for (PropertyDescriptor pd : pds) {
 				if (pd.getWriteMethod() != null) {
-					//如果field上标有@Transient，则忽略
+					// 如果field上标有@Transient，则忽略
 					if (null != this.getFieldAnnotation(this.mappedClass, pd.getName(), Transient.class)) {
 						continue;
 					}
-					//如果field上标有@Column，则使用column中标记的列名
 					Column column = this.getFieldAnnotation(this.mappedClass, pd.getName(), Column.class);
 					Embedded embedded = this.getFieldAnnotation(this.mappedClass, pd.getName(), Embedded.class);
+					// 如果field上标有@Column，则使用column中标记的列名
 					if (null != column) {
 						this.mappedFields.put(lowerCaseName(column.name()), pd);
-					//如果field上标有@Embedded，则取embedded class的属性
+					// 如果field上标有@Embedded，则取embedded class的属性，填充mappedFields、mappedConverter、mappedEmbedded
 					} else if (null != embedded) {
 						this.mappedEmbedded(pd, this.mappedFields, this.mappedProperties, 
 								this.mappedConverter, this.mappedEmbedded);
+					// 没有标注注解的，转换驼峰属性名为带下划线的字段名
 					} else {
 						this.mappedFields.put(lowerCaseName(pd.getName()), pd);
 						String underscoredName = underscoreName(pd.getName());
@@ -188,7 +190,7 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 							this.mappedFields.put(underscoredName, pd);
 						}
 					}
-					//如果setter上标有@Converter，则使用setter上的方法进行转换
+					// 如果setter上标有@Converter，则使用setter上的方法进行类型转换
 					Converter convert = pd.getWriteMethod().getAnnotation(Converter.class);
 					if (null != convert) {
 						try {
@@ -197,39 +199,39 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 							e.printStackTrace();
 						}
 					}
-					
-					//保存映射属性名
+					// 保存映射属性名
 					this.mappedProperties.add(pd.getName());
 				}
 			}
 		}
 		
 		/**
-		 * 
-		 * @Description: 获取@Embedded描述的实体类，暂时没有实现递归embedded
-		 * 
+		 * @Description: 获取@Embedded描述的实体类，暂时没有实现递归embedded，记录embedded类型列名到mappedEmbedded中
+		 * @author chenzq
+		 * @date 2019年3月27日 下午7:26:55
 		 * @param embeddedDescriptor
-		 * @param _mappedFields
-		 * @param _mappedProperties
-		 * @param _mappedConverter
-		 * @param _mappedEmbedded
+		 * @param embeddedMappedFields
+		 * @param embeddedMappedProperties
+		 * @param embeddedMappedConverter
+		 * @param embeddedMappedEmbedded
 		 */
 		protected void mappedEmbedded(PropertyDescriptor embeddedDescriptor, Map<String, PropertyDescriptor> embeddedMappedFields, 
 				Set<String> embeddedMappedProperties, Map<String, IConvertService<?>> embeddedMappedConverter, 
 				Map<String, PropertyDescriptor> embeddedMappedEmbedded) {
-			
+			// 读取Embedded类的属性描述
 			PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(embeddedDescriptor.getPropertyType());
 			for (PropertyDescriptor pd : pds) {
 				if (pd.getWriteMethod() != null) {
-					//如果field上标有@Transient，则忽略
+					// 如果field上标有@Transient，则忽略
 					if (null != this.getFieldAnnotation(embeddedDescriptor.getPropertyType(), pd.getName(), Transient.class)) {
 						continue;
 					}
-					//如果field上标有@Column，则使用column中标记的列名
+					// 如果field上标有@Column，则使用column中标记的列名，同时记录embedded列名所在类型的embeddedDescriptor
 					Column column = this.getFieldAnnotation(embeddedDescriptor.getPropertyType(), pd.getName(), Column.class);
 					if (null != column) {
 						embeddedMappedFields.put(lowerCaseName(column.name()), pd);
 						embeddedMappedEmbedded.put(lowerCaseName(column.name()), embeddedDescriptor);
+					// 没有标注注解的，转换驼峰属性名为带下划线的字段名
 					} else {
 						embeddedMappedFields.put(lowerCaseName(pd.getName()), pd);
 						embeddedMappedEmbedded.put(lowerCaseName(pd.getName()), embeddedDescriptor);
@@ -239,7 +241,7 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 							embeddedMappedEmbedded.put(underscoredName, embeddedDescriptor);
 						}
 					}
-					//如果setter上标有@Converter，则使用setter上的方法进行转换
+					// 如果setter上标有@Converter，则使用setter上的方法进行转换
 					Converter convert = pd.getWriteMethod().getAnnotation(Converter.class);
 					if (null != convert) {
 						try {
@@ -248,16 +250,14 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 							e.printStackTrace();
 						}
 					}
-					
-					//保存映射属性名
+					// 保存映射属性名
 					embeddedMappedProperties.add(pd.getName());
 				}
 			}
 		}
 		
 		/**
-		 * 
-		 * @Description: 生成converter实例
+		 * @Description: 生成注解对应的convert转换链实例
 		 * 
 		 * @param convertAnnotation
 		 * @return
@@ -265,7 +265,6 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 		 * @throws IllegalAccessException
 		 */
 		protected IConvertService<?> generateConvertService(Converter convertAnnotation) throws InstantiationException, IllegalAccessException {
-			
 			Class<?>[] clazzArray = convertAnnotation.value();
 			IConvertService<?> prefixService = null;
 			IConvertService<?> service = null;
@@ -280,7 +279,6 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 		}
 		
 		/**
-		 * 
 		 * @Description: 获取指定属性的注解
 		 * 
 		 * @param clazz
@@ -352,23 +350,26 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnCount = rsmd.getColumnCount();
 			Set<String> populatedProperties = (isCheckFullyPopulated() ? new HashSet<String>() : null);
-
-			Map<PropertyDescriptor, BeanWrapper> embeddedObjectMap = new HashMap<>(16);
+			// 保存嵌入类型new的对象
+			Map<PropertyDescriptor, BeanWrapper> embeddedObjectMap = new HashMap<>(8);
 			for (int index = 1; index <= columnCount; index++) {
 				String column = JdbcUtils.lookupColumnName(rsmd, index);
+				// 查询的列名转小写，并去除空格
 				String field = lowerCaseName(column.replaceAll(" ", ""));
 				PropertyDescriptor pd = this.mappedFields.get(field);
 				if (pd != null) {
 					try {
-						//对应的convert不为空时，使用convert转换
-						Object value = (null == this.mappedConverter.get(pd.getName())) ? 
-								getColumnValue(rs, index, pd) : getColumnValue(rs, index, this.mappedConverter.get(pd.getName()));
-						
+					    Object value = getColumnValue(rs, index, pd);
+					    // 对应的convert不为空时，使用convert进行类型转换
+					    IConvertService<?> service = this.mappedConverter.get(pd.getName());
+					    if (null != service) {
+					        value = service.convert(value);
+					    }
 						if (rowNumber == 0 && logger.isDebugEnabled()) {
 							logger.debug("Mapping column '" + column + "' to property '" + pd.getName() +
 									"' of type [" + ClassUtils.getQualifiedName(pd.getPropertyType()) + "]");
 						}
-						//判断是否是embedded属性，不是embedded直接注入
+						// 判断是否是embedded属性，不是embedded直接注入
 						if (null == this.mappedEmbedded.get(field)) {
 							try {
 								bw.setPropertyValue(pd.getName(), value);
@@ -385,21 +386,19 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 									throw ex;
 								}
 							}
-						//如果是embedded的列，从map中取出embeddedObject注入
+						// 如果是embedded的列，从map中取出embeddedObject注入
 						} else {
 							PropertyDescriptor embeddedDescriptor = this.mappedEmbedded.get(field);
-							//logger.debug("embeddedDescriptor:" + embeddedDescriptor);
 							BeanWrapper embeddedObject = embeddedObjectMap.get(embeddedDescriptor);
 							try {
+							    // embedded对象还没初始化
 								if (null == embeddedObject) {
-									embeddedObject = PropertyAccessorFactory.forBeanPropertyAccess(embeddedDescriptor.getPropertyType().newInstance());
+									embeddedObject = PropertyAccessorFactory.forBeanPropertyAccess(BeanUtils.instantiate(embeddedDescriptor.getPropertyType()));
 									embeddedObjectMap.put(embeddedDescriptor, embeddedObject);
 								}
-								//注入到embeddedObject
+								// column值注入到embeddedObject
 								embeddedObject.setPropertyValue(pd.getName(), value);
-							} catch (InstantiationException |IllegalAccessException e) {
-								e.printStackTrace();
-							} catch (TypeMismatchException ex) {
+							} catch (BeanInstantiationException | TypeMismatchException ex) {
 								if (value == null && this.primitivesDefaultedForNullValue) {
 									if (logger.isDebugEnabled()) {
 										logger.debug("Intercepted TypeMismatchException for row " + rowNumber +
@@ -413,7 +412,7 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 								}
 							}
 						}
-
+						// 记录已处理的column对应的属性名
 						if (populatedProperties != null) {
 							populatedProperties.add(pd.getName());
 						}
@@ -428,7 +427,7 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 					}
 				}
 			}
-			//把embeddedObject注入到实体中
+			// 把embeddedObject注入到实体中
 			if (null != embeddedObjectMap && !embeddedObjectMap.isEmpty()) {
 				for (java.util.Map.Entry<PropertyDescriptor, BeanWrapper> entry : embeddedObjectMap.entrySet()) {
 					try {
@@ -448,13 +447,12 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 					}
 				}
 			}
-
+			// 字段与类型属性不一致
 			if (populatedProperties != null && !populatedProperties.equals(this.mappedProperties)) {
 				throw new InvalidDataAccessApiUsageException("Given ResultSet does not contain all fields " +
 						"necessary to populate object of class [" + this.mappedClass.getName() + "]: " +
 						this.mappedProperties);
 			}
-
 			return mappedObject;
 		}
 
@@ -483,10 +481,6 @@ public class EnhanceBeanPropertyRowMapper<T> implements RowMapper<T> {
 		 */
 		protected Object getColumnValue(ResultSet rs, int index, PropertyDescriptor pd) throws SQLException {
 			return JdbcUtils.getResultSetValue(rs, index, pd.getPropertyType());
-		}
-
-		protected Object getColumnValue(ResultSet rs, int index, IConvertService<?> converter) throws SQLException {
-			return converter.convert(JdbcUtils.getResultSetValue(rs, index, converter.getClazz()));
 		}
 
 		/**

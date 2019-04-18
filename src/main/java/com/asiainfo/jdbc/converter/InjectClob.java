@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @Description: TODO
+ * @Description: Clob字段注解
  * 
  * @author       zq
  * @date         2017年7月2日  上午9:33:31

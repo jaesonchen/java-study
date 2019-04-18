@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 意图: 运用共享技术有效地支持大量细粒度的对象。
+ * 意图: 运用共享技术有效地支持大量细粒度的对象，典型应用：数据库连接池、线程池。
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:31:23
@@ -14,16 +14,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Flyweight {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
-        IConnection con = ConnectionPool.getInstance().getConnection();
+        ConnectionPool pool = new ConnectionPool();
+        IConnection con = pool.getConnection();
         con.query("select * from user");
-        ConnectionPool.getInstance().release(con);
+        pool.release(con);
+        
+        pool = new ConnectionPool(new OracleDriver());
+        con = pool.getConnection();
+        con.query("select * from user");
+        pool.release(con);
     }
 
     enum DIALECT {
@@ -41,34 +42,26 @@ public class Flyweight {
     static class ConnectionPool {
         
         private List<IConnection> pool;
-
         private int poolSize = 10;
-        private static ConnectionPool instance = new ConnectionPool();
         
-        private ConnectionPool() {
-            
+        public ConnectionPool() {
+            this(new MySqlDriver());
+        }
+        public ConnectionPool(IDriver driver) {
             pool = new ArrayList<IConnection>(poolSize);
-            DriverManager.registerDriver(new MySqlDriver());
+            DriverManager.registerDriver(driver);
             for (int i = 0; i < poolSize; i++) {
-                IConnection con = DriverManager.getConnection();
+                IConnection con = DriverManager.getConnection(driver.getDialect());
                 pool.add(con);
             }
         }
-        
-        public static ConnectionPool getInstance() {
-            return instance;
-        }
-
         public synchronized void release(IConnection con) {
             pool.add(con);
-            System.out.println("release connection,poolsize=" + pool.size());
+            System.out.println("release connection, poolsize=" + pool.size());
         }
-
         public synchronized IConnection getConnection() {
-            
             if (pool.size() > 0) {
-                IConnection con = pool.get(0);
-                pool.remove(con);
+                IConnection con = pool.remove(0);
                 System.out.println("get connection, remain=" + pool.size());
                 return con;
             } else {
@@ -93,7 +86,6 @@ public class Flyweight {
         }
         
         public static IConnection getConnection(DIALECT dialect) {
-            
             IDriver driver = drivers.get(dialect);
             if (driver == null) {
                 throw new IllegalArgumentException("no driver register with " + dialect);
@@ -114,6 +106,36 @@ public class Flyweight {
         }
         @Override public DIALECT getDialect() {
             return DIALECT.MYSQL;
+        }
+    }
+    
+    //oracle驱动程序实现
+    static class OracleDriver implements IDriver {
+        
+        @Override public IConnection getConnection() {
+            return new IConnection() {
+                @Override public void query(String sql) {
+                    System.out.println("Oracle query ('" + sql + "') is executing......");
+                }
+            };
+        }
+        @Override public DIALECT getDialect() {
+            return DIALECT.ORACLE;
+        }
+    }
+
+    //db2驱动程序实现
+    static class DB2Driver implements IDriver {
+        
+        @Override public IConnection getConnection() {
+            return new IConnection() {
+                @Override public void query(String sql) {
+                    System.out.println("DB2 query ('" + sql + "') is executing......");
+                }
+            };
+        }
+        @Override public DIALECT getDialect() {
+            return DIALECT.DB2;
         }
     }
 }

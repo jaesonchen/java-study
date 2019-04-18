@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * @Description: TODO
+ * @Description: java reflect示例
  * 
  * @author       zq
  * @date         2017年9月16日  下午4:20:35
@@ -47,43 +47,44 @@ public class ReflectExample {
 	 */
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 		
-		//获取指定签名的构造器
-		Constructor<?> con = ReflectExample.class.getConstructor(new Class<?>[]{String.class});
+		// getConstructor 获取指定签名的构造器
+		Constructor<?> con = ReflectExample.class.getConstructor(new Class<?>[] { String.class });
+		// getParameterTypes 获取参数类型
 		for (Class<?> clazz : con.getParameterTypes()) {
 			System.out.println(clazz);
 		}
-		//new 对象
-		ReflectExample obj = (ReflectExample) con.newInstance(new Object[] {"jaesonchen"});
+		// newInstance 新建实例对象
+		ReflectExample obj = (ReflectExample) con.newInstance(new Object[] { "jaesonchen" });
 		System.out.println(obj.getName());
 		
 		System.out.println("====================================");
-		//反射
+		// getDeclaredField 获取字段
 		Field f = obj.getClass().getDeclaredField("name");
 		System.out.println(f.getType().getSimpleName() + " " + f.getName());
-		//设置属性
+		// set 设置属性
     	f.setAccessible(true);
     	System.out.println("name:" + (String) f.get(obj));
     	f.set(obj, "chenzq");
     	System.out.println("name:" + obj.getName());
-    	//调用方法
+    	// invoke 方法调用
     	Method method = obj.getClass().getMethod("greeting", String.class);
     	System.out.println(method.getReturnType());
     	System.out.println(method.invoke(obj, "hello"));
-    	//无参方法
+    	// 无参方法
     	method = obj.getClass().getMethod("getName", (Class<?>[]) null);
     	System.out.println(method.invoke(obj, (Object[]) null));
-    	//静态方法
+    	// 静态方法
     	method = obj.getClass().getMethod("helloworld", (Class<?>[]) null);
     	System.out.println(method.invoke(null, (Object[]) null));
-    	//getter && setter
+    	// getter && setter
     	for (Method md : obj.getClass().getMethods()) {
     		if (isGetter(md) || isSetter(md)) {
     			System.out.println(md);
     		}
     	}
-    	
 	}
 	
+	// 是否getter方法
 	public static boolean isGetter(Method method) {
 
 		if (!method.getName().startsWith("get")) {
@@ -97,6 +98,8 @@ public class ReflectExample {
 		}
 		return true;
 	}
+	
+	// 是否getter方法
 	public static boolean isSetter(Method method) {
 
 		if (!method.getName().startsWith("set")) {

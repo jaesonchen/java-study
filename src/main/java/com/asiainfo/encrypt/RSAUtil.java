@@ -11,7 +11,7 @@ import javax.crypto.Cipher;
 
 /**
  * 
- * TODO
+ * RSA 是不对称的加密（加密密钥和解密密钥不同  其中 一个为公钥，一个为私钥）。
  * 
  * @author       zq
  * @date         2017年11月14日  上午11:06:24

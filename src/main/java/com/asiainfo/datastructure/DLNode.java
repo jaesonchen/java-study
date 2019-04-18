@@ -10,7 +10,7 @@ package com.asiainfo.datastructure;
 public class DLNode<T> implements Node<T> {
     
 	private T element;
-	private DLNode<T> pre;
+	private DLNode<T> prev;
 	private DLNode<T> next;
 	public DLNode() {
 		this(null, null, null);
@@ -18,9 +18,9 @@ public class DLNode<T> implements Node<T> {
 	public DLNode(T element) {
         this(element, null, null);
     }
-	public DLNode(T element, DLNode<T> pre, DLNode<T> next) {
+	public DLNode(T element, DLNode<T> prev, DLNode<T> next) {
 		this.element = element;
-		this.pre = pre;
+		this.prev = prev;
 		this.next = next;
 	}
 	public DLNode<T> getNext() {
@@ -29,11 +29,11 @@ public class DLNode<T> implements Node<T> {
 	public void setNext(DLNode<T> next) {
 		this.next = next;
 	}
-	public DLNode<T> getPre(){
-		return pre;
+	public DLNode<T> getPrev(){
+		return prev;
 	}
-	public void setPre(DLNode<T> pre) {
-		this.pre = pre;
+	public void setPrev(DLNode<T> prev) {
+		this.prev = prev;
 	}
 
 	@Override

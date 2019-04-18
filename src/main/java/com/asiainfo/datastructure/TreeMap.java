@@ -3,7 +3,7 @@ package com.asiainfo.datastructure;
 import java.util.Objects;
 
 /**
- * TODO
+ * 基于BinaryTree的Map实现
  * 
  * @author       zq
  * @date         2017年12月28日  下午3:37:07
@@ -75,7 +75,7 @@ public class TreeMap<K, V> implements Map<K, V> {
             oldValue = node.getData().getValue();
             node.getData().setValue(value);
         } else {
-            tree.insert(new TreeNode<K, V>(key, value), false);
+            tree.insert(new TreeNode<K, V>(key, value));
             size++;
         }
         return oldValue;
@@ -174,7 +174,6 @@ public class TreeMap<K, V> implements Map<K, V> {
         
         final K key;
         V value;
-
         TreeNode(K key, V value) {
             this.key = key;
             this.value = value;
@@ -205,7 +204,8 @@ public class TreeMap<K, V> implements Map<K, V> {
         }
         @Override
         public int compareTo(TreeNode<K, V> obj) {
-            return Objects.hashCode(key) - obj.hashCode();
+            return equals(obj) ? 0 : (hashCode() == obj.hashCode() ? 
+                    Objects.hashCode(value) - Objects.hashCode(obj.getValue()) : hashCode() - obj.hashCode());
         }
     }
     
@@ -222,16 +222,10 @@ public class TreeMap<K, V> implements Map<K, V> {
         map.put("key8", "value8");
         map.put("key9", "value9");
         map.put("key10", "value10");
-        map.put("key11", "value11");
-        map.put("key12", "value12");
-        map.put("key13", "value13");
-        map.put("key14", "value14");
-        map.put("key15", "value15");
-        map.put("key16", "value16");
-        map.put("key16", "value166");
+        map.put("key10", "value101");
         System.out.println(map.size());
         System.out.println(map.containsKey("key2"));
-        System.out.println(map.remove("key10"));
+        System.out.println(map.remove("key9"));
         System.out.println(map.remove("key20"));
         System.out.println(map.size());
         for (Map.Entry<String, String> entry : map.entrySet()) {

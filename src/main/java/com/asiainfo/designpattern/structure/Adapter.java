@@ -8,8 +8,8 @@ package com.asiainfo.designpattern.structure;
  * 类适配器：Adapter extends Adaptee implements IService
  * 使用场景：当你想使用一个已经存在的类，而它的接口不符合你的需求。
  * 
- * 对象适配器（持有Adaptee对象）：Adapter implements IService  
- * 使用场景：你想使用一些已经存在的子类，但是不可能对每一个都进行子类化以匹配它们的接口，对象适配器可以适配它的父亲接口。
+ * 对象适配器（持有Adaptee对象）：Adapter implements IService
+ * 使用场景：你想使用一些已经存在的子类，但是不可能对每一个都进行子类化以匹配它们的接口，对象适配器可以适配它的父亲接口（Adaptee）。
  * 
  * Facade模式注重简化接口，Adapter模式注重转换接口，Bridge模式注重分离接口（抽象）与其实现，Decorator模式注重稳定接口的前提下为对象扩展功能。
  * 
@@ -19,11 +19,6 @@ package com.asiainfo.designpattern.structure;
  */
 public class Adapter {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
         IReader objAdapter = new InputStreamReader(new FileInputStream());

@@ -10,32 +10,32 @@ package com.asiainfo.insidejvm;
  */
 public class AutoBoxing {
 	
+    //使用基本数据类型
 	public static void sum() {
 		
-		long start = new java.util.Date().getTime();
-		//使用基本数据类型
+		long start = System.currentTimeMillis();
 		long sum = 0L;
 		for(long i = 0; i < Integer.MAX_VALUE; i++) {
 			sum += i;
 		}
-		long end = new java.util.Date().getTime();
+		long end = System.currentTimeMillis();
 		System.out.println("total = " + sum + ",time = " + (end - start) + "ms");
 	}
 	
+	// 使用封装数据类型
 	public static void sumAutoBoxing() {
 		
-		long start = new java.util.Date().getTime();
+		long start = System.currentTimeMillis();
 		//使用对象，每次计算时会自动装箱，性能差异巨大
 		Long sum = 0L;
 		for(long i = 0; i < Integer.MAX_VALUE; i++) {
 			sum += i;
 		}
-		long end = new java.util.Date().getTime();
+		long end = System.currentTimeMillis();
 		System.out.println("total = " + sum + ",time = " + (end - start) + "ms");
 	}
 
 	public static void main(String[] args) {
-		
 		sum();
 		sumAutoBoxing();
 	}

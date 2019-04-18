@@ -1,7 +1,7 @@
 package com.asiainfo.datastructure;
 
 /**
- * TODO
+ * Queue 双向链表实现
  * 
  * @author       zq
  * @date         2017年12月25日  下午4:36:42

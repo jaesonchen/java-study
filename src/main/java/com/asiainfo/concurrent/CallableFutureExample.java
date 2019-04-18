@@ -21,18 +21,11 @@ import com.asiainfo.util.ThreadPoolUtils;
 public class CallableFutureExample {
 
 	static class Task implements Callable<String> {
-
 		String name;
 		Task(String name) {
 			this.name = name;
 		}
-		
-		/* 
-		 * @Description: TODO
-		 * @return
-		 * @throws Exception
-		 * @see java.util.concurrent.Callable#call()
-		 */
+
 		@Override
 		public String call() throws Exception {
 			System.out.println("Thread " + name + " execute!");
@@ -40,13 +33,6 @@ public class CallableFutureExample {
 		}
 	}
 	
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
-	 */
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		
 		ExecutorService service = ThreadPoolUtils.getInstance().cachedThreadPool();

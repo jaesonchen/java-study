@@ -52,6 +52,15 @@
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
+		<dependency>
+		    <groupId>javax.servlet.jsp</groupId>
+		    <artifactId>javax.servlet.jsp-api</artifactId>
+		    <version>2.3.3</version>
+		    <scope>provided</scope>
+		</dependency>
+
+		
 		<!-- slj4j and log4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -99,18 +108,19 @@
 		    <artifactId>kryo</artifactId>
 		    <version>4.0.0</version>
 		</dependency>
-	    <!-- mysql & oracle driver -->
+	    <!-- mysql driver -->
 	    <dependency>
 	    	<groupId>mysql</groupId>
 	    	<artifactId>mysql-connector-java</artifactId>
 	    	<version>5.1.38</version>
 	    </dependency>
-		<!-- https://mvnrepository.com/artifact/com.oracle/ojdbc14 -->
+		<!-- https://mvnrepository.com/artifact/com.oracle/ojdbc6 -->
 		<dependency>
 		    <groupId>com.oracle</groupId>
-		    <artifactId>ojdbc14</artifactId>
-		    <version>10.2.0.4.0</version>
+		    <artifactId>ojdbc6</artifactId>
+		    <version>12.1.0.1</version>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
 		<dependency>
 		    <groupId>com.jcraft</groupId>
@@ -346,6 +356,8 @@
 	
 	<build>
     	<finalName>java-study</finalName>
+    	<!-- avro 插件没有使用m2e导致的报错Plugin execution not covered by lifecycle  -->
+    	<pluginManagement>
 		<plugins>
             <plugin>
                 <groupId>org.apache.avro</groupId>
@@ -375,5 +387,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		</pluginManagement>
 	</build>
 </project>

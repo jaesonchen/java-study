@@ -1,7 +1,7 @@
 package com.asiainfo.basic;
 
 /**
- * @Description: TODO
+ * @Description: 枚举 示例
  * 
  * @author       zq
  * @date         2017年9月18日  下午12:26:15
@@ -34,6 +34,9 @@ public class EnumExample {
 	
 	public static void printName(WeekDay day) {
 		
+	    // switch 语句中的变量类型可以是： byte、short、int 或者 char。
+	    // 从 Java 7 开始，switch 支持字符串 String 和 枚举类型
+	    // 编译后，字符串的case会被转换成 hashCode()，枚举的case会被转换成ordinal()
 		switch (day) {
         	case MONDAY:
         		System.out.println(day.getChnName());
@@ -61,9 +64,7 @@ public class EnumExample {
 }
 
 enum WeekDay {
-	/**
-	 * monday
-	 */
+
     MONDAY("星期一"), 
     TUESDAY("星期二"), 
     WEDNESDAY("星期三"), 
@@ -91,7 +92,9 @@ enum WeekDay {
     }
 }
 
-/*final class com.asiainfo.reflect.WeekDay extends java.lang.Enum<com.asiainfo.reflect.WeekDay> {
+//枚举类型编译后
+/*
+final class com.asiainfo.reflect.WeekDay extends java.lang.Enum<com.asiainfo.reflect.WeekDay> {
 	
   public static final com.asiainfo.reflect.WeekDay MONDAY;
   public static final com.asiainfo.reflect.WeekDay TUESDAY;
@@ -104,8 +107,10 @@ enum WeekDay {
   public java.lang.String getChnName();
   public static com.asiainfo.reflect.WeekDay[] values();
   public static com.asiainfo.reflect.WeekDay valueOf(java.lang.String);
-}*/
+}
+*/
 
+// 枚举多态
 enum Operation {
 
 	/**
@@ -151,16 +156,10 @@ enum Operation {
 interface Food {
 	
 	enum Appetizer implements Food {
-		/**
-		 * foods
-		 */
 	    SALAD, SOUP, SPRING_ROLLS;
 	}
 	
 	enum Coffee implements Food {
-		/**
-		 * Foods
-		 */
 	    BLACK_COFFEE, ESPRESSO, LATTE, TEA;
 	}
 }

@@ -5,10 +5,9 @@ import java.util.concurrent.CountDownLatch;
 import com.asiainfo.util.ThreadPoolUtils;
 
 /**
- *  
- * CountDownLatch示例:
+ * CountDownLatch: 基于AQS共享锁实现
  * 1、计数器必须大于等于0，等于0的时候，计数器就是零，调用await方法时不会阻塞当前线程。
- * 2、CountDownLatch不可能重新初始化或者修改CountDownLatch对象内部计数器的值。
+ * 2、CountDownLatch不能重新初始化或者修改CountDownLatch对象内部计数器的值。
  * 3、一个线程调用countDown方法happen-before，另一个线程调用await方法。
  * 
  * @author       zq
@@ -17,24 +16,33 @@ import com.asiainfo.util.ThreadPoolUtils;
  */
 public class CountDownLatchExample {
 	
-	static CountDownLatch c = new CountDownLatch(2);
+	static CountDownLatch cd = new CountDownLatch(2);
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		ThreadPoolUtils.getInstance().newThread(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("1");
-				c.countDown();
-				System.out.println("2");
-				c.countDown();
+			    try {
+			        System.out.println("1");
+			    } finally {
+			        cd.countDown();
+			    }
 			}
 		}).start();
 		
-		try {
-			c.await();
-		} catch (InterruptedException e) {}
+        ThreadPoolUtils.getInstance().newThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("2");
+                } finally {
+                    cd.countDown();
+                }
+            }
+        }).start();
 		
+        cd.await();
 		System.out.println("3");
 	}
 }

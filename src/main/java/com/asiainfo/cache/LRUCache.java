@@ -28,6 +28,7 @@ public class LRUCache<K, V> {
 		int capacity = (int) Math.ceil(total / FACTOR) + 1;
 		//false=按插入顺序排序、true=按访问顺序排序
 		this.map = new LinkedHashMap<K, V>(capacity, FACTOR, true) {
+		    // put、putAll触发
 			@Override
 			protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
 				return size() > LRUCache.this.total;

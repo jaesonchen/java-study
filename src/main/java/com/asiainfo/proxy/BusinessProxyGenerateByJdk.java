@@ -6,8 +6,13 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.UndeclaredThrowableException; 
 
 /**
- * @author zq
- * jdk动态代理在运行期生成的字节码代理类源码
+ * 
+ * @Description: jdk动态代理在运行期生成的字节码代理类源码
+ * 
+ * @author chenzq  
+ * @date 2019年3月25日 下午4:20:47
+ * @version V1.0
+ * @Copyright: Copyright(c) 2019 jaesonchen.com Inc. All rights reserved.
  */
 public class BusinessProxyGenerateByJdk extends Proxy implements Business {
  

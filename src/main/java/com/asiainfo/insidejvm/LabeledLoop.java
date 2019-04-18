@@ -2,14 +2,15 @@ package com.asiainfo.insidejvm;
 
 /**
  * 
- * switch要求使用一个选择因子，并且必须是int 或char 那样的整数值。例如，假若将一个字串或者浮点数作为选择因子使用，
- * 那么它们在switch 语句里是不会工作的。对于非整数类型，则必须使用一系列if 语句。
+ * switch要求使用一个选择因子，并且必须是int 或char 那样的整数值(String和Enum实际上在编译后被转换为int)。
+ * 例如，假若将一个浮点数作为选择因子使用，那么它们在switch 语句里是不会工作的；对于非整数类型，则必须使用一系列if 语句。
  * 每个case 均以一个break 结尾。这样可使执行流程跳转至switch 主体的末尾。
  * 若省略break，会继续执行后面的case 语句的代码，直到遇到一个break 为止。
  */
 public class LabeledLoop {
 
 	public static void main(String[] args) {
+	    
 		int i = 0;
 		outer: // Can't have statements here
 		for(; true ;) {
@@ -44,6 +45,7 @@ public class LabeledLoop {
 		}
 		// Can't break or continue to labels here
 	}
+	
 	static void prt(String s) {
 		System.out.println(s);
 	}

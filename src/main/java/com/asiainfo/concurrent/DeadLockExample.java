@@ -3,7 +3,8 @@ package com.asiainfo.concurrent;
 import com.asiainfo.util.ThreadPoolUtils;
 
 /**
- * @Description: 基本数据类型的包装类不适合作为同步对象
+ * @Description: 基本数据类型的包装类不适合作为同步对象，valueOf自动拆箱/封箱会缓存[-128, 127]的对象，
+ *               有可能使得多个不同对象持有的是同一个对象锁，从对象锁演变为Class锁。
  * 
  * @author       zq
  * @date         2017年9月5日  上午10:50:49
@@ -11,19 +12,13 @@ import com.asiainfo.util.ThreadPoolUtils;
  */
 public class DeadLockExample {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws InterruptedException 
-	 */
 	public static void main(String[] args) throws InterruptedException {
 
 		for (int i = 0; i < 100; i++) {
-			ThreadPoolUtils.getInstance().newThread(new SynAddRunnable(1,2)).start();
-			ThreadPoolUtils.getInstance().newThread(new SynAddRunnable(2,1)).start();
+			ThreadPoolUtils.getInstance().newThread(new SynAddRunnable(1, 2)).start();
+			ThreadPoolUtils.getInstance().newThread(new SynAddRunnable(2, 1)).start();
 		}
-		Thread.sleep(100000);
+		Thread.sleep(10000);
 	}
 	
 	static class SynAddRunnable implements Runnable {

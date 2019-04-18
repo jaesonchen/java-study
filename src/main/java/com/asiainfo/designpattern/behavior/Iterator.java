@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /**
- * TODO
+ * 迭代器模式的典型应用：java集合的Iterator
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:35:04
@@ -12,11 +12,6 @@ import java.util.NoSuchElementException;
  */
 public class Iterator {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
         
         MyList<String> list = new MyList<>();
@@ -45,6 +40,7 @@ public class Iterator {
         }
     }
 
+    // 迭代器接口
     interface MyIterator<E> {
         
         boolean hasNext();

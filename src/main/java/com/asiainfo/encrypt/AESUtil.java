@@ -6,7 +6,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * AES算法实现
+ * AES算法
+ * AES加密是对称加密、分组加密；密钥长度 分为128位、192位、256位；对应的数据分组也应该分为128位  192位  256位；这三种加密的轮次是不一样的。分别是：10、12、14。
  * 
  * @author       zq
  * @date         2017年11月14日  上午11:03:49

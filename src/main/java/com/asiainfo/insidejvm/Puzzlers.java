@@ -6,7 +6,7 @@ import java.math.*;
 
 /**
  * 
- * @Description: TODO
+ * @Description: java puzzlers中的示例
  * 
  * @author       zq
  * @date         2017年10月16日  下午5:00:22
@@ -26,20 +26,20 @@ public class Puzzlers {
 		//后一个构造器将用它的参数的“精确”值来创建一个实例。
 		System.out.println(2.00 - 1.10);	//0.8999999999999999
 		
-		//当你在操作很大的数字时，千万要提防溢出——它可是一个缄	默杀手。
-		//即使用来保存结果的变量已显得足够大，也并不意味着要产生结果的计
-		//算具有正确的类型。当你拿不准时，就使用long 运算来执行整个计算。
+		//当你在操作很大的数字时，千万要提防溢出——它可是一个缄默杀手。
+		//即使用来保存结果的变量已显得足够大，也并不意味着要产生结果的计算具有正确的类型。
+		//当你拿不准时，就使用long 运算来执行整个计算。
 		//在运算时使用的是int，在将int结果赋值给long之前，溢出部分被截取，导致结果错误。
 		//正确的做法: final long MICROS_PER_DAY = 24L * 60 * 60 * 1000 * 1000;
 		final long MICROS_PER_DAY = 24 * 60 * 60 * 1000 * 1000;
 		final long MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
-		System.out.println(MICROS_PER_DAY/MILLIS_PER_DAY);		//5
+		System.out.println(MICROS_PER_DAY + "/" + MILLIS_PER_DAY); //500654080/86400000
 		
 		//在long 型字面常量中，一定要用大写的L，千万不要用小写的l。
 		//要避免使用单独的一个l 字母作为变量名。
 		//数字1 的水平笔划和垂直笔划之间是一个锐角，而与此相对照的是，小写字母l的是一个直角。
 		//正确的做法：System.out.println(12345+5432L);
-		System.out.println(12345+5432l);	//17777
+		System.out.println(12345 + 5432l);	//17777
 		
 		//混合类型的计算可能会产生混淆，尤其是十六进制和八进制字面常量无需显式的减号符号就可以表示负的数值。
 		//为了避免这种窘境，通常最好是避免混合类型的计算。
@@ -47,7 +47,7 @@ public class Puzzlers {
 		//如果十六进制和八进制字面常量的最高位被置位了，那么它们就是负数。
 		System.out.println(Long.toHexString(0x100000000L + 0xcafebabe));	//cafebabe
 		
-		//通常最好是在条件表达式中使用类型相同的第二和第三操作数。
+		//在条件表达式中最好是使用类型相同的第二和第三操作数。
 		//确定条件表达式结果类型的规则:
 		//如果第二个和第三个操作数具有相同的类型，那么它就是条件表达式的类型。
 		//如果一个操作数的类型是T，T 表示byte、short 或char，而另一个操作数是一个int 类型的常量表达式，
@@ -55,11 +55,11 @@ public class Puzzlers {
 		//否则，将对操作数类型运用二进制数字提升，而条件表达式的类型就是第二个和第三个操作数被提升之后的类型。
 		char x = 'X';
 		int i = 0;
-		System.out.println(true ? 88 : x);		//X
-		System.out.println(true ? x : 65535);	//X
-		System.out.println(true ? x : 65536);	//88
-		System.out.println(false ? i : x);		//88
-		System.out.println(true ? x : i);		//88
+		System.out.println(true ? 88 : x);		//char X
+		System.out.println(true ? x : 65535);	//char X
+		System.out.println(true ? x : 65536);	//int 88
+		System.out.println(false ? i : x);		//int 88
+		System.out.println(true ? x : i);		//int 88
 		
 		//复合赋值表达式自动地将它们所执行的计算的结果转型为其左侧变量的类型。
 		//请不要将复合赋值操作符作用于byte、short 或char 类型的变量上。
@@ -83,7 +83,7 @@ public class Puzzlers {
 		System.out.println("" + new char[] { '1', '2', '3' });		//[C@191c0b76
 		
 		//String类型的编译期常量是内存限定的。
-		//任何两个String	类型的常量表达式，如果标明的是相同的字符序列，那么它们就用相同的对象引用来表示。
+		//任何两个String 类型的常量表达式，如果标明的是相同的字符序列，那么它们就用相同的对象引用来表示。
 		//+ 操作符，不论是用作加法还是字符串连接操作，它都比 == 操作符的优先级高。
 		final String pig = "length: 10";
 		final String dog = "length: " + pig.length();
@@ -99,9 +99,9 @@ public class Puzzlers {
 		//Java 对在字符串字面常量中的Unicode 转义字	符没有提供任何特殊处理。
 		//编译器在将程序解析成各种符号之前，先将Unicode转义字符转换成为它们所表示的字符。
 		// \u0022 是双引号的Unicode 转义字符
-		System.out.println("a\u0022.length()+\u0022b".length());	//2
+		System.out.println("a\u0022.length() + \u0022b".length());	//2
 		//可以使用转义字符序列来实现: 转义字符序列是一个反斜杠后面紧跟着一个需要转义的字符
-		System.out.println("a\".length()+\"b".length());			//14
+		System.out.println("a\".length() + \"b".length());			//16
 		
 		/**
 		 * c:\u2222test
@@ -131,7 +131,9 @@ public class Puzzlers {
 			System.out.println(new String(bytes));
 			//正确的用法
 			System.out.println(new String(bytes, "ISO-8859-1"));
-		} catch (UnsupportedEncodingException ex) {}
+		} catch (UnsupportedEncodingException ex) {
+		    //ignore
+		}
 		
 		
 		//String.replaceAll 接受了一个正则表达式作为它的第一个参数，而并非接受了一个字符序列字面常量。
@@ -143,18 +145,20 @@ public class Puzzlers {
 		//输出为：com/jaeson/javastudy/puzzler/Puzzlers.class
 		
 		//在替代字符串中出现的反斜杠会把紧随其后的字符进行转义，从而导致其被按字面含义而处理了。
-		//Exception:String index out of range
+		//Exception:String index out of range(1.6和1.8的异常不一样)
 		try {
 			System.out.println(Puzzlers.class.getName().replaceAll("\\.", File.separator) + ".class");
-		} catch (StringIndexOutOfBoundsException ex) {
-			System.out.println("StringIndexOutOfBoundsException: " + ex.getMessage());
+		} catch (StringIndexOutOfBoundsException | IllegalArgumentException ex) {
+			ex.printStackTrace();
 		}
+		//正确的做法
+		System.out.println(Puzzlers.class.getName().replaceAll("\\.", "\\\\") + ".class");
 		//使用1.5新的replace方法：它将模式和替代物都当作字面含义的字符串处理。
 		System.out.println(Puzzlers.class.getName().replace(".", File.separator) + ".class");
 		
 		//令人误解的注释和无关的代码会引起混乱。
 		//你可以在任何语句前面放置标号(除了注释，语句不能跟标号在同一行)。
-		//这个语句标注了一个表达式语句，它是合法的，但是却没什么用处。
+		//这个语句标注了一个label表达式语句，它是合法的，但是却没什么用处。
 		http://www.google.com;
 		System.out.println("url的愚弄");
 		
@@ -166,7 +170,7 @@ public class Puzzlers {
 		//StringBuffer没有char参数构造器，new StringBuffer('M'); 调用的是设置缓冲区初始容量的int型构造器。
 		Random rnd = new Random();
 		StringBuffer word = null;
-		switch(rnd.nextInt(2)) {
+		switch (rnd.nextInt(2)) {
 			case 1: word = new StringBuffer('P');
 			case 2: word = new StringBuffer('G');
 			default: word = new StringBuffer('M');
@@ -178,23 +182,35 @@ public class Puzzlers {
 		//正确和更优雅的解决办法：
 		System.out.println("PGM".charAt(rnd.nextInt(3)) + "ain");
 		
-		//byte short char 类型在使用int常量赋值时,如果常量值超出类型表示范围需要强制类型转换。否则编译错误。
+		//byte short char 类型在使用int常量赋值时, 如果常量值超出类型表示范围需要强制类型转换。否则编译错误。
 		//编译错误: int常量128超过byte的表示范围，丢失精度出错。   	byte bValue = 128;
 		//编译错误：int常量2147483648超过int的表示范围，越界出错。  	long lValue = 2147483648;
 		byte bValue = 127;
 		long lValue = 2147483648L;
 		
-		//原码的得来：(负数的原码，直接把对应正数的最高位改为1)， 原码能够直观的表示一个负数(能直观的把真值显示出来，-1的原码10000001)。
-		//补码的设计目的是:使符号位能与有效值部分一起参加运算，从而简化运算规则。使减法运算转换为加法运算。
 		//java中byte short int long都是有符号整数，char是无符号整数
-		//有符号整数的最高位为符号位：0表示整数、1表示负数。
-		//当把二进制转换为十进制时，正整数直接计算结果。 -5 = 原码(10000101) = 反码(01111010)
+        //有符号整数的最高位为符号位：0表示整数、1表示负数。
+		//原码的由来：(负数的原码，直接把对应正数的最高位改为1)， 原码能够直观的表示一个负数(能直观的把真值显示出来，-1的原码10000001)。
+		//补码的设计目的是:使符号位能与有效值部分一起参加运算，从而简化运算规则。使减法运算转换为加法运算。
+		//使用补码不仅仅修复了0的符号以及存在两个编码的问题，而且还能够多表示一个最低数。注意，-128并没有原码和反码表示。
+		//正数的原码、反码、补码都是同一个。
+		//负数的反码：符号位不变，其他位取反。
+		//负数的补码：反码加1。
+		//当把二进制转换为十进制时，正整数直接计算结果。
 		//负数的十进制结果为：负数的二进制码取反(^) + 1得到无符号二进制表示，计算无符号二进制的十进制结果，然后在结果前加负号(-)。
-		//十进制负数转化为二进制表示：去除负号，将无符号十进制数转为无符号二进制数表示，对二进制码取反(^) + 1得到有符号二进制表示。
+		//十进制负数转化为二进制表示：去除负号，将无符号十进制数转为无符号二进制数表示，对二进制码(除符号位)取反(^) + 1得到有符号二进制表示。
 		//byte的表示范围为：-128 to 127，其中负数范围-128 to -1, 整数范围0 to 127，各代表2的n-1次方个数。
-		//-128的二进制码为10000000，^(10000000) = 01111111，01111111 + 1 = 10000000（无符号二进制），十进制结果为128加负号 = -128。
-		//java中的减法转化为加法：5 - 3 实际执行的是 5 + (-3)，00000101 + 11111101 = 00000010 (高位溢出) = 2
+		//-1的二进制码为11111111，^(11111111) = 00000000，00000000 + 1 = 00000001（无符号二进制），十进制结果为1加负号 = -1。
+		//-1的十进制转二进制，10000001(原) -> ^(0000001) -> 11111110(反) + 1 = 11111111(补)
+		//java中的减法转化为加法：5 - 3 实际执行的是 5 + (-3)，00000101 + 11111101(补) = 00000010 (高位溢出) = 2
 		
+	      
+        //Java 使用2 的补码的算术运算，它是非对称的。对于每一种有符号的整数类型（int、long、byte 和short），
+        //负的数值总是比正的数值多一个，这个 多出来的值总是这种类型所能表示的最小数值。
+        i = Integer.MIN_VALUE;
+        System.out.println(i != 0 && i == -i);      //true
+        
+        
 		//表达式计算顺序都是从左到右
 		System.out.println(3 + 5 + " hello");	//8 hello
 		System.out.println("hello " + 3 + 5);	//hello 35
@@ -220,14 +236,14 @@ public class Puzzlers {
 		//由于系统总是强制地将一个操作数提升到与另一个操作数相匹配的类型，所以混合类型比较总是容易把人搞糊涂。
 		//这种转换是不可视的，而且可能不会产生你所期望的结果。
 		for (byte d = Byte.MIN_VALUE; d < Byte.MAX_VALUE; d++) {
+		    // 这里0x90是int类型，byte 10010000 不等于0x90
 			if (d == 0x90)
 				System.out.print("Joy!");
 		}
 		//因为byte 是一个有符号类型，所以这个转换执行的是符号扩展，将负的byte 数值提升为了在数字上相等的int数值。
 		//正数的符号扩展使用0填充高位，负数的符号扩展使用1填充高位。
-		//byte b = (byte)144; b == 144; -> 11111111111111111111111110010000(负数符号扩展) -> -(11111111111111111111111110010000^ + 1) = -(00000000000000000000000001110000) = -112
 		//(byte)0x90 -> (byte)00000000000000000000000010010000 -> 10010000(byte负数) -> -(10010000^ + 1) = -(01110000) = -112
-		System.out.println((byte)0x90);		//-112
+		System.out.println((byte) 0x90);		//-112
 		
 		//不要在单个的表达式中对相同的变量赋值超过一次。
 		int j = 0;
@@ -261,31 +277,24 @@ public class Puzzlers {
 		//while (i != 0) {
 		//	i >>>= 1;
 		//}
-		
-		//Java 使用2 的补码的算术运算，它是非对称的。对于每一种有符号的整数类型（int、long、byte 和short），
-		//负的数值总是比正的数值多一个，这个	多出来的值总是这种类型所能表示的最小数值。
-		//-128 = 10000000(原码=补码), -(-128) -> -(10000000) -> 10000000^ + 1 -> 10000000 = -128
-		i = Integer.MIN_VALUE;
-		System.out.println(i != 0 && i == -i);		//true
+
 		
 		//在5.0 版中，自动包装（autoboxing）和自动反包装（auto-unboxing）被添加到了Java 语言中。
 		//（被包装的数字类型有：Byte、Character、Short、Integer、Long、Float 和Double。）
-		//Java 的判等操作符（==和!=）在作用于对象引用时，执行的是引用ID 的比较，而不是值的比较。这是为了兼容5.0以前版本。
+		//Java 的判等操作符（==和!=）在作用于对象引用时，执行的是引用的比较，而不是值的比较。这是为了兼容5.0以前版本。
 		//判等操作符在其两个操作数中只有一个是被包装的数字类型，而另一个是原始类型时，执行的确实是数值比较。这种比较在5.0以前是非法的，所以不会出现不兼容。
 		//数值比较操作符（>、 >=、 <、 <=）：
 		//当两个操作数都是被包装的数字类型时，数值比较操作符和判等操作符的行为存在着根本的差异：
 		//数值比较操作符执行的是值比较，而判等操作符执行的是引用标识的比较。
 		Integer obj1 = new Integer(0);
 		Integer obj2 = new Integer(0);
-		System.out.println(obj1 <= obj2 && obj1 >= obj2 && obj1 != obj2);	//true
+		System.out.println((obj1 <= obj2) + ", " + (obj1 >= obj2)  + ", " +  (obj1 != obj2));	//true
 		
 		//会导致精度丢失的三种拓宽原始类型转换:从int 到float、从long 到float、从long 到double。
 		//丢失原因：毗邻的浮点数值之间的距离被称为一个ulp，它是“最小单位（unit in the last place）”的首字母缩写词。
 		//当float和double足够大时，将一个小于最小单位ulp的浮点数加到一个很大的浮点数上时，将不会改变大的浮点数的值。
-		System.out.println((float)2000000000 ==	(float)2000000050);			//true
+		System.out.println((float) 2000000000 == (float) 2000000050);			//true
 		
-		//在一个try-finally 语句中，finally 语句块总是在控制权离开try 语句块时执行的。
-		System.out.println(decision());		//false
 		
 		//一个方法可以抛出的被检查异常集合是它所适用的所有类型声明要抛出的被检查异常集合的交集，而不是合集。
 		Type3 tp = new Type3();
@@ -318,22 +327,18 @@ public class Puzzlers {
 		//型的实例，那么你就可以将其转型为该类型，并调用该类型的方法，而不用担心会抛出
 		//ClassCastException 或NullPointerException 异常。
 		//instanceof 操作符有这样的要求：如果两个操作数的类型都是类，其中一个必须是另一个的子类型。
-		//所以，new Puzzlers() instanceof String是非法的。
+		//new Puzzlers() instanceof String是非法的。
+		//new Object() instanceof String是合法的。
 		String str = null;
-		System.out.println(str instanceof String);  
+		System.out.println(str instanceof String);
 		//编译错误：  
-		//System.out.println(new ArrayList() instanceof String);  
-		//编译通过，但运行期会抛出异常ClassCastException 
-		try {
-			Puzzlers tc = (Puzzlers) new Object();
-		} catch (Exception ex){	
-			System.out.println(ex.getMessage());
-		}
+		//System.out.println(new ArrayList() instanceof String);
 
-		//一个本地变量声明看起来像是一条语句，但是从技术上说，它不是；它应该是一
-		//个本地变量声明语句（local variable declaration statement）。
-		//Java 语言规范不允许一个本地变量声明语句作为一条语句在for、while 或do
-		//循环中重复执行。一个本地变量声明作为一条语句只能直接出现在一个语句块中。
+
+		//一个本地变量声明看起来像是一条语句，但是从技术上说，它不是；
+		//它应该是一个本地变量声明语句（local variable declaration statement）。
+		//Java 语言规范不允许一个本地变量声明语句作为一条语句在for、while 或do循环中重复执行。
+		//一个本地变量声明作为一条语句只能直接出现在一个语句块中。
 		//（一个语句块是由一对花括号以及包含在这对花括展中的语句和声明构成的。）
 		//编译错误：
 		//for (i = 0; i < 100; i++)
@@ -343,102 +348,32 @@ public class Puzzlers {
 			Object obj = new Object();
 		}
 		//更好的做法
-		for (i = 0; i < 100; i++)
-			new Object();
-		
-		
-		
+		Object obj = null;
+		for (i = 0; i < 100; i++) {
+			obj = new Object();
+		}
 	}
+	
 	//无论你何时使用到了取余操作符，都要考虑到操作数和结果的符号。
 	//错误的方法，在i为负数时总是返回false
-	public static boolean isOdd(int i){
+	public static boolean isOdd(int i) {
 		return i % 2 == 1;
 	}
 	//正确的方法
-	public static boolean isOddCorrect(int i){
+	public static boolean isOddCorrect(int i) {
 		return i % 2 != 0;
 	}
 	
-	//在一个try-finally 语句中，finally 语句块总是在控制权离开try 语句块时执行的。
-	//当try 语句块和finally 语句块都意外结束时，在try 语句块中引发意外结束的原因将被丢弃，
-	//而整个try-finally 语句意外结束的原因将于finally 语句块意外结束的原因相同。
-	//总之，每一个finally 语句块都应该正常结束，除非抛出的是不受检查的异常。
-	//千万不要用一个return、break、continue 或throw 来退出一个finally 语句块，
-	//并且千万不要允许将一个受检查的异常传播到一个finally 语句块之外去。
-	//如果一个catch 子句要捕获一个类型为E 的被检查异常，而其相对应的try 子句不能抛出E 的某种子类型的异常，那么这就是一个编译期错误。
-	//但是捕获Exception 或Throwble 的catch 子句是合法的，不管与其相对应的try 子句的内容为何。
-	//System.exit 将立即停止所有的程序线程，它并不会使finally 语句块得到调用，但是它在停止VM 之前会执行关闭挂钩操作。
-	@SuppressWarnings("all")
-	static boolean decision() {
-		try {
-			return true;
-		} finally {
-			return false;
-		}
-	}
-	
-	//当你处理IO流，在finally 语句块中调用close 方法时，要用一个嵌套的try-catch语句来保护它，以防止IOException 的传播。
-	static void copy(String src, String dest) throws IOException {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new FileInputStream(src);
-			out = new FileOutputStream(dest);
-			byte[] buf = new byte[1024];
-			int n;
-			while ((n = in.read(buf)) > 0)
-				out.write(buf, 0, n);
-		} finally {
-			//in可能抛出异常导致out无法关闭。
-			//if (in != null) in.close();
-			//if (out != null) out.close();
-			closeIgnoringException(in);
-			closeIgnoringException(out);
-		}
-	}
-	private static void closeIgnoringException(Closeable c) {
-		if (c != null) {
-			try {
-				c.close();
-			} catch (IOException ex) {
-				// There is nothing we can do if close fails
-			}
-		}
-	}
-	
-	//在程序中，一个空final 域只有在它是明确未赋过值的地方才可以被赋值。
+	//在程序中，一个final 域只有在它是明确未赋过值的地方才可以被赋值。
 	static void finalInit() {
 		final int fint;
 		try {
-			fint = finalInitHelper();
+			fint = 200;
 		} catch (Exception e) {
 			//编译错误：final 变量可能已经被赋值
 			//fint = 100;
 		}
 	}
-	private static int finalInitHelper() throws Exception {
-		throw new Exception();
-	}
-	
-	//不要对捕获NoClassDefFoundError 形成依赖。语言规范非常仔细地描述	了类初始化是在何时发生的[JLS 12.4.1]，
-	//但是类被加载的时机却显得更加不可预测。更一般地讲，捕获Error 及其子类型几乎是完全不恰当的。
-	//这些异常是为那些不能被恢复的错误而保留的。
-	static void noClassDefine() {
-		/*
-		Missing m;
-		try {
-			m = new Missing();
-		} catch (NoClassDefFoundError ex) {
-			System.out.println("Got it!");
-		}
-		*/
-		try {
-			Object m = Class.forName("Missing").newInstance();
-		} catch (ClassNotFoundException ex) {
-			System.err.println("Got it!");
-		} catch (Exception ex) { }
-	}
-	
 }
 //一个方法可以抛出的被检查异常集合是它所适用的所有类型声明要抛出的被检查异常集合的交集，而不是合集。
 //多个继承而来的throws 子句的交集，将减少而不是增加方法允许抛出的异常数量。
@@ -454,26 +389,6 @@ interface Type1 {
 interface Type2 {
 	void f() throws InterruptedException;
 }
-//实例初始化操作是先于构造器的程序体而运行的。实例初始化操作抛出的任何异常都会传播给构造器。
-//如果初始化操作抛出的是被检查异常，那么构造器必须声明也会抛出这些异常，但是应该避免这样做，因为它会造成混乱。
-//最后，对于我们所设计的类，如果其实例包含同样属于这个类的其他实例，那么对这种无限递归要格外当心。
-//有可能会因为递归调用而抛出StackOverflowError，它是Error 的子类型而不是Exception 的子类型，所以catch 子句无法捕获它。
-@SuppressWarnings("unused")
-class Car {
-	private static Class<Engine> engineClass = Engine.class;
-	private Engine engine = newEngine();
-	private static Engine newEngine() {
-		try {
-			return (Engine)engineClass.newInstance();
-		} catch (IllegalAccessException e) {
-			throw new AssertionError(e);
-		} catch (InstantiationException e) {
-			throw new AssertionError(e);
-		}
-	}
-	public Car() { }
-}
-class Engine { }
 
 //Java 的重载解析过程是以两阶段运行的。
 //第一阶段选取所有可获得并且可应用的方法或构造器。
@@ -483,6 +398,7 @@ class Engine { }
 //如果你确实进行了重载，那么请确保所有的重载版本所接受的参数类型都互不兼容，
 //这样，任何两个重载版本都不会同时是可应用的。
 class Confusing {
+    //缺乏精确
 	Confusing(Object o) {
 		System.out.println("Object");
 	}

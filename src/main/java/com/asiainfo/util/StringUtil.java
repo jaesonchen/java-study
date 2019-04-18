@@ -18,12 +18,32 @@ public class StringUtil {
     static final Logger logger = LoggerFactory.getLogger(StringUtil.class);
     
     /**
+     * 是否为null
+     * 
+     * @param str
+     * @return
+     */
+    public static boolean isNull(Object str) {
+        return null == str;
+    }
+    
+    /**
+     * 不为null
+     * 
+     * @param str
+     * @return
+     */
+    public static boolean isNotNull(Object str) {
+        return !isNull(str);
+    }
+    
+    /**
      * 是否为空
      * 
      * @param str
      * @return
      */
-    public static boolean isBlank(String str) {
+    public static boolean isBlank(Object str) {
         return null == str || "".equals(str);
     }
     
@@ -33,7 +53,7 @@ public class StringUtil {
      * @param str
      * @return
      */
-    public static boolean isNotBlank(String str) {
+    public static boolean isNotBlank(Object str) {
         return !isBlank(str);
     }
     

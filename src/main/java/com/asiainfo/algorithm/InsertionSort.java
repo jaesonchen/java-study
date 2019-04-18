@@ -2,9 +2,9 @@ package com.asiainfo.algorithm;
 
 /**
  * 插入排序:
- *  通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。插入排序在实现上，通常采用
- *  in-place排序（即只需乃至O(1)的额外空间的排序），因而在从后向前扫描过程中，需要反复把已排序元素逐步往后
- *  挪位，为最新元素提供插入空间。
+ *  通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。
+ *  插入排序在实现上，通常采用in-place排序（即只需乃至O(1)的额外空间的排序），因而在从后向前扫描过程中，
+ *  需要反复把已排序元素逐步往后挪位，为最新元素提供插入空间。
  *  
  *  具体算法描述如下：
  *  <1>.从第一个元素开始，该元素可以认为已经被排序；
@@ -22,10 +22,8 @@ public class InsertionSort {
 	
     /**
      * 简单插入排序
-     * 
-     * @param arr
      */
-	public static <T extends Object & Comparable<T>> void insertionSort(T[] arr) {
+	public static <T extends Comparable<T>> void insertionSort(T[] arr) {
 	    
 		for (int i = 1, len = arr.length; i < len; i++) {
 			T key = arr[i];
@@ -40,10 +38,8 @@ public class InsertionSort {
 	
 	/**
 	 * 改进：查找插入位置时使用二分查找方式
-	 * 
-	 * @param arr
 	 */
-	public static <T extends Object & Comparable<T>> void insertionSort2(T[] arr) {
+	public static <T extends Comparable<T>> void insertionSort2(T[] arr) {
 	    
 		for (int i = 1, len = arr.length; i < len; i++) {
 			T key = arr[i];
@@ -69,14 +65,14 @@ public class InsertionSort {
         //1.原始版本
         long start = System.nanoTime();
         insertionSort(arr);
-        System.out.println(System.nanoTime() - start);
         Sorts.printArray(arr);
+        System.out.println(System.nanoTime() - start);
 		
 		//改进后算法
 		arr = new Integer[] {3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48};
 		start = System.nanoTime();
 		insertionSort2(arr);
-		System.out.println(System.nanoTime() - start);
 		Sorts.printArray(arr);
+		System.out.println(System.nanoTime() - start);
 	}
 }

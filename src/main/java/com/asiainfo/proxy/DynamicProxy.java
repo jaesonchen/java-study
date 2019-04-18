@@ -18,15 +18,9 @@ package com.asiainfo.proxy;
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class DynamicProxy {
-
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
+    
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 	}
-
 }

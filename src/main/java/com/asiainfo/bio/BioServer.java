@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.asiainfo.util.ThreadPoolUtils;
 
 /**
- * @Description: TODO
+ * @Description: bio 的典型应用，一个线程处理一个socket，高并发时需要的线程资源可能超过系统的负载
  * 
  * @author       zq
  * @date         2017年8月6日  上午10:51:04

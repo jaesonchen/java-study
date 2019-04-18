@@ -15,7 +15,6 @@ public class BusinessProxy implements Business {
 	private void doBefore() {
 		System.out.println("before service");
 	}
-	
 	private void doAfter() {
 		System.out.println("after service");
 	}
@@ -37,7 +36,6 @@ public class BusinessProxy implements Business {
 	}
 	
 	public static void main(String[] args) {
-		
 		BusinessProxy proxy = new BusinessProxy(new BusinessImpl());
 		proxy.service();	
 	}

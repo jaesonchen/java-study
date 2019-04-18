@@ -3,6 +3,8 @@ package com.asiainfo.algorithm;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.asiainfo.datastructure.ArrayList;
 import com.asiainfo.datastructure.HashSet;
@@ -10,8 +12,26 @@ import com.asiainfo.datastructure.List;
 import com.asiainfo.datastructure.Set;
 
 /**
- * 协同推荐slopeone算法
- * rb = (n * (ra - R(A->B)) + m * (rc + R(B->C)))/(m+n)
+ * 基于内容的推荐引擎：它将计算得到并推荐给用户一些与该用户已选择过的项目相似的内容。
+ * 例如，当你在网上购书时，你总是购买与历史相关的书籍，那么基于内容的推荐引擎就会给你推荐一些热门的历史方面的书籍。
+ * 
+ * 基于协同过滤的推荐引擎：它将推荐给用户一些与该用户品味相似的其他用户喜欢的内容。
+ * 例如，当你在网上买衣服时，基于协同过滤的推荐引擎会根据你的历史购买记录或是浏览记录，分析出你的穿衣品位，
+ * 并找到与你品味相似的一些用户，将他们浏览和购买的衣服推荐给你。
+ * 
+ * 协同过滤推荐算法slopeone (Item-based)
+ * 协同过滤推荐（Collaborative Filtering recommendation）是在信息过滤和信息系统中正迅速成为一项很受欢迎的技术。
+ * 与传统的基于内容过滤直接分析内容进行推荐不同，协同过滤分析用户兴趣，在用户群中找到指定用户的相似（兴趣）用户，
+ * 综合这些相似用户对某一信息的评价，形成系统对该指定用户对此信息的喜好程度预测。
+ * 
+ * R(C) = (n * (R(A) - R(AC)) + m * (R(B) - R(BC))) / (m + n)
+ * R(A)   当前用户对A的评分。
+ * R(AC)  其他用户对A、C的评分差值平均值。
+ * m/n    算评分差值平均值时的评分用户数。
+ * 
+ * Step1:计算物品之间的评分差的均值，记为物品间的评分偏差。
+ * Step2:根据物品间的评分偏差和用户的历史评分，预测用户对未评分的物品的评分。
+ * Step3:将预测评分排序，取topN对应的物品推荐给用户。
  * 
  * @author       zq
  * @date         2018年1月3日  下午5:02:33
@@ -20,33 +40,33 @@ import com.asiainfo.datastructure.Set;
 public class SlopeOne {
 
     public static void main(String[] args) throws Exception {
-        
-        List<Rating> ratings = generateRating();
-        
+        Map<String, Set<Rating>> ratings = generateRating();
         System.out.println(recommend("user1", 10006, ratings));
         System.out.println(recommend("user999", 10001, ratings));
     }
     
     /**
-     * 评分数据
+     * 读取评分数据
      * 
      * @return
      * @throws Exception 
      */
-    protected static List<Rating> generateRating() throws Exception {
+    protected static Map<String, Set<Rating>> generateRating() throws Exception {
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/main/java/com/asiainfo/algorithm/slopeone.data")));
-        List<Rating> list = new ArrayList<>();
+        Map<String, Set<Rating>> map = new HashMap<>();
         String line = null;
         while ((line = reader.readLine()) != null) {
             String[] fields = line.split("\\s+");
             Rating rating = new Rating(fields[0], Long.parseLong(fields[1]), Double.parseDouble(fields[2]));
-            if (!list.contains(rating)) {
-                list.add(rating);
+            if (null == map.get(fields[0])) {
+                map.put(fields[0], new HashSet<>());
             }
+            Set<Rating> set = map.get(fields[0]);
+            set.add(rating);
         }
         reader.close();
-        return list;
+        return map;
     }
 
     /**
@@ -57,15 +77,19 @@ public class SlopeOne {
      * @param data
      * @return
      */
-    public static double recommend(String userId, long item, List<Rating> data) {
-        
-        Set<Rating> userRatings = userRating(userId, data);
-        Set<Diff> allDiff = allDiff(data);
+    public static double recommend(String userId, long item, Map<String, Set<Rating>> data) {
+
+        // 所有用户、所有item的评分差值（同一个用户对不同item的评分差值）
+        Map<Long, Set<Diff>> diffMap = allDiff(data);
+        // 用户的所有评分
+        Set<Rating> userRatings = data.get(userId);
+        // 用户可以参与评分的所有item
         Set<Long> allItem = allItem(userRatings);
         List<AverageDiff> averageList = new ArrayList<>();
         for (Long origin : allItem) {
             if (origin.longValue() != item) {
-                AverageDiff averageDiff = averageDiff(origin, item, allDiff);
+                // 其他用户对origin与item评分的平均差值
+                AverageDiff averageDiff = averageDiff(origin, item, diffMap.get(origin));
                 if (null != averageDiff) {
                     averageList.add(averageDiff);
                 }
@@ -75,13 +99,14 @@ public class SlopeOne {
         long count = 0L;
         for (AverageDiff average : averageList) {
             System.out.println(average);
+            // 用户对origin的评分
             Rating userRating = userItemRating(userId, average.origin, userRatings);
             if (null != userRating) {
                 count += average.count;
+                // (用户对origin的评分 - 其他用户origin与item评分差值平均值) * 其他用户评价数
                 total += (userRating.rating - average.average) * average.count;
             }
         }
-
         return 0 == count ? 0 : total / count;
     }
     
@@ -98,7 +123,7 @@ public class SlopeOne {
         double total = 0.0;
         long count = 0L;
         for (Diff diff : set) {
-            if (origin == diff.origin && target == diff.target) {
+            if (target == diff.target) {
                 count++;
                 total += diff.diff;
             }
@@ -107,24 +132,28 @@ public class SlopeOne {
     }
     
     /**
-     * 所有评分差值
+     * 所有评分差值，
      * 
-     * @param list
+     * @param data
      * @return
      */
-    protected static Set<Diff> allDiff(List<Rating> list) {
+    protected static Map<Long, Set<Diff>> allDiff(Map<String, Set<Rating>> data) {
         
-        Set<Diff> result = new HashSet<>();
-        Set<String> allUser = allUser(list);
-        for (String userId : allUser) {
-            Set<Rating> userRatings = userRating(userId, list);
-            result.addAll(calculate(userRatings));
+        Map<Long, Set<Diff>> map = new HashMap<>();
+        for (Map.Entry<String, Set<Rating>> entry : data.entrySet()) {
+            Set<Diff> set = calculate(entry.getValue());
+            for (Diff diff : set) {
+                if (map.get(diff.origin) == null) {
+                    map.put(diff.origin, new HashSet<>());
+                }
+                map.get(diff.origin).add(diff);
+            }
         }
-        return result;
+        return map;
     }
     
     /**
-     * 计算用户的评分差值
+     * 用户的评分差值
      * 
      * @param set
      * @return
@@ -139,7 +168,7 @@ public class SlopeOne {
     }
     
     /**
-     * 计算单用户的评分差值
+     * 计算用户的评分差值，一个item评分 与 其他item的评分差值
      * 
      * @param target
      * @param set
@@ -172,7 +201,7 @@ public class SlopeOne {
     }
     
     /**
-     * user可以参考的所有item
+     * 用户可以参考的所有item
      * 
      * @param userRatings
      * @return
@@ -307,8 +336,7 @@ public class SlopeOne {
                 return false;
             }
             Diff other = (Diff) obj;
-            return origin == other.origin && target == other.target 
-                    && (userId == null && other.userId == null || userId != null && userId.equals(other.userId));
+            return origin == other.origin && target == other.target && userId.equals(other.userId);
         }
     }
     
@@ -344,8 +372,7 @@ public class SlopeOne {
                 return false;
             }
             Rating other = (Rating) obj;
-            return item == other.item && (userId == null && other.userId == null || 
-                    userId != null && userId.equals(other.userId));
+            return item == other.item && userId.equals(other.userId);
         }
         @Override
         public String toString() {

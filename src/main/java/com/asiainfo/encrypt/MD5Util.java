@@ -4,7 +4,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * TODO
+ * MD5消息摘要算法，属Hash算法一类。MD5算法对输入任意长度的消息进行运行，产生一个128位的消息摘要。
+ * 通常用于文件校验
  * 
  * @author       zq
  * @date         2017年11月15日  下午3:39:01

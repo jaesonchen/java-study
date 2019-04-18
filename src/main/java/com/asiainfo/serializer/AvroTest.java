@@ -121,7 +121,7 @@ public class AvroTest {
         dataFileWriter.close();
         
         // Deserialize users from disk
-        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
+        DatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>();
         DataFileReader<GenericRecord> dataFileReader = new DataFileReader<GenericRecord>(file, datumReader);
         GenericRecord user = null;
         while (dataFileReader.hasNext()) {

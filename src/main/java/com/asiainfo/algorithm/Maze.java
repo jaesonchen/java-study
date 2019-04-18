@@ -15,7 +15,7 @@ public class Maze {
 	
 	public static void mazeExit(char[][] maze, int sx, int sy, int ex, int ey) {
 	    
-		Cell[][] cells = createMaze(maze); //创建化迷宫
+		Cell[][] cells = createMaze(maze); //初始化迷宫
 		printMaze(cells); //打印迷宫
 		Stack<Cell> s = new ArrayStack<>(); //构造堆栈
 		Cell startCell = cells[sx][sy]; //起点
@@ -90,6 +90,7 @@ public class Maze {
 		}
 		return cells;
 	}
+	
 	public static void main(String[] args) {
 		char[][] maze = {
 				{'1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},

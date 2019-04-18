@@ -3,7 +3,6 @@ package com.asiainfo.encrypt.test;
 import com.asiainfo.encrypt.Base64Util;
 
 /**
- * 
  * TODO
  * 
  * @author       zq

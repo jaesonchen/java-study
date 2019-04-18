@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Composite组合模式，将对象以树形结构组织起来,以达成“部分－整体” 的层次结构，使得客户端对单个对象和组合对象的使用具有一致性。
+ * 典型应用：部门树形结构。
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:31:11
@@ -13,11 +14,6 @@ import java.util.List;
  */
 public class Composite {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
         IComponent root = new Folder("root");
@@ -46,8 +42,8 @@ public class Composite {
         System.out.print(root);
     }
     
+    // 组件接口
     interface IComponent {
-        
         public void operate();
         public void add(IComponent component);
         public void remove(IComponent component);
@@ -56,7 +52,7 @@ public class Composite {
         public int getDepth();
     }
     
-    //整体
+    // 整体组件实现
     static class Folder implements IComponent {
         
         private String name;
@@ -86,11 +82,9 @@ public class Composite {
             return childs.iterator();
         }
         @Override public String toString() {
-            
             StringBuilder sb = new StringBuilder();
             sb.append("|-").append(this.name);
-            for (Iterator<IComponent> it = this.iterator(); it.hasNext(); ) {
-                IComponent cp = it.next();
+            for (IComponent cp : childs) {
                 sb.append("\n");
                 for(int i = 0; i < cp.getDepth(); i++) {
                     sb.append("  ");
@@ -101,7 +95,7 @@ public class Composite {
         }
     }
     
-    //部分
+    // 部分组件实现
     static class Leaf implements IComponent {
 
         private String name;

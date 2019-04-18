@@ -116,7 +116,7 @@ public class CopyOnWriteHashMap<K, V> implements Cloneable, Map<K, V> {
     public Object clone() {
         try {
         	@SuppressWarnings("unchecked")
-			CopyOnWriteHashMap<K, V> c = (CopyOnWriteHashMap<K, V>)(super.clone());
+			CopyOnWriteHashMap<K, V> c = (CopyOnWriteHashMap<K, V>) super.clone();
             return c;
         } catch (CloneNotSupportedException e) {
             // this shouldn't happen, since we are Cloneable

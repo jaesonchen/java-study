@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @Description: TODO
+ * @Description: 忽略key大小写的Map
  * 
  * @author       zq
  * @date         2017年3月31日  下午5:52:10

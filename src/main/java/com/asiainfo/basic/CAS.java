@@ -5,7 +5,15 @@ import java.lang.reflect.Field;
 import sun.misc.Unsafe;
 
 /**
- * @Description: TODO
+ * @Description: cas 原理
+ * 
+ *  CAS是一些CPU直接支持的指令，在Java中无锁操作CAS基于以下3个方法实现:
+ *      第一个参数o为给定对象，offset为对象内存的偏移量，通过这个偏移量迅速定位字段并设置或获取该字段的值，
+ *      expected表示期望值，x表示要设置的值，下面3个方法都通过CAS原子指令执行操作。
+ *      
+ *      public final native boolean compareAndSwapObject(Object o, long offset, Object expected, Object x);
+ *      public final native boolean compareAndSwapInt(Object o, long offset, int expected, int x);
+ *      public final native boolean compareAndSwapLong(Object o, long offset, long expected, long x);
  * 
  * @author       zq
  * @date         2017年9月18日  下午3:00:46
@@ -14,20 +22,13 @@ import sun.misc.Unsafe;
 @SuppressWarnings("restriction")
 public class CAS {
 	
-	Unsafe unsafe;
+    Unsafe unsafe;
 	public CAS() throws Exception {
 
 		Field field = Unsafe.class.getDeclaredField("theUnsafe");
 		field.setAccessible(true);
 		this.unsafe = (Unsafe) field.get(null);
 	}
-
-	//CAS是一些CPU直接支持的指令，在Java中无锁操作CAS基于以下3个方法实现
-	//第一个参数o为给定对象，offset为对象内存的偏移量，通过这个偏移量迅速定位字段并设置或获取该字段的值，
-	//expected表示期望值，x表示要设置的值，下面3个方法都通过CAS原子指令执行操作。
-	//public final native boolean compareAndSwapObject(Object o, long offset, Object expected, Object x);
-	//public final native boolean compareAndSwapInt(Object o, long offset, int expected, int x);
-	//public final native boolean compareAndSwapLong(Object o, long offset, long expected, long x);
 	
 	//1.8新增，给定对象o，根据获取内存偏移量指向的字段，将其增加delta，
 	//这是一个CAS操作过程，直到设置成功方能退出循环，返回旧值

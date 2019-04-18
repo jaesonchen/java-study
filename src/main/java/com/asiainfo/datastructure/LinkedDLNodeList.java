@@ -3,7 +3,7 @@ package com.asiainfo.datastructure;
 import java.util.NoSuchElementException;
 
 /**
- * TODO
+ * 双向链表 list实现
  * 
  * @author       zq
  * @date         2017年12月25日  下午3:29:07
@@ -19,7 +19,7 @@ public class LinkedDLNodeList<E> implements List<E> {
         head = new DLNode<E>();
         tail = new DLNode<E>();
         head.setNext(tail);
-        tail.setPre(head);
+        tail.setPrev(head);
     }
     
     /* 
@@ -85,10 +85,10 @@ public class LinkedDLNodeList<E> implements List<E> {
 
         DLNode<E> node = new DLNode<E>(element);
         DLNode<E> current = node(index);
-        current.getPre().setNext(node);
-        node.setPre(current.getPre());
+        current.getPrev().setNext(node);
+        node.setPrev(current.getPrev());
         node.setNext(current);
-        current.setPre(node);
+        current.setPrev(node);
         size++;
     }
 
@@ -102,10 +102,10 @@ public class LinkedDLNodeList<E> implements List<E> {
     public boolean add(E element) {
 
         DLNode<E> node = new DLNode<E>(element);
-        tail.getPre().setNext(node);
-        node.setPre(tail.getPre());
+        tail.getPrev().setNext(node);
+        node.setPrev(tail.getPrev());
         node.setNext(tail);
-        tail.setPre(node);
+        tail.setPrev(node);
         size++;
         return true;
     }
@@ -146,8 +146,8 @@ public class LinkedDLNodeList<E> implements List<E> {
     public E remove(int index) {
 
         DLNode<E> node = node(index);
-        node.getPre().setNext(node.getNext());
-        node.getNext().setPre(node.getPre());
+        node.getPrev().setNext(node.getNext());
+        node.getNext().setPrev(node.getPrev());
         size--;
         return node.getData();
     }
@@ -180,12 +180,12 @@ public class LinkedDLNodeList<E> implements List<E> {
         while (tail != node) {
             DLNode<E> next = node.getNext();
             node.setNext(null);
-            node.setPre(null);
+            node.setPrev(null);
             node.setData(null);
             node = next;
         }
         head.setNext(tail);
-        tail.setPre(head);
+        tail.setPrev(head);
         size = 0;
     }
 
@@ -230,7 +230,7 @@ public class LinkedDLNodeList<E> implements List<E> {
                 if (size == 0) {
                     throw new NoSuchElementException();
                 }
-                return tail.getPre().getData();
+                return tail.getPrev().getData();
             }
         };
     }
@@ -267,9 +267,9 @@ public class LinkedDLNodeList<E> implements List<E> {
             }
         // from tail
         } else {
-            node = tail.getPre();
+            node = tail.getPrev();
             for (int i = 0; i < (size - index - 1); i++) {
-                node = node.getPre();
+                node = node.getPrev();
             }
         }
         return node;

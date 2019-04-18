@@ -3,7 +3,7 @@ package com.asiainfo.jdbc.converter;
 import java.text.SimpleDateFormat;
 
 /**
- * @Description: TODO
+ * @Description: Date转字符串，用于setter上
  * 
  * @author       zq
  * @date         2017年6月25日  上午11:51:18

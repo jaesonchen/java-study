@@ -32,6 +32,7 @@ public class testRSA {
 		System.out.println("RSA 加密>>>>====" + BytesToHex.bytesToHex(rsaResult));
 		
 		byte[] plainResult = RSAUtil.decrypt(rsaResult, rsaPrivateKey);
+		System.out.println("RSA 解密>>>>====" + new String(plainResult));
 		System.out.println("RSA 解密>>>>====" + BytesToHex.bytesToHex(plainResult));
 	}
 }

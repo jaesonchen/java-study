@@ -9,12 +9,6 @@ package com.asiainfo.nio;
  */
 public class ServerSocketConfigure {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws IOException 
-	 */
 	public static void main(String[] args) {
 		
 		//绑定端口 BindException

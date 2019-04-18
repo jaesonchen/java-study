@@ -2,7 +2,6 @@ package com.asiainfo.compiler.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
@@ -47,20 +46,20 @@ public class JavaStringCompilerTest {
 		assertEquals(1, results.size());
 		assertTrue(results.containsKey("com.asiainfo.compiler.test.UserProxy"));
 		Class<?> clazz = compiler.loadClass("com.asiainfo.compiler.test.UserProxy", results);
-		// get method:
+		// get method
 		Method setId = clazz.getMethod("setId", String.class);
 		Method setName = clazz.getMethod("setName", String.class);
 		Method setCreated = clazz.getMethod("setCreated", long.class);
-		// try instance:
+		// try instance
 		Object obj = clazz.newInstance();
-		// get as proxy:
+		// get as proxy
 		BeanProxy proxy = (BeanProxy) obj;
 		assertFalse(proxy.isDirty());
-		// set:
+		// set
 		setId.invoke(obj, "A-123");
 		setName.invoke(obj, "Fly");
 		setCreated.invoke(obj, 123000999);
-		// get as user:
+		// get as user
 		User user = (User) obj;
 		assertEquals("A-123", user.getId());
 		assertEquals("Fly", user.getName());
@@ -69,6 +68,9 @@ public class JavaStringCompilerTest {
 		System.out.println(user);
 	}
 
+	/**
+	 * @Fields MULTIPLE_JAVA : TODO
+	 */
 	static final String MULTIPLE_JAVA = "/* a single class to many files */   "
 			+ "package com.asiainfo.compiler.test;                            "
 			+ "import java.util.*;                                            "
@@ -94,6 +96,9 @@ public class JavaStringCompilerTest {
 			+ "/* package level */                                            "
 			+ "class Bird {                                                   "
 			+ "    String name = null;                                        "
+			+ "    public String toString() {                                 "
+			+ "        return \"name=\" + name;                               "
+			+ "    }                                                          "
 			+ "}                                                              ";
 
 	public void testCompileMultipleClasses() throws Exception {
@@ -104,10 +109,15 @@ public class JavaStringCompilerTest {
 		assertTrue(results.containsKey("com.asiainfo.compiler.test.Multiple$StaticBird"));
 		assertTrue(results.containsKey("com.asiainfo.compiler.test.Multiple$NestedBird"));
 		assertTrue(results.containsKey("com.asiainfo.compiler.test.Bird"));
-		Class<?> clzMul = compiler.loadClass("com.asiainfo.compiler.test.Multiple", results);
-		// try instance:
-		Object obj = clzMul.newInstance();
-		assertNotNull(obj);
+		Class<?> clz = compiler.loadClass("com.asiainfo.compiler.test.Multiple", results);
+		// try instance
+		Object multi = clz.newInstance();
+		Method add = clz.getMethod("add", String.class);
+		add.invoke(multi, "wuya");
+		
+		Method get = clz.getMethod("getFirstBird", (Class<?>[]) null);
+		Object bird = get.invoke(multi, new Object[0]);
+		System.out.println(bird.getClass() + ", " + bird);
 	}
 	
 	public static void main(String[] args) throws Exception {

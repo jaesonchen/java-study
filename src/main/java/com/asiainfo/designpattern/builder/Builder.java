@@ -14,15 +14,17 @@ import java.io.Serializable;
  */
 public class Builder {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
         
-        User user = new User.UserBuilder("1001").firstName("chen").lastName("zq").address("bj")
-                .sex(1).age(20).zipcode(10010).status(0).build();
+        User user = new User.UserBuilder("1001")
+                .firstName("chen")
+                .lastName("zq")
+                .address("bj")
+                .sex(1)
+                .age(20)
+                .zipcode(10010)
+                .status(0)
+                .build();
         System.out.println(user);
     }
 
@@ -72,6 +74,9 @@ public class Builder {
                 this.userId = userId;
             }
             
+            public User build() {
+                return new User(this);
+            }
             public UserBuilder userId(String userId) {
                 this.userId = userId;
                 return this;
@@ -103,9 +108,6 @@ public class Builder {
             public UserBuilder status(int status) {
                 this.status = status;
                 return this;
-            }
-            public User build() {
-                return new User(this);
             }
         }
         public String getUserId() {

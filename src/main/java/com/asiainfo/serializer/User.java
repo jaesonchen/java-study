@@ -343,7 +343,6 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public User build() {
       try {
         User record = new User();

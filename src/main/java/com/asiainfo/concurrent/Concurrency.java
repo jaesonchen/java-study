@@ -6,7 +6,7 @@ import com.asiainfo.util.ThreadPoolUtils;
  * 
  * 同步访问共享的可变数据：当多个线程共享可变数据的时候，每个读或者写数据的线程都必须进行同步。
  * 
- * 		关键字synchronized可以保证在同一时刻，只有一个线程可以执行对象的某个方法或者代码库。
+ * 		关键字synchronized可以保证在同一时刻，只有一个线程可以执行对象的某个方法或者代码块。
  * 		正确地使用同步可以保证没有任何方法会看到对象处于不一致的状态中。
  * 		java规范保证读或者写一个变量是原子性(atomic)，除非这个变量是long或者double。
  * 		java规范保证线程在读取原子数据的时候，不会看到任意的数值，但是它并不保证一个线程写入的值对于另一个线程将是可见的。
@@ -63,7 +63,7 @@ public class Concurrency {
 	private static class FieldHolder {
 		static final FieldType INSTANCE = new FieldType();
 	}
-	//不需要使用synchronized同步
+	//不需要使用synchronized同步，由虚拟机保证初始化的同步
 	static FieldType getField() { return FieldHolder.INSTANCE; }
 	
 	public static void main(String[] args) throws InterruptedException {

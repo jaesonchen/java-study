@@ -1,13 +1,13 @@
 package com.asiainfo.designpattern.structure;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  * 通过对象组合的方式，Bridge模式把两个角色之间的继承关系改为了耦合的关系，从而使这两者可以从容自若的各自独立的变化，这也是Bridge模式的本意。
  * bridge是在设计之初的模式，adapter是针对已有系统的代码。
- * jdbc api使用bridge模式。
+ * jdbc api使用bridge模式，将jdbc转换为odbc再调用native方法。
  * 
  * Facade模式注重简化接口，Adapter模式注重转换接口，Bridge模式注重分离接口（抽象）与其实现，Decorator模式注重稳定接口的前提下为对象扩展功能。
  * 
@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *      @Override
  *      public void operation() {
  *          //do someting 
- *          super.operation();
+ *          super.implementor.operationImpl();
  *          //do other thing
  *      }
  * }
@@ -54,103 +54,129 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Bridge {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Bridge.class);
+    
     public static void main(String[] args) {
 
-        DriverManager.registerDriver(new MySqlDriver());
-        IConnection mysql = DriverManager.getConnection();
-        mysql.query("select * from table");
-        
-        DriverManager.registerDriver(new OracleDriver());
-        IConnection oracle = DriverManager.getConnection(DIALECT.ORACLE);
-        oracle.query("insert into table");
-        
-        IConnection db2 = DriverManager.getConnection(DIALECT.DB2);
-        db2.query("update table");
-    }
+        LOGGER.info("The knight receives an enchanted sword.");
+        Sword enchantedSword = new Sword(new SoulEatingEnchantment());
+        enchantedSword.wield();
+        enchantedSword.swing();
+        enchantedSword.unwield();
 
-    enum DIALECT {
-        MYSQL, ORACLE, DB2;
-    }
-    interface IDriver {
-        public DIALECT getDialect();
-        public IConnection getConnection();
-    }
-    interface IConnection {
-        public void query(String sql);
+        LOGGER.info("The valkyrie receives an enchanted hammer.");
+        Hammer hammer = new Hammer(new FlyingEnchantment());
+        hammer.wield();
+        hammer.swing();
+        hammer.unwield();
     }
     
-    //驱动管理
-    static class DriverManager {
-        
-        private static final DIALECT DEFAULT_DIALECT = DIALECT.MYSQL;
-        private static Map<DIALECT, IDriver> drivers = new ConcurrentHashMap<DIALECT, IDriver>();
-
-        private DriverManager() {}
-        public static void registerDriver(IDriver driver) {
-            drivers.put(driver.getDialect(), driver);
-        }
-        
-        public static IConnection getConnection() {
-            return getConnection(DEFAULT_DIALECT); 
-        }
-        
-        public static IConnection getConnection(DIALECT dialect) {
-            
-            IDriver driver = drivers.get(dialect);
-            if (driver == null) {
-                throw new IllegalArgumentException("no driver register with " + dialect);
-            }
-            return driver.getConnection();
-        }
+    // 主体对象
+    interface Weapon {
+        void wield();
+        void swing();
+        void unwield();
+        Enchantment getEnchantment();
+    }
+    // 桥接对象
+    interface Enchantment {
+        void onActivate();
+        void apply();
+        void onDeactivate();
     }
     
-    //mysql驱动程序实现
-    static class MySqlDriver implements IDriver {
-        
-        @Override public IConnection getConnection() {
-            return new IConnection() {
-                @Override public void query(String sql) {
-                    System.out.println("MySql query ('" + sql + "') is executing......");
-                }
-            };
-        }
-        @Override public DIALECT getDialect() {
-            return DIALECT.MYSQL;
-        }
-    }
-    
-    //oracle驱动程序实现
-    static class OracleDriver implements IDriver {
-        
-        @Override public IConnection getConnection() {
-            return new IConnection() {
-                @Override public void query(String sql) {
-                    System.out.println("Oracle query ('" + sql + "') is executing......");
-                }
-            };
-        }
-        @Override public DIALECT getDialect() {
-            return DIALECT.ORACLE;
-        }
-    }
+    // 具体实现：组合代替继承
+    static class Sword implements Weapon {
 
-    //db2驱动程序实现
-    static class DB2Driver implements IDriver {
+        final Logger logger = LoggerFactory.getLogger(getClass());
         
-        @Override public IConnection getConnection() {
-            return new IConnection() {
-                @Override public void query(String sql) {
-                    System.out.println("DB2 query ('" + sql + "') is executing......");
-                }
-            };
+        private Enchantment enchantment;
+        public Sword(Enchantment enchantment) {
+          this.enchantment = enchantment;
         }
-        @Override public DIALECT getDialect() {
-            return DIALECT.DB2;
+        
+        @Override
+        public void wield() {
+            logger.info("The sword is wielded.");
+            enchantment.onActivate();
+        }
+        @Override
+        public void swing() {
+            logger.info("The sword is swinged.");
+            enchantment.apply();
+        }
+        @Override
+        public void unwield() {
+            logger.info("The sword is unwielded.");
+            enchantment.onDeactivate();
+        }
+        @Override
+        public Enchantment getEnchantment() {
+            return enchantment;
+        }
+    }
+    // 具体实现：组合代替继承
+    static class Hammer implements Weapon {
+
+        final Logger logger = LoggerFactory.getLogger(getClass());
+        private Enchantment enchantment;
+        public Hammer(Enchantment enchantment) {
+          this.enchantment = enchantment;
+        }
+        @Override
+        public void wield() {
+            logger.info("The hammer is wielded.");
+            enchantment.onActivate();
+        }
+        @Override
+        public void swing() {
+            logger.info("The hammer is swinged.");
+            enchantment.apply();
+        }
+        @Override
+        public void unwield() {
+            logger.info("The hammer is unwielded.");
+            enchantment.onDeactivate();
+        }
+        @Override
+        public Enchantment getEnchantment() {
+            return enchantment;
+        }
+    }
+    // 桥接对象
+    static class SoulEatingEnchantment implements Enchantment {
+
+        final Logger logger = LoggerFactory.getLogger(getClass());
+        
+        @Override
+        public void onActivate() {
+            logger.info("开始杀戮.");
+        }
+        @Override
+        public void apply() {
+            logger.info("这个魔法吞噬敌人的灵魂.");
+        }
+        @Override
+        public void onDeactivate() {
+            logger.info("嗜血慢慢消失.");
+        }
+    }
+    // 桥接对象
+    static class FlyingEnchantment implements Enchantment {
+
+        final Logger logger = LoggerFactory.getLogger(getClass());
+        
+        @Override
+        public void onActivate() {
+            logger.info("开始淡淡地发光.");
+        }
+        @Override
+        public void apply() {
+            logger.info("飞到敌人身上，最后回到主人的手上.");
+        }
+        @Override
+        public void onDeactivate() {
+            logger.info("光芒渐渐消失.");
         }
     }
 }

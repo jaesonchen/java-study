@@ -6,13 +6,26 @@ import java.util.concurrent.locks.LockSupport;
 import sun.misc.Unsafe;
 
 /**
- * @Description: TODO
+ * AQS 数据结构：
+ * 
+ * Node:
+ * volatile Node prev, next;
+ * volatile int waitStatus;
+ * volatile Thread thread;
+ * 
+ * AQS:
+ * volatile Node head, tail;
+ * volatile int state;
+ * 
+ *      +------+  prev +------+  next +------+
+ * head | null | <---- | node | ----> | node |  tail
+ *      +------+       +------+       +------+
  * 
  * @author       zq
  * @date         2017年9月22日  下午3:42:00
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings("all")
 public abstract class AbstractQueuedSynchronizer implements Serializable {
 
 	/** serialVersionUID */
@@ -26,6 +39,7 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
 		static final int SIGNAL    = -1;
 		/** waitStatus value to indicate thread is waiting on condition */
 		static final int CONDITION = -2;
+		/** waitStatus value to indicate the next acquireShared should unconditionally propagate */
 		static final int PROPAGATE = -3;
 	        
 		volatile int waitStatus;
@@ -132,6 +146,9 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
     }
     
+    /**
+     * 节点入队，非阻塞往tail插入节点
+     */
     protected Node enq(final Node node) {
     	
         for (;;) {
@@ -151,6 +168,9 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         }
     }
     
+    /**
+     * 增加同步等待节点
+     */
     protected Node addWaiter() {
     	
         Node node = new Node(Thread.currentThread());
@@ -173,6 +193,10 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         node.prev = null;
     }
     
+    /**
+     * 尝试获得状态锁，失败则加入等待节点，加入等待队列后再确认一次，如果是第一个节点则再次尝试获取锁，失败则park线程。
+     * 成功获取状态锁后，需要判断在park时是否被中断过，如果中断过则设置当前线程的中断状态
+     */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
             acquireQueued(addWaiter(), arg)) {
@@ -180,6 +204,9 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         }
     }
 
+    /**
+     * 释放状态锁，并唤醒等待队列的下一个非cancel的节点线程
+     */
     public final boolean release(int arg) {
         if (tryRelease(arg)) {
             Node h = head;
@@ -191,6 +218,9 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         return false;
     }
     
+    /**
+     * 查找head节点的下一个非cancel的等待节点，并唤醒该节点的线程，如果next为null或者状态为cancel则从tail往前找
+     */
     protected void unparkSuccessor(Node node) {
     	
         /*
@@ -223,6 +253,9 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         }
     }
     
+    /**
+     * 如果是等待队列的第一个节点，则再次尝试获得锁，否则park当前线程
+     */
     final boolean acquireQueued(final Node node, int arg) {
     	
         boolean failed = true;
@@ -243,17 +276,27 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
                 }
             }
         } finally {
+            // 异常退出时需要清理等待节点。
             if (failed) {
                 cancelAcquire(node);
             }
         }
     }
     
+    /**
+     * park当前线程，返回线程在park期间是否被中断
+     */
     private final boolean parkAndCheckInterrupt() {
         LockSupport.park(this);
         return Thread.interrupted();
     }
     
+    /**
+     * 判断是否需要在失败后park线程
+     * a. 如果前一个节点被标记为signal，则park线程
+     * b. 如果前一个节点被标记为cancel，则循环找到非cancel的节点，返回acquireQueued继续尝试
+     * c. 如果前一个节点被标记为0、PROPAGATE，则更新其状态为signal，返回acquireQueued继续尝试
+     */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
     	
         int ws = pred.waitStatus;
@@ -283,7 +326,7 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         }
         return false;
     }
-    
+
     private void cancelAcquire(Node node) {
     	
         // Ignore if node doesn't exist
@@ -331,10 +374,16 @@ public abstract class AbstractQueuedSynchronizer implements Serializable {
         }
     }
     
+    /**
+     * 尝试获得状态锁，通常是compareAndSwap state状态
+     */
     protected boolean tryAcquire(int arg) {
         throw new UnsupportedOperationException();
     }
     
+    /**
+     * 尝试释放状态锁，通常是重置state状态
+     */
     protected boolean tryRelease(int arg) {
         throw new UnsupportedOperationException();
     }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Description: TODO
+ * @Description: java.lang.reflect.Array 操作数组
  * 
  * @author       zq
  * @date         2017年9月11日  上午10:35:42
@@ -14,43 +14,41 @@ import java.util.Map;
 public class ArrayExample {
 
 	static class Element {}
-	
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws ClassNotFoundException 
-	 */
+
 	public static void main(String[] args) throws ClassNotFoundException {
 		
-		//Array反射
+		// 新建数组
 		int[] intArray = (int[]) Array.newInstance(int.class, 3);
+		// 设置数组值
 		Array.set(intArray, 0, 123);
 		Array.set(intArray, 1, 456);
 		Array.set(intArray, 2, 789);
+		// 获取数组值
 		for (int i = 0; i < intArray.length; i++) {
 			System.out.println("intArray[" + i + "] = " + Array.get(intArray, i));
 		}
-		Element[] eleArr = new Element[2];
-		System.out.println(eleArr.length);
-		Element[][] arr = (Element[][]) Array.newInstance(eleArr.getClass(), 5);
+		
+		Element[] eleArray = new Element[2];
+		System.out.println(eleArray.length);
+		Element[][] arr = (Element[][]) Array.newInstance(eleArray.getClass(), 5);
 		System.out.println(arr.length);
 
 		//原生数组class
-		@SuppressWarnings("unused")
-		Class<?> intArrayClass = Class.forName("[I");
-		//对象数组clazz
-		Class<?> stringArrayClass = String[].class;
-		stringArrayClass = Class.forName("[Ljava.lang.String;");
+		System.out.println(int[].class.equals(Class.forName("[I")));
+		
+		//对象数组class
+		System.out.println(String[].class.equals(Class.forName("[Ljava.lang.String;")));
+
 		//数组元素类型
-		Class<?> stringArrayComponentType = stringArrayClass.getComponentType();
+		Class<?> stringArrayComponentType = String[].class.getComponentType();
 		System.out.println(stringArrayComponentType);
 	}
 	
+	// 加载class
 	public Class<?> getClass(String className) throws ClassNotFoundException {
 
 		if ("int" .equals(className)) {
-			return int .class;
+			return int.class;
 		}
 		if ("long".equals(className)) {
 			return long.class;
@@ -58,21 +56,16 @@ public class ArrayExample {
 		return Class.forName(className);
 	}
 	
-	/**
-	 * 
-	 * @param anArray
-	 * @return
-	 */
-	static Map<Object, Integer> countDuplicates(Object anArray) {
+	// 操作数组
+	public Map<Object, Integer> countDuplicates(Object array) {
 		
-	    if (!anArray.getClass().isArray()) {
-	        throw new IllegalArgumentException("anArray is not an array");
+	    if (!array.getClass().isArray()) {
+	        throw new IllegalArgumentException("array is not an array");
 	    }
-
-	    int length = Array.getLength(anArray);
+	    int length = Array.getLength(array);
 	    Map<Object, Integer> map = new HashMap<Object, Integer>(length);
 	    for (int i = 0; i < length; i++) {
-	        Object dup = Array.get(anArray, i);         
+	        Object dup = Array.get(array, i);         
 	        Integer count = map.get(dup);
 	        map.put(dup, count == null ? 1 : count + 1);
 	    }

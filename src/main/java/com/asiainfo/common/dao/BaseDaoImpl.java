@@ -25,7 +25,6 @@ public abstract class BaseDaoImpl<M extends java.io.Serializable, PK extends jav
 	 */
 	@SuppressWarnings("unchecked")
 	public BaseDaoImpl() {
-		
 		ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();  
 		this.entityClass = (Class<M>) type.getActualTypeArguments()[0];
 	}  
@@ -42,7 +41,6 @@ public abstract class BaseDaoImpl<M extends java.io.Serializable, PK extends jav
 	@SuppressWarnings("unchecked")
 	@Override
 	public M findById(PK id) {
-		
 		return (M) this.currentSession().get(entityClass, id);
 	}
 
@@ -52,43 +50,35 @@ public abstract class BaseDaoImpl<M extends java.io.Serializable, PK extends jav
 		
 		Query query = this.currentSession().createQuery(hql);  
 		for (int i = 0; params != null && i < params.length; i++) { 
-			
 			query.setParameter(i, params[i]);
 		}
-
 		return query.list();  
 	}
 
 	@Override
 	public void update(M entity) {
-		
 		this.currentSession().update(entity);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public PK save(M entity) {
-		
 		PK id = (PK) this.currentSession().save(entity);
 		return id;
 	}
 
 	@Override
-	public void saveOrUpdate(M entity) {
-		
+	public void saveOrUpdate(M entity) {		
 		this.currentSession().saveOrUpdate(entity);
 	}
 
 	@Override
-	public void delete(M entity) {
-		
+	public void delete(M entity) {		
 		this.currentSession().delete(entity);
 	}
 	
 	@Override
 	public void deleteById(PK id) {
-		
 		this.currentSession().delete(this.findById(id));
 	}
-
 }

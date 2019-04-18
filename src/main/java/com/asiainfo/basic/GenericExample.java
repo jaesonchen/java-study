@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * @Description: TODO
+ * @Description: java 泛型 示例
  * 
  * @author       zq
  * @date         2017年9月16日  下午6:33:07
@@ -35,19 +35,22 @@ public class GenericExample {
 
 		Class<GenericExample> clazz = GenericExample.class;
 		
-		//方法返回值泛型参数实际类型
 		Method method = clazz.getMethod("getList", (Class<?>[]) null);
+		// getGenericReturnType 方法返回值泛型类型
 		Type returnType = method.getGenericReturnType();
+		// ParameterizedType 泛型参数化类型
 		if (returnType instanceof ParameterizedType) {
 			ParameterizedType type = (ParameterizedType) returnType;
+			// getActualTypeArguments 返回实际参数类型
 			Type[] typeArguments = type.getActualTypeArguments();
 			for (Type typeArgument : typeArguments) {
 				Class<?> typeArgClass = (Class<?>) typeArgument;
 				System.out.println("typeArgClass = " + typeArgClass);
 			}
 		}
-		//方法参数的泛型参数实际类型
+		
 		method = clazz.getMethod("setList", List.class);
+		// getGenericParameterTypes 方法参数的泛型类型
 		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		for (Type genericParameterType : genericParameterTypes) {
 			if (genericParameterType instanceof ParameterizedType) {
@@ -59,8 +62,9 @@ public class GenericExample {
 				}
 			}
 		}
-		//field泛型参数时间类型
+		
 		Field field = clazz.getDeclaredField("list");
+		// getGenericType field泛型参数类型
 		Type genericFieldType = field.getGenericType();
 		if (genericFieldType instanceof ParameterizedType) {
 			ParameterizedType aType = (ParameterizedType) genericFieldType;
@@ -71,5 +75,4 @@ public class GenericExample {
 			}
 		}
 	}
-
 }

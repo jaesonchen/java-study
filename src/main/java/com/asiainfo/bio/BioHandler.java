@@ -66,6 +66,7 @@ public class BioHandler implements Runnable {
 		}
 		return result.toByteArray();
 	}
+	
 	//process incoming message
 	protected byte[] process(final byte[] input) throws UnsupportedEncodingException {
 		
@@ -73,6 +74,7 @@ public class BioHandler implements Runnable {
 		StringBuilder response = new StringBuilder("response message: ").append(System.currentTimeMillis());
 		return response.toString().getBytes("utf-8");
 	}
+	
 	//write response after process
 	protected void write(final byte[] output) throws IOException {
 		

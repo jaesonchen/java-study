@@ -1,15 +1,15 @@
 package com.asiainfo.designpattern.builder;
 
 /**
- * Factory Method
+ * Factory Method: 工厂方法模式是简单工厂模式的一种升级和抽象
  * 工厂模式的好处就在于将工厂和产品之间的耦合降低，将具体产品的构造过程放在了具体工厂类里面。
  * 在以后扩展产品的时候方便很多，只需要添加一个工厂类，一个产品类，就能方便的添加产品，而不需要修改原有的代码。
  * 
  * 意图:定义一个用于创建对象的接口，让子类决定实例化哪一个类。Factory Method 使一个类的实例化延迟到其子类。
  * 适用性:
- * 当一个类不知道它所必须创建的对象的类的时候。 
- * 当一个类希望由它的子类来指定它所创建的对象的时候。 
- * 当类将创建对象的职责委托给多个帮助子类中的某一个，并且你希望将哪一个帮助子类是代理者这一信息局部化的时候。
+ *  当一个类不知道它所必须创建的对象的类的时候。 
+ *  当一个类希望由它的子类来指定它所创建的对象的时候。 
+ *  当类将创建对象的职责委托给多个帮助子类中的某一个，并且你希望将哪一个帮助子类是代理者这一信息局部化的时候。
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:33:42
@@ -17,11 +17,6 @@ package com.asiainfo.designpattern.builder;
  */
 public class FactoryMethod {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
         IFactory carFac = new CarFactory();

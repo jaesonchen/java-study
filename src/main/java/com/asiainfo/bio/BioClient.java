@@ -45,15 +45,12 @@ public class BioClient {
 			try {
 				if (out != null) {
 					out.close();
-					out = null;
 				}
 				if (in != null) {
 					in.close();
-					in = null;
 				}
 				if (socket != null) {
 					socket.close();
-					socket = null;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

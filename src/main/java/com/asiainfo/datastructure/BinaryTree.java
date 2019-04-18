@@ -1,9 +1,19 @@
 package com.asiainfo.datastructure;
 
-import java.util.Comparator;
-
 /**
- * 二叉树
+ * 二叉树是每个节点最多有两个子树的树结构。
+ * 
+ * 二叉查找树(Binary Search Tree)，又被称为二叉搜索树。
+ * 它是特殊的二叉树：对于二叉树，假设x为二叉树中的任意一个结点，x节点包含关键字key，节点x的key值记为key[x]。
+ * 如果y是x的左子树中的一个结点，则key[y] <= key[x]；
+ * 如果y是x的右子树的一个结点，则key[y] >= key[x]。
+ * 
+ * 在二叉查找树中：
+ * (1) 若任意节点的左子树不空，则左子树上所有结点的值均小于它的根结点的值；
+ * (2) 任意节点的右子树不空，则右子树上所有结点的值均大于它的根结点的值；
+ * (3) 任意节点的左、右子树也分别为二叉查找树。
+ * (4) 没有键值相等的节点（no duplicate nodes）。
+ * 
  * 
  * @author       zq
  * @date         2017年12月25日  下午4:43:17
@@ -11,26 +21,14 @@ import java.util.Comparator;
  */
 public class BinaryTree<T extends Comparable<T>> {
     
-    private Comparator<T> comparator;
 	private BinaryTreeNode<T> root;
 	
 	public BinaryTree() {
 	    this(null);
 	}
 	public BinaryTree(BinaryTreeNode<T> root) {
-		this(root, null);
+	    this.root = root;
 	}
-	public BinaryTree(BinaryTreeNode<T> root, Comparator<T> comparator) {
-        this.root = root;
-        this.comparator = comparator;
-    }
-	
-	public Comparator<T> getComparator() {
-        return comparator;
-    }
-    public void setComparator(Comparator<T> comparator) {
-        this.comparator = comparator;
-    }
     public BinaryTreeNode<T> getRoot() {
         return root;
     }
@@ -154,7 +152,7 @@ public class BinaryTree<T extends Comparable<T>> {
         while (current != null || !stack.isEmpty()) {
             while (current != null) {
                 stack.push(current);
-                current = null != current.getLeft() ? current.getLeft() : current.getRight();
+                current = (null != current.getLeft()) ? current.getLeft() : current.getRight();
             }
             if (!stack.isEmpty()) {
                 current = stack.pop();
@@ -212,7 +210,7 @@ public class BinaryTree<T extends Comparable<T>> {
 		return searchElement(this.root, element);
 	}
 	/**
-	 * 递归查找元素
+	 * 非递归查找元素
 	 * 
 	 * @param node
 	 * @param element
@@ -220,21 +218,36 @@ public class BinaryTree<T extends Comparable<T>> {
 	 */
 	protected BinaryTreeNode<T> searchElement(BinaryTreeNode<T> node, T element) {
 	    
-		if (null == node) {
-			return null;
-		}
-		if (null == element && null == node.getData() 
-		        || element.equals(node.getData())) {
-		    return node;
-		}
-		BinaryTreeNode<T> result = searchElement(node.getLeft(), element);
-		if (result == null) {
-			result = searchElement(node.getRight(), element);
-		}
-		return result;
+	    BinaryTreeNode<T> current = node;
+	    while (null != current) {
+	        // Comparable
+	        int cmp = compare(element, current.getData());
+	        if (cmp > 0) {
+	            current = current.getRight();
+	        } else if (cmp < 0) {
+	            current = current.getLeft();
+	        } else {
+	            return current;
+	        }
+	    }
+		return null;
+	}
+	
+	/**
+	 * 比较两个元素大小，默认null较小
+	 * 
+	 * @param e1
+	 * @param e2
+	 * @return
+	 */
+	protected int compare(T e1, T e2) {
+	    if (e1 == null) {
+	        return e1 == e2 ? 0 : -1;
+	    }
+	    return e1.compareTo(e2);
 	}
 	/**
-	 * 二叉树查找
+	 * 二叉树查找递归算法
 	 * 
 	 * @param node
 	 * @param element
@@ -246,7 +259,7 @@ public class BinaryTree<T extends Comparable<T>> {
 		if (null == node)  {
 		    return null;
 		}
-		//Comparator && Comparable
+		// Comparable
 		int cmp = compare(element, node.getData());
     	if (cmp > 0) {
     		return binarySearch(node.getRight(), element);
@@ -257,24 +270,18 @@ public class BinaryTree<T extends Comparable<T>> {
     	}
 	}
 	/**
-	 * 节点值比较
-	 * 
-	 * @param element
-	 * @param data
-	 * @return
-	 */
-	protected int compare(T element, T data) {
-	    return null != this.comparator ? comparator.compare(element, data) : element.compareTo(data);
-	}
-	/**
 	 * 在二叉查找树中插入节点
 	 * 
 	 * @param element
 	 * @param allowDup
 	 * @return
 	 */
-	public BinaryTreeNode<T> insert(T element, boolean allowDup) {
+	public BinaryTreeNode<T> insert(T element) {
 	    
+	    if (this.root == null) {
+	        this.root = new BinaryTreeNode<T>(element);
+	        return this.root;
+	    }
 		BinaryTreeNode<T> parent = null;
 		BinaryTreeNode<T> current = this.root;
 		while (current != null) {
@@ -284,18 +291,14 @@ public class BinaryTree<T extends Comparable<T>> {
 				current = current.getLeft();
 			} else if (cmp > 0) {
 			    current = current.getRight();
-			} else if (allowDup) {
-			    current = current.getRight();
 			} else {
 			    current.setData(element);
-			    return null;
+			    return current;
 			}
 		}
 		BinaryTreeNode<T> newNode = new BinaryTreeNode<T>(element);
 		newNode.setParent(parent);
-		if (null == parent) {
-			this.root = newNode;
-		} else if (compare(element, parent.getData()) < 0) {
+		if (compare(element, parent.getData()) < 0) {
 		    parent.setLeft(newNode);
 		} else {
 		    parent.setRight(newNode);
@@ -304,6 +307,9 @@ public class BinaryTree<T extends Comparable<T>> {
 	}
 	/**
 	 * 删除节点
+	 * a. 如果没有左右子节点，则直接删除即可
+	 * b. 如果只有左或者右子节点，直接取子节点替代删除节点位置
+	 * c. 如果有左右子节点，则复制 前趋/后续 节点 替代删除节点位置，再删除 前驱/后续节点，此时的前驱/后续节点无双子或者只有一个子节点
 	 * 
 	 * @param element
 	 * @return
@@ -312,43 +318,62 @@ public class BinaryTree<T extends Comparable<T>> {
 	    
 	    BinaryTreeNode<T> node = find(element);
 	    if (null != node) {
-	        BinaryTreeNode<T> subRoot = removeNode(node);
-	        if (node == root) {
-	            subRoot.setParent(null);
-	            root = subRoot;
-	        } else if (node.isLeft()) {
-	            subRoot.setParent(node.getParent());
-	            node.getParent().setLeft(subRoot);
-	        } else {
-	            subRoot.setParent(node.getParent());
-                node.getParent().setRight(subRoot);
-	        }
+	        removeNode(node);
 	    }
 	    return node;
 	}
+	
 	/**
-	 * 删除节点，返回重排序后的节点树
+	 * 删除节点
 	 * 
 	 * @param node
 	 * @return
 	 */
 	protected BinaryTreeNode<T> removeNode(BinaryTreeNode<T> node) {
 	    
-	    if (null == node.getRight()) {
-	        return node.getLeft();
-	    }
-	    if (null == node.getLeft()) {
-	        return node.getRight();
-	    }
-	    List<BinaryTreeNode<T>> list = new ArrayList<>();
-	    this.midOrderTraverse(node, list);
-	    list.remove(node);
-	    BinaryTree<T> tree = new BinaryTree<>(list.get(0));
-	    for (int i = 1; i < list.size(); i++) {
-	        tree.insert(list.get(i).getData(), true);
-	    }
-	    return tree.getRoot();
-	}	
+	    if (null != node) {
+            // 叶子节点
+            if (node.isLeaf()) {
+                replaceNode(node, null);
+            // 只有右子节点
+            } else if (node.getLeft() == null && node.getRight() != null) {
+                replaceNode(node, node.getRight());
+                node.getRight().setParent(node.getParent());
+             // 只有左子节点
+            } else if (node.getLeft() != null && node.getRight() == null) {
+                replaceNode(node, node.getLeft());
+                node.getLeft().setParent(node.getParent());
+            // 拥有左右子节点，取前驱节点替代删除的节点
+            } else {
+                // 前驱节点
+                BinaryTreeNode<T> predNode = predecessor(node);
+                // 前驱节点替换要删除的节点
+                node.setData(predNode.getData());
+                // 删除前驱节点
+                return removeNode(predNode);
+            }
+            //help gc
+            node.setParent(null);
+            node.setRight(null);
+            node.setLeft(null);
+        }
+	    return node;
+	}
+    /**
+     * 替换节点
+     * 
+     * @param node
+     * @param child
+     */
+    protected void replaceNode(BinaryTreeNode<T> node, BinaryTreeNode<T> child) {
+        if (node == this.root) {
+            this.root = child;
+        } else if (node.isLeft()) {
+            node.getParent().setLeft(child);
+        } else {
+            node.getParent().setRight(child);
+        }
+    }
 	/**
 	 * 二叉查找树中最大节点
 	 * 

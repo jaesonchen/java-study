@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * 用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。
+ * 聊天室应用使用了中介模式
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:47:09
@@ -12,11 +13,6 @@ import java.util.Map;
  */
 public class Mediator {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
         AbstractChatroom happyChat = new ChatGroup();
@@ -67,15 +63,17 @@ public class Mediator {
         public void sendText(String from, String to, String message) {
             
             Member member = members.get(to);
-            member.receiveText(from, message.replaceAll("日", "*"));
+            member.receiveText(from, message.replace("日", "*"));
         }
         @Override
         public void sendImage(String from, String to, String image) {
 
-            Member member = members.get(to);
+            Member member;
             if (image.length() > 5) {
-              System.out.println("图片太大，发送失败！");
+                member = members.get(from);
+                member.receiveText("系统", "图片太大，发送失败！");
             } else {
+                member = members.get(to);
                 member.receiveImage(from, image);
             }
         }
@@ -87,7 +85,7 @@ public class Mediator {
         protected String name;
 
         public Member(String name) {
-            this.name=name;
+            this.name = name;
         }
         public AbstractChatroom getChatroom() {
             return chatroom;
@@ -128,6 +126,7 @@ public class Mediator {
             System.out.println("普通会员不能发送图片！");
         }
     }
+    // member implement
     static class DiamondMember extends Member {
         
         public DiamondMember(String name) {

@@ -22,11 +22,6 @@ import com.google.gson.stream.JsonWriter;
  */
 public class TypeAdapterExample {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
 
         Gson gson = new GsonBuilder()

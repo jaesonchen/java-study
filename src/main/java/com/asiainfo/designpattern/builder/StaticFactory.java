@@ -1,7 +1,7 @@
 package com.asiainfo.designpattern.builder;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 考虑用静态工厂方法代替构造器：
@@ -16,11 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class StaticFactory {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
         
         Factory.registerProvider(new IProvider() {
@@ -45,7 +40,7 @@ public class StaticFactory {
     static class Factory {
         
         private static final String DEFAULT_PROVIDER = "default";
-        private static final Map<String, IProvider> providers = new ConcurrentHashMap<String, IProvider>();
+        private static final Map<String, IProvider> providers = new HashMap<String, IProvider>();
         private Factory() {}
         //Provider register API
         public static void registerProvider(IProvider p) {

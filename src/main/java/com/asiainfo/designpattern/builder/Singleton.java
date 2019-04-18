@@ -8,24 +8,15 @@ import java.io.Serializable;
  * enum Sigleton 在功能上与静态工厂方法相近，但它更简洁，无偿地提供了序列化机制，绝对防止多次实例化， 即使是在面对复杂的序列化和反射攻击的时候。
  * 
  * 单元素的enum已经成为实现Singleton的最佳方法。
- * 
- * 1.线程安全 2.不会因为序列化而产生新实例 3.防止反射攻击
+ * 1.线程安全 
+ * 2.不会因为序列化而产生新实例 
+ * 3.防止反射攻击
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:32:26
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
 public class Singleton {
-
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
-    }
     
     // enum singleton
     enum EnumSingleton implements Serializable {
@@ -51,6 +42,7 @@ public class Singleton {
         public static HungrySingleton getInstance() {
             return instance;
         }
+        // 反序列化
         protected Object readResolve() {     
             return instance;     
         }
@@ -64,22 +56,22 @@ public class Singleton {
         private LazySingleton() {}
 
         public static synchronized LazySingleton getInstance() {
-            
             if (instance == null) {
                 instance = new LazySingleton();
             }
             return instance;
         }
+        // 反序列化
         protected Object readResolve() {     
             return instance;     
         }
     }
-    // 双重检查
+    // 双重检查懒汉
     static class DoubleCheckSingleton implements java.io.Serializable {
         
         /** serialVersionUID */
         private static final long serialVersionUID = 1L;
-        
+        // 为防止指令重排，需要指定volatile
         private static volatile DoubleCheckSingleton instance;
         private DoubleCheckSingleton() {}
 
@@ -102,7 +94,7 @@ public class Singleton {
             return instance;     
         }
     }
-    // Holder 模式
+    // Holder 模式，由jvm保证初始化的同步
     static class HolderSingleton implements java.io.Serializable {
         
         /** serialVersionUID */
@@ -112,7 +104,6 @@ public class Singleton {
         private static class SingletonHolder {
             private static HolderSingleton instance = new HolderSingleton();
         }
-
         public static HolderSingleton getInstance() {
             return SingletonHolder.instance;
         }

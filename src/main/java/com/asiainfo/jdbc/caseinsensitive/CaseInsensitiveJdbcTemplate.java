@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlParameter;
 
 /**
- * @Description: TODO
+ * @Description: 忽略查询结果集的字段名称大小写的JdbcTemplate
  * 
  * @author       zq
  * @date         2017年3月31日  下午5:33:49

@@ -1,7 +1,7 @@
 package com.asiainfo.datastructure;
 
 /**
- * TODO
+ * 基于HashMap的Set实现
  * 
  * @author       zq
  * @date         2017年12月26日  下午2:25:37

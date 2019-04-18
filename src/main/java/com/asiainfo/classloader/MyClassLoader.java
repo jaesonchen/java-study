@@ -3,12 +3,13 @@ package com.asiainfo.classloader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * @Description: TODO
+ * @Description: 自定义ClassLoader，用于加载不在classpath中的class
  * 
  * @author       zq
  * @date         2017年9月16日  下午8:41:18
@@ -16,7 +17,7 @@ import java.net.URLConnection;
  */
 public class MyClassLoader extends ClassLoader {
 
-	final String CLASS_NAME = "reflection.MyObject";
+	final String CLASS_NAME = "com.asiainfo.classloader.MyObject";
 	public MyClassLoader(ClassLoader parent) {
 		super(parent);
 	}
@@ -28,15 +29,15 @@ public class MyClassLoader extends ClassLoader {
 			return super.loadClass(name);
 		}
 		try {
-			String url = "file:C:/data/projects/tutorials/web/WEB-INF/classes/reflection/MyObject.class";
+		    //为方便测试，直接读取classes下的项目
+		    String url = this.getClass().getClassLoader().getResource("").toString() + name.replace(".", "/") + ".class";
 			URL myUrl = new URL(url);
 			URLConnection connection = myUrl.openConnection();
 			InputStream input = connection.getInputStream();
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			int data = input.read();
-			while (data != -1) {
+			int data;
+			while ((data = input.read()) != -1) {
 				buffer.write(data);
-				data = input.read();
 			}
 			input.close();
 			byte[] classData = buffer.toByteArray();
@@ -47,5 +48,13 @@ public class MyClassLoader extends ClassLoader {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static void main(String[] args) throws Exception {
+	    
+	    MyClassLoader loader = new MyClassLoader(MyClassLoader.class.getClassLoader());
+	    Class<?> clazz = loader.loadClass("com.asiainfo.classloader.MyObject");
+	    Method method = clazz.getMethod("sayHello", new Class<?>[] {String.class});
+	    method.invoke(clazz.newInstance(), "jaeson");
 	}
 }

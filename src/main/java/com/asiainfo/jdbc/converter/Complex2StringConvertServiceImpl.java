@@ -1,7 +1,7 @@
 package com.asiainfo.jdbc.converter;
 
 /**
- * @Description: TODO
+ * @Description: 对象字段转字符串，使用toString，也可自定义使用json字符串，用于getter方法上
  * 
  * @author       zq
  * @date         2017年7月2日  上午10:38:20
@@ -16,8 +16,7 @@ public class Complex2StringConvertServiceImpl implements IConvertService<String>
 	 */
 	@Override
 	public Class<?> getClazz() {
-		// TODO Auto-generated method stub
-		return null;
+		return Object.class;
 	}
 
 	/* 
@@ -38,7 +37,6 @@ public class Complex2StringConvertServiceImpl implements IConvertService<String>
 	 */
 	@Override
 	public void setDelegate(IConvertService<?> delegate) {
-		// TODO Auto-generated method stub
-
+	    throw new UnsupportedOperationException("ComplexConverter do not support delegate!");
 	}
 }

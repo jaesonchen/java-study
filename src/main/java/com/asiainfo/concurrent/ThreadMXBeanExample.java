@@ -19,11 +19,6 @@ import java.lang.management.ThreadMXBean;
  */
 public class ThreadMXBeanExample {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 		//获取java线程管理MXBean
@@ -35,5 +30,4 @@ public class ThreadMXBeanExample {
 			System.out.println("[" + threadInfo.getThreadId()+"] " + threadInfo.getThreadName());
 		}
 	}
-
 }

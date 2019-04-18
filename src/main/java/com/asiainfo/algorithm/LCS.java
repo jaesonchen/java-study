@@ -19,6 +19,8 @@ public class LCS {
 
         String str1 = "abcdefgh", str2 = "badfxgahn";
         Matrix matrix = lcs(str1, str2);
+        printMatrix(matrix.getMatrix());
+        printMatrix(matrix.getAccessMatrix());
         
         System.out.println(String.format("lcs=%d, sequence=%s", 
                 matrix.getMatrix()[str1.length()][str2.length()], 
@@ -32,8 +34,9 @@ public class LCS {
     }
 
     /**
+     * 矩阵大小：matrix[str1.length() + 1][str2.length() + 1]
      * 矩阵填充, matrix[str1.length][str2.length]的值即为lcs的长度
-     * accessFlag: 0=left up, 1=left, 2=up, 3=left | up
+     * accessFlag: 0=left up, 1=left, 2=up, 3=left or up
      * 
      * @param str1
      * @param str2
@@ -43,13 +46,6 @@ public class LCS {
         
         int[][] matrix = new int[str1.length() + 1][str2.length() + 1];
         Arrow[][] accessMatrix = new Arrow[str1.length()][str2.length()];
-        //初始化矩阵
-        for (int i = 0; i <= str1.length(); i++) {
-            matrix[i][0] = 0;
-        }
-        for (int j = 1; j <= str2.length(); j++) {
-            matrix[0][j] = 0;
-        }
         //填充矩阵
         for (int i = 1; i <= str1.length(); i++) {
             for (int j = 1; j <= str2.length(); j++) {
@@ -106,7 +102,7 @@ public class LCS {
             stack.push(str1.charAt(i));
             nextStep(str1, accessMatrix, i - 1, j - 1, stack);
         } else {
-            //left or up
+            //left or up 选择up 
             nextStep(str1, accessMatrix, (Arrow.LEFT == accessMatrix[i][j]) ? i : (i - 1), 
                     (Arrow.LEFT == accessMatrix[i][j]) ? (j - 1) : j, stack);
         }
@@ -122,7 +118,7 @@ public class LCS {
      */
     public static List<String> getAllSequence(String str1, String str2, Matrix matrix) {
         
-        List<String> list = getAllSequence(str1, matrix.getAccessMatrix(), str1.length() - 1, str2.length() - 1, new ArrayList<String>());
+        List<String> list = getAllSequence(str1, matrix.getAccessMatrix(), str1.length() - 1, str2.length() - 1, new ArrayList<>());
         List<String> result = new ArrayList<>();
         for (String str : list) {
             if (!result.contains(str)) {
@@ -155,9 +151,13 @@ public class LCS {
         } else if (Arrow.UP == accessMatrix[i][j]) {
             return getAllSequence(str1, accessMatrix, i - 1, j, list);
         } else {
-            List<String> copy = addAll(new ArrayList<String>(), list);
+            List<String> copy = new ArrayList<String>();
+            copy.addAll(list);
+            // left
             List<String> result = getAllSequence(str1, accessMatrix, i, j - 1, list);
-            return addAll(result, getAllSequence(str1, accessMatrix, i - 1, j, copy));
+            // up
+            result.addAll(getAllSequence(str1, accessMatrix, i - 1, j, copy));
+            return result;
         }
     }
     
@@ -170,29 +170,15 @@ public class LCS {
      */
     protected static List<String> addCharacter(List<String> list, Character c) {
         
+        if (list.isEmpty()) {
+            list.add(String.valueOf(c));
+            return list;
+        }
         List<String> result = new ArrayList<>();
         for (String str : list) {
             result.add(str + c);
         }
-        if (result.isEmpty()) {
-            result.add(String.valueOf(c));
-        }
         return result;
-    }
-    
-    /**
-     * 复制
-     * 
-     * @param list
-     * @param target
-     * @return
-     */
-    protected static List<String> addAll(List<String> list, List<String> target) {
-        
-        for (String str : target) {
-            list.add(str);
-        }
-        return list;
     }
     
     /**
@@ -210,10 +196,12 @@ public class LCS {
             }
             System.out.println();
         }
-    }
-    protected static <T extends Object> void printMatrix(T[][] matrix) {
-        
         System.out.println("==========matrix=========");
+    }
+    
+    protected static <T> void printMatrix(T[][] matrix) {
+        
+        System.out.println("==========accessMatrix=========");
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 System.out.print(matrix[i][j]);
@@ -221,6 +209,7 @@ public class LCS {
             }
             System.out.println();
         }
+        System.out.println("==========accessMatrix=========");
     }
     
     static class Matrix {

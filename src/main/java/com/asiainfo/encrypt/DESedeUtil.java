@@ -7,7 +7,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 
- * TODO
+ * DESede：针对des算法进行了改进，有了三重des算法（DESede）。针对des算法的密钥长度较短以及迭代次数偏少问题做了相应改进，提高了安全强度。
+ *             不过desede算法处理速度较慢，密钥计算时间较长，加密效率不高问题使得对称加密算法的发展不容乐观。
  * 
  * @author       zq
  * @date         2017年11月14日  上午10:58:32

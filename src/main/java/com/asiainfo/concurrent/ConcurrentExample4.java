@@ -13,31 +13,31 @@ public class ConcurrentExample4 {
 	public static void main(String[] args) {
 		
 		ObservableSet<Integer> set = new ObservableSet<Integer>();
-		set.addObserver(new SetObserver<Integer>() {
+		set.addObserver(new Observer<Integer>() {
 			@Override
 	    	public void added(ObservableSet<Integer> s, Integer e) {
 	    		System.out.println("print = " + e);
 	    	}
 		});
 		
-		set.addObserver(new SetObserver<Integer>() {
+		set.addObserver(new Observer<Integer>() {
 			@Override
 	    	public void added(ObservableSet<Integer> s, Integer e) {
 	    		System.out.println("remove = " + e);
-	    		if(e > 30) {
+	    		if (e > 30) {
 	    			s.removeObserver(this);
 	    		}
 	    	}
 		});
 		
-		for(int i = 1; i <= 100; i++) {  
-			set.add(i);  
-		}  
+		for (int i = 1; i <= 100; i++) {
+			set.add(i);
+		}
 	}
 }
 
 //集合观察者  
-interface SetObserver<E> {
+interface Observer<E> {
 	public void added(ObservableSet<E> set, E element);
 }
 //被观察的集合主题 
@@ -45,16 +45,16 @@ interface SetObserver<E> {
 class ObservableSet<E> extends HashSet<E> {
 	//观察者集合
 	//private final List<SetObserver<E>> observers = new ArrayList<SetObserver<E>>();
-	private final List<SetObserver<E>> observers = new java.util.concurrent.CopyOnWriteArrayList<SetObserver<E>>();
+	private final List<Observer<E>> observers = new java.util.concurrent.CopyOnWriteArrayList<Observer<E>>();
 
 	//注册观察者
-	public void addObserver(SetObserver<E> observer) {
+	public void addObserver(Observer<E> observer) {
 		synchronized(observers){
 			observers.add(observer);
 		}
 	}
 	//取消注册观察者
-	public void removeObserver(SetObserver<E> observer) {
+	public void removeObserver(Observer<E> observer) {
 		synchronized(observers) {
 			observers.remove(observer);
 		}
@@ -66,14 +66,14 @@ class ObservableSet<E> extends HashSet<E> {
 				observer.added(this, element);
 			}
 		}*/
-		for(SetObserver<E> observer : observers) {
+		for (Observer<E> observer : observers) {
 			observer.added(this, element);
 		}
 	}
 	@Override
 	public boolean add(E element) {
 		boolean added = super.add(element);//调用父类方法 
-		if(added) {
+		if (added) {
 			notifyElementAdded(element);
 		}
 		return added;

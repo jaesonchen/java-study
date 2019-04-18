@@ -2,7 +2,15 @@ package com.asiainfo.common.dao;
 
 import java.io.Serializable;
 import java.util.List;
-
+/**
+ * 
+ * @Description: hibernate通用dao
+ * 
+ * @author chenzq  
+ * @date 2019年3月21日 下午1:05:42
+ * @version V1.0
+ * @Copyright: Copyright(c) 2019 jaesonchen.com Inc. All rights reserved.
+ */
 public interface CommonDao {
 	
     public <T extends Serializable> Serializable save(T model);

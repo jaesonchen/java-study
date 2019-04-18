@@ -18,28 +18,15 @@ import java.util.Arrays;
  */
 public class ExpireObjectReference {
 
-	public static void main(String[] args) {
-		
-
-	}
-
 }
 
-/**
- * 
- * @Description: TODO
- * 
- * @author       zq
- * @date         2017年10月16日  下午4:35:45
- * Copyright: 	  北京亚信智慧数据科技有限公司
- */
 class Stack<T> {
+    
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
 	private Object[] elements;
 	private int size = 0;
-	private static final int DEFAULT_INITIAL_CAPACITY = 16;
 	
 	public Stack() {
-
 		this.elements = new Object[DEFAULT_INITIAL_CAPACITY];
 	}
 	
@@ -56,7 +43,7 @@ class Stack<T> {
 		//这里会发生内存泄漏，elements[size]对象引用还存在，不会被gc回收
 		//return (T) this.elements[--size];
 		T result = (T) this.elements[--size];
-		//eliminate obsolete reference
+		//消除对象引用
 		this.elements[this.size] = null;
 		return result;
 	}

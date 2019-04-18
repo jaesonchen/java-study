@@ -1,11 +1,13 @@
 package com.asiainfo.insidejvm;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.*;
 
 /**
  * 
- * @Description: TODO
+ * @Description: java io示例
  * 
  * @author       zq
  * @date         2017年10月16日  下午4:58:24
@@ -19,95 +21,86 @@ public class IOExample {
         System.out.println(File.pathSeparator);	// ;
 	}
 	//创建文件，创建成功返回true，当文件名已存在时返回false
-	static void create() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello.txt";
+	static boolean create(String fileName) throws IOException {
         File f = new File(fileName);
-        f.createNewFile();
+        if (!f.exists()) {
+            return f.createNewFile();
+        }
+        return false;
 	}
 	//删除文件或目录，删除目录时，File代表的目录必须是空的。
 	//java.nio.file.Files的delete方法，在无法删除一个文件是抛出IOException。
-	static void delete() {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello.txt";
+	static boolean delete(String fileName) {
         File f = new File(fileName);
         if (f.exists()) {
-            f.delete();
-        } else {
-            System.out.println("文件不存在");
+            return f.delete();
         }
+        return false;
 	}
 	//创建目录
-	static void mkdir() {
-		String fileName = "C:" + File.separator + "hello";
+	static boolean mkdir(String fileName) {
         File f = new File(fileName);
-        f.mkdir();
+        if (!f.exists()) {
+            return f.mkdir();
+        }
+        return false;
 	}
+    //判断一个指定的路径是否为目录
+    static boolean isDirectory(String fileName) {
+        File f = new File(fileName);
+        return f.exists() && f.isDirectory();
+    }
 	//列出指定目录的全部文件（包括隐藏文件）
 	//使用list返回的是String数组，只包含文件名。
-	static void list() {
-		String fileName = "C:" + File.separator + "hello";
+	static List<String> list(String fileName) {
+	    List<String> result = new ArrayList<>();
 	    File f = new File(fileName);
-	    String[] str = f.list();
-	    for (int i = 0; i < str.length; i++) {
-	        System.out.println(str[i]);
+	    if (f.exists()) {
+	        for (String file : f.list()) {
+	            result.add(file);
+	        }
 	    }
+	    return result;
 	}
 	//列出指定目录的全部文件（包括隐藏文件）
 	//listFiles返回的是File的数组，包含完整路径。
-	static void listFile() {
-		String fileName = "C:" + File.separator + "hello";
+	static List<File> listFile(String fileName) {
+	    List<File> result = new ArrayList<>();
         File f = new File(fileName);
-        File[] files = f.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            System.out.println(files[i]);
+        if (f.exists()) {
+            for (File file : f.listFiles()) {
+                result.add(file);
+            }
         }
-	}
-	//判断一个指定的路径是否为目录
-	static void isDirectory() {
-		String fileName = "C:" + File.separator + "hello";
-        File f = new File(fileName);
-        if (f.isDirectory()) {
-            System.out.println("YES");
-        } else {
-            System.out.println("NO");
-        }
+        return result;
 	}
 	//搜索指定目录的全部内容
-	static void listAll() {
-		String fileName = "C:" + File.separator + "hello";
-        File f = new File(fileName);
-        print(f);
-	}
-	private static void print(File f) {
-		if (f != null) {
-            if (f.isDirectory()) {
-                File[] fileArray = f.listFiles();
-                if (fileArray != null) {
-                    for (int i = 0; i < fileArray.length; i++) {
-                        print(fileArray[i]);
-                    }
-                }
-            } else {
-                System.out.println(f);
-            }
-		}
+	static List<File> listAll(File file) {
+	    List<File> result = new ArrayList<>();
+	    if (file.isDirectory()) {
+	        for (File f : file.listFiles()) {
+	            result.add(f);
+	            if (f.isDirectory()) {
+	                result.addAll(listAll(f));
+	            }
+	        }
+	    }
+	    return result;
 	}
 	//写入字节流
-	static void outputStream() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello.txt";
+	static void outputStream(String fileName) throws IOException {
 		OutputStream out = new FileOutputStream(new File(fileName));
 		String str = "你好";
 		//使用系统默认编码
-		byte[] b = str.getBytes();
-		out.write(b);
-		b = "北京".getBytes();
-		for (int i = 0; i < b.length; i++) {
-			out.write(b[i]);
+		out.write(str.getBytes());
+		byte[] buff = "北京".getBytes();
+		for (int i = 0; i < buff.length; i++) {
+			out.write(buff[i]);
 		}
 		out.close();
 	}
 	//向文件中追加新内容
-	static void appendFile() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello.txt";
+	static void appendFile(String fileName) throws IOException {
 		OutputStream out = new FileOutputStream(new File(fileName), true);
 		String str="\r\njaesonchen";
 		byte[] b = str.getBytes();
@@ -115,8 +108,7 @@ public class IOExample {
 		out.close();
 	}
 	//读取文件内容
-	static void inputStream() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello.txt";
+	static void inputStream(String fileName) throws IOException {
 		InputStream in = new FileInputStream(new File(fileName));
         byte[] b = new byte[1024];
         int len = in.read(b);
@@ -125,22 +117,20 @@ public class IOExample {
         System.out.println(new String(b, 0, len));
 	}
 	//一个个字节读
-	static void inputStream2() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello.txt";
+	static void inputStream2(String fileName) throws IOException {
 		InputStream in = new FileInputStream(new File(fileName));
-        byte[] b = new byte[1024];
-        int temp = 0;
-        int i = 0;
-        while ((temp = in.read()) != -1 && i < 1024) {
-        	b[i++] = (byte) temp;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int b = 0;
+        while ((b = in.read()) != -1) {
+        	out.write(b);
         }
+        System.out.println(new String(out.toByteArray()));
         in.close();
-        System.out.println(new String(b, 0, i));
+        out.close();
 	}
 	
 	//写入字符流
-	static void writer() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello_writer.txt";
+	static void writer(String fileName) throws IOException {
 		Writer out = new FileWriter(new File(fileName));
 		//文件追加
 		//Writer out = new FileWriter(new File(fileName), true);
@@ -149,26 +139,23 @@ public class IOExample {
         out.close();
 	}
 	//读取字符流
-	static void reader() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "hello_writer.txt";
+	static void reader(String fileName) throws IOException {
 		Reader in = new FileReader(new File(fileName));
-		char[] ch = new char[1024];
+		StringBuilder sb = new StringBuilder();
 		int temp = 0;
         int i = 0;
-        while((temp = in.read()) != -1 && i < 1024) {
-            ch[i++] = (char) temp;
+        while ((temp = in.read()) != -1 && i < 1024) {
+            sb.append((char) temp);
         }
         in.close();
-        System.out.println(new String(ch, 0, i));
+        System.out.println(sb.toString());
 	}
 	//文件复制
-	static void fileCopy() throws IOException {
-		String fileName1 = "C:" + File.separator + "hello" + File.separator + "hello.txt";
-		String fileName2 = "C:" + File.separator + "hello" + File.separator + "hello_copy.txt";
-		InputStream in = new FileInputStream(new File(fileName1));
-        OutputStream out = new FileOutputStream(new File(fileName2));
+	static void fileCopy(String source, String dest) throws IOException {
+		InputStream in = new FileInputStream(new File(source));
+        OutputStream out = new FileOutputStream(new File(dest));
         int temp=0;
-        while((temp = in.read()) != -1) {
+        while ((temp = in.read()) != -1) {
         	out.write(temp);
         }
         in.close();
@@ -176,45 +163,40 @@ public class IOExample {
 	}
 	//OutputStreramWriter 和InputStreamReader
 	//将字节输出流转化为字符输出流
-	static void stream2writer() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "helloworld.txt";
+	static void stream2writer(String fileName) throws IOException {
         Writer out = new OutputStreamWriter(new FileOutputStream(new File(fileName)));
         out.write("hello world");
         out.close();
 	}
 	//将字节输入流变为字符输入流
-	static void stream2reader() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "helloworld.txt";
+	static void stream2reader(String fileName) throws IOException {
         Reader in = new InputStreamReader(new FileInputStream(new File(fileName)));
-        char[] ch = new char[1024];
+        StringBuilder sb = new StringBuilder();
         int temp = 0;
         int i = 0;
-        while((temp = in.read()) != -1 && i < 1024) {
-            ch[i++] = (char) temp;
+        while ((temp = in.read()) != -1 && i < 1024) {
+            sb.append((char) temp);
         }
         in.close();
-        System.out.println(new String(ch, 0, i));
+        System.out.println(sb.toString());
 	}
 	//ByteArrayInputStream 将内容写入内存
 	//ByteArrayOutputStream 将内容从内存输出
 	static void byteArrayStream() throws IOException {
-		String str="ROLLENHOLT";
-        ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes());
+		String str = "ROLLENHOLT";
+        ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes("utf-8"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int temp = 0;
-        while((temp = in.read()) != -1){
-            char ch = (char) temp;
-            out.write(Character.toLowerCase(ch));
+        while ((temp = in.read()) != -1) {
+            out.write(Character.toLowerCase(temp));
         }
-        String outStr = out.toString();
+        System.out.println(new String(out.toByteArray()));
         in.close();
         out.close();
-        System.out.println(outStr);
 	}
 	
 	//PrintStream打印流
-	static void printStream() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "printstream.txt";
+	static void printStream(String fileName) throws IOException {
 		PrintStream print = new PrintStream(new FileOutputStream(new File(fileName)));
         print.println(true);
         print.println("hello");
@@ -227,16 +209,13 @@ public class IOExample {
         out.close();
 	}
 	//输入输出重定向
-	static void redirect() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "printstream.txt";
-		
+	static void redirect(String fileName) throws IOException {		
 		System.setIn(new FileInputStream(new File(fileName)));
         byte[] bytes = new byte[1024];
         int len = 0;
         len = System.in.read(bytes);
         System.out.println("读入的内容为：" + new String(bytes, 0, len));
         
-        fileName = "C:" + File.separator + "hello" + File.separator + "redirect.txt";
         System.setOut(new PrintStream(new FileOutputStream(new File(fileName))));
         System.out.println("这些内容在文件中才能看到哦！"); 
 	}
@@ -250,45 +229,23 @@ public class IOExample {
         System.out.println("你输入的内容是：" + str);
 	}
 	//数据操作流DataOutputStream、DataInputStream
-	static void dataOutput() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "dataoutput.txt";
+	static void dataOutput(String fileName) throws IOException {
 		DataOutputStream out = new DataOutputStream(new FileOutputStream(new File(fileName)));
 		out.writeChar('A');
 		out.writeInt(37);
 		out.writeBoolean(false);
         out.close();
 	}
-	static void dataInput() throws IOException {
-		String fileName = "C:" + File.separator + "hello" + File.separator + "dataoutput.txt";
+	static void dataInput(String fileName) throws IOException {
 		DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
 		System.out.println(input.readChar());
 		System.out.println(input.readInt());
 		System.out.println(input.readBoolean());
 		input.close();
 	}
-	//SequenceInputStream 合并流 
-	static void sequenceStream() throws IOException {
-		File file1 = new File("C:" + File.separator + "hello" + File.separator + "dataoutput.txt");
-        File file2 = new File("C:" + File.separator + "hello" + File.separator + "redirect.txt");
-        File file3 = new File("C:" + File.separator + "hello" + File.separator + "sequence.txt");
-        InputStream input1 = new FileInputStream(file1);
-        InputStream input2 = new FileInputStream(file2);
-        OutputStream output = new FileOutputStream(file3);
-        // 合并流
-        SequenceInputStream sis = new SequenceInputStream(input1, input2);
-        int temp = 0;
-        while ((temp = sis.read()) != -1) {
-            output.write(temp);
-        }
-        input1.close();
-        input2.close();
-        output.close();
-        sis.close();
-	}
+
 	//文件压缩 ZipOutputStream
-	static void zipOutputStream() throws IOException {
-		File file = new File("C:" + File.separator + "hello" + File.separator + "hello.txt");
-        File zipFile = new File("C:" + File.separator + "hello" + File.separator + "hello.zip");
+	static void zipOutputStream(File file, File zipFile) throws IOException {
         InputStream input = new FileInputStream(file);
         ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
         zipOut.putNextEntry(new ZipEntry(file.getName()));
@@ -302,43 +259,36 @@ public class IOExample {
         zipOut.close();
 	}
 	//压缩多个文件
-	static void zipOutputStream2() throws IOException {
-		// 要被压缩的文件夹
-        File file = new File("C:" + File.separator + "hello" + File.separator + "test");
-        File zipFile = new File("C:" + File.separator + "hello" + File.separator + "hello.zip");
+	static void zipOutputStream2(File file, File zipFile) throws IOException {
         InputStream input = null;
         ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
-
         if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length && !files[i].isDirectory(); i++) {
-                input = new FileInputStream(files[i]);
-                zipOut.putNextEntry(new ZipEntry(file.getName()
-                        + File.separator + files[i].getName()));
-                int temp = 0;
-                while ((temp = input.read()) != -1) {
-                	zipOut.write(temp);
+            for (File f : file.listFiles()) {
+                if (f.isFile()) {
+                    input = new FileInputStream(f);
+                    zipOut.putNextEntry(new ZipEntry(file.getName()
+                            + File.separator + f.getName()));
+                    int temp = 0;
+                    while ((temp = input.read()) != -1) {
+                    	zipOut.write(temp);
+                    }
+                    input.close();
                 }
-                input.close();
             }
         }
         zipOut.close();
 	}
 	//解压缩
-	static void zipExtract() throws IOException {
-		 File file = new File("C:" + File.separator + "hello" + File.separator + "hello.zip");
+	static void zipExtract(File file, File dest) throws IOException {
 		 File outFile = null;
 		 ZipFile zipFile = new ZipFile(file);
-		 ZipInputStream zipInput = new ZipInputStream(
-				 new FileInputStream(file));
+		 ZipInputStream zipInput = new ZipInputStream(new FileInputStream(file));
 		 ZipEntry entry = null;
 		 InputStream input = null;
 	     OutputStream output = null;
 	     while ((entry = zipInput.getNextEntry()) != null) {
 	            System.out.println("解压缩" + entry.getName() + "文件");
-	            outFile = new File("C:" + File.separator + "hello" 
-	            		+ File.separator + "extract" + File.separator + entry.getName());
-
+	            outFile = new File(dest.getAbsolutePath() + File.separator + entry.getName());
 	            if (!outFile.getParentFile().exists()) {
 	                outFile.getParentFile().mkdir();
 	            }
@@ -358,14 +308,12 @@ public class IOExample {
 	     zipFile.close();
 	}
 	//ObjectInputStream和ObjectOutputStream 对象序列化
-	static void objectOutputStream() throws IOException {
-		File file = new File("C:" + File.separator + "hello" + File.separator + "object.txt");
+	static void objectOutputStream(File file) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
         oos.writeObject(new Student("jaeson", 30));
         oos.close();
 	}
-	static void objectInputStream() throws Exception {
-		File file = new File("C:" + File.separator + "hello" + File.separator + "object.txt");
+	static void objectInputStream(File file) throws Exception {
 		ObjectInputStream input = new ObjectInputStream(new FileInputStream(file));
         Object obj = input.readObject();
         input.close();
@@ -373,88 +321,15 @@ public class IOExample {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		//objectInputStream();
-		//objectOutputStream();
-		//zipExtract();
-		//zipOutputStream2();
-		//zipOutputStream();
-		//sequenceStream();
-		//dataInput();
-		//bufferReader();
-		//redirect();
-		//printStream();
-		//byteArrayStream();
-		//stream2reader();
-		//stream2writer();
-		//fileCopy();
-		//reader();
-		//writer();
-		//inputStream2();
-		//inputStream();
-		//appendFile();
-		//outputStream();
-		//separator();
-		//create();
-		//delete();
-		//mkdir();
-		//list();
-		//listFile();
-		//isDirectory();
-		//listAll();
-		/*Send send = new Send();
-        Recive recive = new Recive();
-        //管道连接
-        send.getOut().connect(recive.getInput());
-        new Thread(send).start();
-        new Thread(recive).start();*/
+
 	}
 }
-//PipedOutputStream 管道输出流
-//PipedInputStream 管道输入流
-//发送消息类
-class Send implements Runnable {
-    private PipedOutputStream out = null;
-    public Send() {
-        out = new PipedOutputStream();
-    }
-    public PipedOutputStream getOut() {
-        return this.out;
-    }
-    @Override public void run() {
-        String message = "hello jaesonchen";
-        try {
-            out.write(message.getBytes());
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}
-//接受消息类
-class Recive implements Runnable {
-    private PipedInputStream input = null;
-    public Recive() {
-        this.input = new PipedInputStream();
-    }
-    public PipedInputStream getInput() {
-        return this.input;
-    }
-    @Override public void run() {
-        byte[] b=new byte[1024];
-        int len=0;
-        try {
-            len = this.input.read(b);
-            input.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("接受的内容为 " + new String(b, 0, len));
-    }
-}
-//Serializable
-@SuppressWarnings("all")
-class Student implements Serializable{
-    public Student() { }
+
+//序列化
+class Student implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    public Student() {}
     public Student(String name, int age) {
         this.name = name;
         this.age = age;

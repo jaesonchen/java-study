@@ -1,9 +1,7 @@
 package com.asiainfo.jdbc.converter;
 
-import com.asiainfo.jdbc.util.ConvertUtil;
-
 /**
- * @Description: TODO
+ * @Description: java.sql.Clob字段转String，用于setter上
  * 
  * @author       zq
  * @date         2017年6月25日  下午12:01:40

@@ -8,14 +8,12 @@ package com.asiainfo.insidejvm;
  * 
  * 类或者基类必须实现标志空接口Cloneable，否则在调用clone方法时会抛出CloneNotSupportedException异常。
  * 
- * 克隆时要注意的两个关键问题是：几乎肯定要调用super.clone()，以及注意将克隆设为public。
- * 
- * 调用Object.clone()时，根类中的clone()方法负责建立正确的存储容量，并通过“按位复制”
- * 二进制位从原始对象中复制到新对象的存储空间。也就是说，它并不只是预留存储空间以及复制一个对象
- * ——实际需要调查出欲复制之对象的准确大小，然后复制那个对象。
+ * 调用Object.clone()时，clone()方法负责建立正确的存储容量，并通过“按位复制”二进制位从原始对象中复制到新对象的存储空间。
  * 
  * 不管我们要做什么，克隆过程的第一个部分通常都应该是调用super.clone()。通过进行一次准确的复制，
  * 这样做可为后续的克隆进程建立起一个良好的基础。随后，可采取另一些必要的操作，以完成最终的克隆。
+ * 
+ * 克隆时要注意的两个关键问题是：几乎肯定要调用super.clone()，以及注意将克隆设为public。
  * 
  */
 public class ObjectClone implements Cloneable {
@@ -39,26 +37,30 @@ public class ObjectClone implements Cloneable {
 	@Override public Object clone() {
 		ObjectClone o = null;
 		try {
+		    // 调用Object.clone()克隆
 			o = (ObjectClone) super.clone();
 		} catch (CloneNotSupportedException ex) {
 			ex.printStackTrace();
 		}
+		// 克隆引用类型
 		o.handler = (Handler) o.handler.clone();
 		return o;
 	}
+	
 	public static void main(String[] args) {
 		
-		ObjectClone o = new ObjectClone(100);
-		ObjectClone oc = (ObjectClone) o.clone();
-		o.increase();
-		System.out.println("o.i = " + o.getI() + ", oc.i = " + oc.getI());
-		o.changeHandler("jaesonchen");
-		System.out.println("o.handler = " + o.handler);
-		System.out.println("oc.handler = " + oc.handler);
+		ObjectClone obj = new ObjectClone(100);
+		ObjectClone clone = (ObjectClone) obj.clone();
+		obj.increase();
+		System.out.println("obj.i = " + obj.getI() + ", clone.i = " + clone.getI());
+		obj.changeHandler("jaesonchen");
+		System.out.println("obj.handler = " + obj.handler);
+		System.out.println("clone.handler = " + clone.handler);
 	}
 }
 
 class Handler implements Cloneable {
+    
 	private int j = 100;
 	private String str = "default";
 	public Handler() { }

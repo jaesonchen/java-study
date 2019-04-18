@@ -6,7 +6,9 @@ import com.asiainfo.util.ThreadPoolUtils;
  * 多线程同步 synchronized方法和代码块：每个对象都有一个锁，当线程进入对象的synchronized方法或代码块时，
  * 该线程获得对象的锁，其他线程在访问该对象的任何synchronized方法或代码块时无法获得锁被挂起等待。对象的
  * 其他非synchronized方法不受锁的影响。
+ * 
  * static synchronized方法的锁时ClassName.class。
+ * 
  */
 public class ProducerAndConsumer {
 
@@ -27,7 +29,7 @@ public class ProducerAndConsumer {
 	}
 }
 
-//仓库 
+// 仓库 
 class Storage {
 	private int index = 0;
 	private Product[] products = new Product[20];
@@ -40,16 +42,16 @@ class Storage {
 		
 		while (index == products.length) {
 			try {
-				//仓库已满，等待  
+				// 仓库已满，等待  
 				wait();
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
-		//把产品放入仓库 
+		// 把产品放入仓库 
 		products[index++] = product;
 		System.out.println(product.getProducer() + " 存入了产品 " + product + " ,仓库共有 " + this.index + "个产品！"); 
-		//唤醒等待线程
+		// 唤醒等待线程
 		notifyAll();
 	}
 
@@ -57,7 +59,7 @@ class Storage {
 	public synchronized Product pop(String consumer) {
 		while (index == 0) {
 			try {  
-				wait();//仓库空，等待  
+				wait(); // 仓库空，等待  
 			} catch (InterruptedException ex) {   
 				ex.printStackTrace();  
 			}  
@@ -110,10 +112,9 @@ class Producer extends Thread {
 	public void run() {
 		while (true) {
 			storage.push(new Product(new java.util.Date().getTime(), super.getName()));
-			
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException ex) {   
+			} catch (InterruptedException ex) {
 				ex.printStackTrace();  
 			}
 		}
@@ -133,8 +134,7 @@ class Consumer extends Thread {
 	@Override  
 	public void run() {  
 		while (true) {
-			storage.pop(super.getName());		
-			
+			storage.pop(super.getName());
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException ex) {   

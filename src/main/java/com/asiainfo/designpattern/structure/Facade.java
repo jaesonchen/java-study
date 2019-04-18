@@ -11,11 +11,6 @@ package com.asiainfo.designpattern.structure;
  */
 public class Facade {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
         
         Facade facade = new Facade();
@@ -64,7 +59,6 @@ public class Facade {
         public void startup() {
             System.out.println("memory startup!");
         }
-
         public void shutdown() {
             System.out.println("memory shutdown!");
         }

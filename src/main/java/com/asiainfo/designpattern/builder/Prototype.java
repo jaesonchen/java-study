@@ -1,7 +1,9 @@
 package com.asiainfo.designpattern.builder;
 
 /**
- * TODO
+ * 原型模式：通过java clone实现对象的创建
+ * 
+ * Cloneable的浅克隆、深克隆
  * 
  * @author       zq
  * @date         2017年12月21日  下午5:34:13
@@ -9,22 +11,41 @@ package com.asiainfo.designpattern.builder;
  */
 public class Prototype {
 
-    /** 
-     * TODO
-     * 
-     * @param args
-     * @throws CloneNotSupportedException 
-     */
     public static void main(String[] args) throws CloneNotSupportedException {
         
         User chenzq = new User("1001", "chenzq", new Address("bj", 10010));
+        // 1
         User jaeson = chenzq.clone();
         jaeson.setUserName("jaeson");
         jaeson.getAddress().setCity("sh");
+        // 2
+        UserFactory factory = new UserFactory(chenzq);
+        User jaesonchen = factory.createUser();
+        jaesonchen.setUserName("jaesonchen");
+        jaesonchen.getAddress().setCity("gz");
+        
         System.out.println("chenzq=" + chenzq);
         System.out.println("jaeson=" + jaeson);
+        System.out.println("jachen=" + jaesonchen);
     }
 
+    static class UserFactory {
+        
+        private User user;
+        public UserFactory(User user) {
+            this.user = user;
+        }
+        
+        public User createUser() {
+            try {
+                return this.user.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    
     static class User implements Cloneable {
         
         private String userId;

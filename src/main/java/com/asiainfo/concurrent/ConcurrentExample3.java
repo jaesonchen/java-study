@@ -7,7 +7,6 @@ import com.asiainfo.util.ThreadPoolUtils;
 /**
  * 
  * 线程安全性失败：使用volatile时要确保变量必须是原子性操作，否则产生安全性失败。
- * 如果第二个线程在第一个线程读取旧值和写回新值期间读取这个域，则第二个线程就会与第一个线程一起看到同一个值，并返回相同的序列号。
  * 
  * @author       zq
  * @date         2017年10月16日  下午5:22:34
@@ -16,6 +15,7 @@ import com.asiainfo.util.ThreadPoolUtils;
 public class ConcurrentExample3 {
 
 	private static volatile int nextSerialNumber = 0;
+	// 如果第二个线程在第一个线程读取旧值和写回新值期间读取这个域，则第二个线程就会与第一个线程一起看到同一个值，并返回相同的序列号。
 	public static int generateSerialNumber() {
 		//nextSerialNumber++非原子操作
 	    return nextSerialNumber++;
@@ -40,13 +40,13 @@ public class ConcurrentExample3 {
 		ThreadPoolUtils.getInstance().newThread(new TestThread()).start();
 		ThreadPoolUtils.getInstance().newThread(new TestThread()).start();
 		
-/*		new Thread(new TestThread1()).start();
-		new Thread(new TestThread1()).start();
-		new Thread(new TestThread1()).start();*/
+		ThreadPoolUtils.getInstance().newThread(new TestThread1()).start();
+		ThreadPoolUtils.getInstance().newThread(new TestThread1()).start();
+		ThreadPoolUtils.getInstance().newThread(new TestThread1()).start();
 		
-/*		new Thread(new TestThread2()).start();
-		new Thread(new TestThread2()).start();
-		new Thread(new TestThread2()).start();*/
+		ThreadPoolUtils.getInstance().newThread(new TestThread2()).start();
+		ThreadPoolUtils.getInstance().newThread(new TestThread2()).start();
+		ThreadPoolUtils.getInstance().newThread(new TestThread2()).start();
 	}
 	
 	static class TestThread implements Runnable {

@@ -14,7 +14,7 @@ package com.asiainfo.insidejvm;
  * 
  * 内部类拥有对其他内部类的所有成员的访问权限。
  * 
- * 当我们从外部类继承的时候，没有任何额外的内部类继续下去。在继承类中使用同名内部类不会覆盖基类的内部类，必须使用SubInner extends Parent.Inner。
+ * 在继承类中使用同名内部类不会覆盖基类的内部类，必须使用SubInner extends Parent.Inner。
  * 
  * @author       zq
  * @date         2017年10月16日  下午4:55:50
@@ -24,10 +24,10 @@ public class InnerClass {
  
 	public static void main(String[] args) {
 		
-		//必须先有外部类的对象才能生成内部类的对象，因为内部类的作用就是为了访问外部类中的成员变量
-		Outer.Inner in = new Outer().new Inner(); //out.new Inner()
-		in.show();
-		in.show1();
+		// 必须先有外部类的对象才能生成内部类的对象，因为内部类的作用就是为了访问外部类中的成员变量
+		Outer.Inner inner = new Outer().new Inner();
+		inner.show();
+		inner.show1();
 		
 		new Outer().show2();
 		new Outer().show3(166);
@@ -38,6 +38,7 @@ public class InnerClass {
 		Test annoymous = new Outer().getAnonymous();
 		annoymous.test();
 		
+		// 可以直接new static内部类
 		new Outer.InnerStatic().show();
 	}
 
@@ -49,7 +50,7 @@ interface Test {
 class Outer {
 	private int age = 20;
 	private String name = "Outer.name";
-	private static String sex = "static.male";
+	private static String sex = "Outer.static.sex";
 	
 	//friendly内部类
 	class Inner {
@@ -90,7 +91,7 @@ class Outer {
 		new InnerPrivate().show();
 	}
 	//方法内部类
-	//方法内部类只能访问外部成员函数的final参数
+	//方法内部类只能访问外部成员函数的final局部变量
 	public void show3(final int height) {
 		final int iValue = 100;
 		class InnerMethod {
@@ -99,7 +100,7 @@ class Outer {
 				System.out.println("方法内部类InnerMethod访问外部类方法Outer.show3()的final局部变量：" + iValue);
 				System.out.println("方法内部类InnerMethod访问外部类Outer的成员变量：" + name);
 			}
-		}	
+		}
 		new InnerMethod().show();
 	}
 	//匿名内部类
@@ -113,9 +114,7 @@ class Outer {
 			{
 				this.str = "by anonymous class initial block";
 				this.name = "anonymous name";
-				if(this.str != null) {
-					System.out.println("匿名内部类实例初始化：" + this.str + ", " + this.name);
-				}
+				System.out.println("匿名内部类实例初始化：" + this.str + ", " + this.name);
 			}
 			@Override
 			public void test() {

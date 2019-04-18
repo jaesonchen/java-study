@@ -19,7 +19,7 @@ public class SpiServiceExample {
 	public static void main(String[] args) {
 		
 		ServiceLoader<SpiService> loaders = ServiceLoader.load(SpiService.class);
-		for(SpiService h : loaders) {
+		for (SpiService h : loaders) {
 			h.sayHello("jaeson");
 		}
 	}

@@ -7,7 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.asiainfo.util.ThreadPoolUtils;
 
 /**
- * @Description: TODO
+ * @Description: Atomic 原子类基于Unsafe的getAndAddInt、compareAndSwapInt实现。
+ *               Atomic封装的值域使用了volatile，private volatile int value; 因此Atomic类在效率上是低于直接用volatitle的
+ * 
  * 
  * @author       zq
  * @date         2017年9月3日  下午1:19:14
@@ -18,11 +20,10 @@ public class AtomicIntegerExample {
 	private AtomicInteger atomicI = new AtomicInteger(0);
 	private int i = 0;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		final AtomicIntegerExample cas = new AtomicIntegerExample();
 		List<Thread> list = new ArrayList<>();
-		long start = System.currentTimeMillis();
 		for (int j = 0; j < 100; j++) {
 			list.add(ThreadPoolUtils.getInstance().newThread(new Runnable() {
 				@Override
@@ -39,15 +40,10 @@ public class AtomicIntegerExample {
 		}
 		// 等待所有线程执行完成
 		for (Thread t : list) {
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			t.join();
 		}
 		System.out.println(cas.i);
 		System.out.println(cas.atomicI.get());
-		System.out.println(System.currentTimeMillis() - start);
 	}
 
 	/**

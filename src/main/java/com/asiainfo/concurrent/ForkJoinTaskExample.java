@@ -38,6 +38,12 @@ public class ForkJoinTaskExample extends RecursiveTask<Long>{
 		this.dir = dir;
 	}
 
+    public static void main(String[] args) {
+
+        Long count = new ForkJoinPool().invoke(new ForkJoinTaskExample(Paths.get("D:/")));
+        System.out.println(count.longValue());
+    }
+    
 	/* 
 	 * @Description: TODO
 	 * @return
@@ -71,16 +77,5 @@ public class ForkJoinTaskExample extends RecursiveTask<Long>{
             return 0L;
         }
         return count;
-	}
-	
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-
-		Long count = new ForkJoinPool().invoke(new ForkJoinTaskExample(Paths.get("D:/")));
-		System.out.println(count.longValue());
 	}
 }

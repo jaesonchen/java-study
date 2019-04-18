@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.asiainfo.collection.failfast.CopyOnWriteHashMap;
 
 /**
- * @Description: TODO
+ * @Description: 缓存简单实现，可以判断缓存失效时间
  * 
  * @author       zq
  * @date         2017年3月29日  下午10:35:55

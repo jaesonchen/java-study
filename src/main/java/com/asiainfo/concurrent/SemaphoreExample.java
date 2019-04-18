@@ -31,7 +31,8 @@ public class SemaphoreExample {
 						semaphore.acquire();
 						System.out.println("save data : " + System.currentTimeMillis());
 						TimeUnit.SECONDS.sleep(1);
-					} catch(InterruptedException e){
+					} catch(InterruptedException e) {
+					    // ignore
 					} finally {
 						semaphore.release();
 					}

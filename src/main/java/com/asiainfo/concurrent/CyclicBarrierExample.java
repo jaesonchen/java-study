@@ -8,8 +8,7 @@ import com.asiainfo.util.ServiceUtil;
 import com.asiainfo.util.ThreadPoolUtils;
 
 /**
- * 
- * 	CyclicBarrier与CountDownLatch区别：
+ * 	CyclicBarrier与CountDownLatch区别：基于ReentrantLock实现
  * 	1、CountDownLatch的计数器只能使用一次，而CyclicBarrier的计数器可以使用reset()方法重置
  * 	2、CyclicBarrier还提供其他有用的方法，如getNumberWaiting方法可以获得阻塞的线程数量。isBroken()方法用来了解阻塞的线程是否被中断
  * 

@@ -21,11 +21,6 @@ package com.asiainfo.lambda;
  */
 public class DefaultMethodExample {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		
 		A di = new A() {};
@@ -46,7 +41,6 @@ interface B {
 		System.out.println("default method B.show()");
 	}
 }
-
 class C implements A, B {
 	
 	@Override
@@ -56,8 +50,3 @@ class C implements A, B {
 		B.super.show();
 	}
 }
-
-
-
-
-

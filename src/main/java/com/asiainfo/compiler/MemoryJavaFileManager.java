@@ -76,6 +76,7 @@ public class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileMan
 	}
 
 	class MemoryOutputJavaFileObject extends SimpleJavaFileObject {
+	    
 		final String name;
 
 		MemoryOutputJavaFileObject(String name) {

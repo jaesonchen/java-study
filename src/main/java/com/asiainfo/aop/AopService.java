@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class AopService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(AopService.class);
+	final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	//自调用无法触发aop的解决办法
 	//开启暴露Aop代理到ThreadLocal支持
-	//<aop:aspectj-autoproxy expose-proxy="true"/><!—注解风格支持--> 
-	//<aop:config expose-proxy="true"><!—xml风格支持-->   
+	//<aop:aspectj-autoproxy expose-proxy="true"/> <!—注解风格支持--> 
+	//<aop:config expose-proxy="true"> <!—xml风格支持-->   
 	public void selfInvocation() {
 		logger.info("AopService.selfInvocation() method . . .");
-		((AopService)AopContext.currentProxy()).get(0L);
+		((AopService) AopContext.currentProxy()).get(0L);
 	}
 	
 	
@@ -33,18 +33,15 @@ public class AopService {
 	
 	
 	public User get(long id) {
-
 		logger.info("AopService.get(Long) method . . .");
 		return new User();
 	}
 
 	public void save(User user) {
-		
 		logger.info("AopService.save(User) method . . .");
 	}
 
 	public void delete(long id) throws RuntimeException {
-
 		logger.info("AopService.delete(Long) method . . .");
 		throw new UnsupportedOperationException("AopService.delete(Long) throw UnsupportedOperationException");
 	}

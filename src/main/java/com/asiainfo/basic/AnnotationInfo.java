@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * @Description: TODO
+ * @Description: java 注解
  * 
  * @author       zq
  * @date         2017年9月16日  下午5:28:57
@@ -21,17 +21,9 @@ public class AnnotationInfo {
 	@MyFieldAnnotation("serviceCode")
 	String serviceCode;
 	
-	@MyServiceAnnotation("serviceAnnotation")
+	@MyServiceAnnotation("methodAnnotation")
 	public void service(@MyServiceAnnotation("paramAnnotation") String code) {}
 	
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
-	 * @throws NoSuchFieldException 
-	 */
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, NoSuchFieldException {
 
 		Class<AnnotationInfo> clazz = AnnotationInfo.class;
@@ -43,6 +35,7 @@ public class AnnotationInfo {
 				System.out.println("class value: " + myAnnotation.value());
 			}
 		}
+		
 		//获取类型指定的注解
 		MyAnnotation myAnnotation = clazz.getAnnotation(MyAnnotation.class);
 		if (null != myAnnotation) {
@@ -56,6 +49,7 @@ public class AnnotationInfo {
 		if (null != serviceAnnotation) {
 			System.out.println("method value: " + serviceAnnotation.value());
 		}
+		
 		//获取方法的参数注解
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 		Class<?>[] parameterTypes = method.getParameterTypes();
