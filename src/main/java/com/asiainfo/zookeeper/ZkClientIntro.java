@@ -31,15 +31,6 @@ package com.asiainfo.zookeeper;
  * @date         2017年8月29日  下午1:34:20
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class ZkClientExample {
+public class ZkClientIntro {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 }

@@ -1,19 +1,19 @@
 package com.asiainfo.insidejvm;
 
+import java.io.IOException;
+
 /**
  * 
  * try finally特性：
  * 
- * 在try中的return语句会将返回结果值压栈，然后转入到finally子过程，等到finally子过程执行完毕之后（没有return），再返回。
+ * try中的return语句会将返回结果/抛出异常压栈，然后转入到finally子过程，等到finally子过程执行完毕之后（没有return），再返回/抛出异常。
  * 
- * finally的语句是在方法return之前执行的，而且如果finally中有return语句的话，方法直接结束，不再返回栈中的值。
+ * finally的语句是在方法return之前执行的，而且如果finally中有return语句的话，方法直接结束，不再返回栈中的值/异常。
  * 
- * finally中return会吃掉try中抛出的异常（方法不需要声明异常）。
+ * finally中return会吃掉try中抛出的异常，方法不需要声明异常。
  * 
- * finally中抛出异常会抑制try中抛出的异常。
+ * finally中抛出异常会抑制try中抛出的异常，方法需要声明finally抛出得异常类型。
  * 
- * java中方法调用都是采用传值模式，所以如果在finally中改变了引用类型的对象的值，则return返回后的结果也被改变。
- * （实际上返回的是对象引用，并没有被改变，在finally中是直接对对象引用指向的对象进行了修改）
  * 
  * @author       zq
  * @date         2017年10月16日  下午4:38:11
@@ -85,12 +85,12 @@ public class TryCatchFinally {
 	
 	// 在finally里抛出的异常会抑制try抛出的异常
 	@SuppressWarnings("finally")
-    static void testFinal6() throws Exception {
+    static void testFinal6() throws IOException {
         try {
             throw new Exception("ex");
         } finally {
             System.out.println("in testFinal6():finally 抑制异常！");
-            throw new RuntimeException("ex");
+            throw new IOException("ex");
         }
 	}
 }

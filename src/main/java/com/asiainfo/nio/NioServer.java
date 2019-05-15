@@ -28,6 +28,13 @@ import com.asiainfo.util.ThreadPoolUtils;
  *               常用的select就是属于条件触发这一类，长期关注socket写事件会出现CPU 100%的毛病。
  *               所以在使用Java的NIO编程的时候，在没有数据可以往外写的时候要取消写事件，在有数据往外写的时候再注册写事件。
  * 
+ *               1. 一旦通道注册在Selector上，就是一直注册在其上，除非关闭此通道或者重新注册其他感兴趣的事件。
+ *               2. SelectionKey的interestOps()只是改变已经注册在Selector上那个的通道感兴趣的事件，覆盖原来调用register时注册的感兴趣事件。
+ *               3. 不对socket连接断开的情况做处理的话，会使得服务器select方法一直返回值大于0，因为里面一直有一个可读的请求，
+ *                  这样每次都会进入isReadable的判断里，陷入一个可读的死循环。具体需要处理断开的方法是将此通道关闭。
+ *                  判断Socketchannel的read方法返回值，如果是-1，表示已经断开，取消当前SelectionKey.cancel(), 关闭当前通道 key.channel().close()
+ * 
+ * 
  * @author       zq
  * @date         2017年8月11日  下午12:29:23
  * Copyright: 	  北京亚信智慧数据科技有限公司

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * @Description: TODO
+ * mysql / oracle 多数据sql语句工具类
  * 
  * @author       zq
  * @date         2017年3月27日  下午5:47:11

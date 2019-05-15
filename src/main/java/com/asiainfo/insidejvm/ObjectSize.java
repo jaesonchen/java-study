@@ -15,19 +15,29 @@ import sun.misc.Unsafe;
  * 
  *  对象头 _mark                  对象头 _mark         
  *  类对象指针 oop                类对象指针 oop
- *  超类字段数据                                   数组长度 length
- *  padding                     数组数据（值、引用）
- *  基类字段数据                                  padding（8的倍数对齐）
- *  padding                            
- *  
+ *  超类基本类型填充                            数组长度 length
+ *  padding                   数组数据（值、引用）
+ *  超类基本类型                                  padding（8的倍数对齐）  
+ *  padding
+ *  超类引用类型                                   
+ *  padding                    
+ *  子类基本类型 
+ *  padding                                          
+ *  子类引用类型
+ *  padding
+ *   
  *  
  *  对象头包含: hashCode、gc分代年龄、锁状态、持有锁的线程、偏向线程id
  *  
+ *  我们在程序代码里面所定义的各种类型的字段内容，无论是从父类继承下来的，还是在子类中定义的都需要记录下来。 
+ *  这部分的存储顺序会受到虚拟机分配策略参数（FieldsAllocationStyle）和字段在Java源码中定义顺序的影响。
+ *  HotSpot虚拟机 默认的分配策略为longs/doubles、ints、shorts/chars、bytes/booleans、Reference，
+ *  从分配策略中可以看出，相同宽度的字段总是被分配到一起。
+ *  oop和基本类型之间需要填充和padding、基本数据类型和引用类型之间需要填充和padding、超类字段与子类字段之间需要填充和padding。
+ *  填充发生的必要条件为 开启压缩指针且 padding >= 4 byte，需要padding的地方如果小于4则直接padding不填充。 
  *  
- *  HotSpot创建的对象的字段会先按照给定顺序排列一下, 默认的顺序如下，从长到短排列，引用排最后:
- *      long/double --> int/float -->  short/char --> byte/boolean --> Reference；
- *      这个排列不是固定的，如果_mark+oop刚好是16字节则按照这个顺序排，如果开启压缩oop时(12)，
- *      会优先使用int/float->short/char->byte/boolean->reference进行填充，不够的留padding到16字节，再按照这个顺序排列。
+ *  这个排列不是固定的，如果_mark+oop刚好是16字节则按照这个顺序排，如果开启压缩oop时(12)，
+ *  会优先使用int/float->short/char->byte/boolean->reference进行填充，不够的留padding到16字节，再按照这个顺序排列。
  *  这个顺序可以使用JVM参数:  -XX:FieldsAllocationSylte=0(默认是1)来改变。    
  *                          
  *                              
@@ -47,7 +57,7 @@ import sun.misc.Unsafe;
  * @date         2017年10月16日  下午4:56:47
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings("all")
 public class ObjectSize {
 
     static Unsafe unsafe;
@@ -67,27 +77,28 @@ public class ObjectSize {
 		
 	    // 引用大小
 	    System.out.println("是否开启oop，引用大小=" + unsafe.arrayIndexScale(Object[].class));
-	    // 对象字段在内存中的排列
+	    // 对象字段在内存中的排列，从long --> byte/boolean --> padding --> reference/array
 	    Field[] fields = FieldOffset.class.getDeclaredFields();
         for(Field f: fields) {
             System.out.println(f.getName() + " offset: " + unsafe.objectFieldOffset(f));
         }
         
+        System.out.println("================================");
         // 超类的字段在基类字段之前，并且超类需要与8的倍数对齐
         fields = E.class.getFields();
         for(Field f: fields) {
             System.out.println("e." + f.getName() + " offset: " + unsafe.objectFieldOffset(f));
         }
         
+        System.out.println("================================");
 	    System.out.println("sizeOf new A()=" + sizeOf(new A()));
 	    System.out.println("sizeOf new B()=" + sizeOf(new B()));
 	    System.out.println("sizeOf new C()=" + sizeOf(new C()));
 	    System.out.println("sizeOf new D()=" + sizeOf(new D()));
 	    System.out.println("sizeOf new E()=" + sizeOf(new E()));
-	    
 	    /** 
-	     * -XX:+UseCompressedOops: mark/4 + metedata/8 + length/4 + data/44 + padding/4 = 64 
-	     * -XX:-UseCompressedOops: mark/8 + metedata/8 + length/4 + data/44 = 64 
+	     * -XX:+UseCompressedOops: mark/8 + oop/4 + length/4 + data/44 + padding/4 = 64 
+	     * -XX:-UseCompressedOops: mark/8 + oop/8 + length/4 + data/44 = 64 
 	     */
 	    System.out.println("sizeOf new int[11]=" + sizeOf(new int[11]));
 	}
@@ -106,7 +117,31 @@ public class ObjectSize {
 	    int[] iArr = new int[5];
 	    A a = new A();
 	}
-	
+    // 继承关系的类字段在内存中的排列
+    /** 
+     * -XX:+UseCompressedOops: mark/8 + oop/4 + sPP/2 + padding/2 + iP/4 + bP/1 + padding/3 + rP/4 + s/2 + b/1 + padding/1 + j/8 + eArray/4 + padding/4 = 48 
+     * -XX:-UseCompressedOops: mark/8 + oop/8 + sPP/2 + padding/6 + iP/4 + bP/1 + padding/3 + rP/4 + padding/4 + j/8 + s/2 + b/1 + padding/5 + eArray/4 + padding/4 = 64 
+     */
+    static class E extends P {
+        public long j;
+        public short s;
+        public byte b; 
+        public P[] eArray = new P[3];
+ 
+        E() {
+            for (int i = 0; i < eArray.length; i++) {
+                eArray[i] = new P();
+            }
+        }
+    }
+    static class P extends PP {
+        public int iP;
+        public byte bP;
+        public B rP;
+    }
+    static class PP {
+        public short sPP;
+    }	
 	
     /** 
      * -XX:+UseCompressedOops: mark/4 + metedata/8 + field/4 = 16 
@@ -140,20 +175,5 @@ public class ObjectSize {
      */ 
     static class D {
         int[] iArray = new int[10];
-    }
-    
-    /** 
-     * -XX:+UseCompressedOops: mark/4 + metedata/8 + field.a/4 + field.e1/4 + reference/4 = 24 
-     * -XX:-UseCompressedOops: mark/8 + metedata/8 + field.a/4 + padding/4 + field.e1/4 + reference/8 + padding/4 = 40
-     */ 
-    static class E extends A {
-        public int e1;
-        public A[] eArray = new A[3];
-  
-        E() {
-            for (int i = 0; i < eArray.length; i++) {
-                eArray[i] = new A();
-            }
-        }
     }
 }

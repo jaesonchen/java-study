@@ -20,11 +20,6 @@ public class ZookeeperApi {
 
 	final static int SESSION_TIMEOUT = 60000;
 	
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) throws Exception {
 		
 		final CountDownLatch countDownLatch = new CountDownLatch(1);

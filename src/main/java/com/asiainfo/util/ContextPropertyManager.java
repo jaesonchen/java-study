@@ -9,7 +9,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 /**
- * @Description: TODO
+ * spring properties读取工具类，通常在xml里替代PropertyPlaceholderConfigurer
  * 
  * @author       zq
  * @date         2017年1月17日  下午1:49:09

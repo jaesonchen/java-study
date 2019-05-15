@@ -1,8 +1,9 @@
 package com.asiainfo.insidejvm;
 
 /**
- * 
- * @Description: 对象实例化时，通过clone()获得的对象不会调用构造器
+ * 1. 对象实例化时，通过clone()获得的对象不会调用构造器
+ * 2. 通过Unsafe.allocateInstance(Class) 实例化得对象，不会调用构造函数，但会调用类初始化并初始化final字段(构造函数里初始化的final不会被调用)
+ *    final字段已初始化的无法修改，未初始化的final字段可以修改多次
  * 
  * @author       zq
  * @date         2017年10月16日  下午4:34:45

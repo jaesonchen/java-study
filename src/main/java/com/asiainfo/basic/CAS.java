@@ -19,7 +19,7 @@ import sun.misc.Unsafe;
  * @date         2017年9月18日  下午3:00:46
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings("all")
 public class CAS {
 	
     Unsafe unsafe;
@@ -83,16 +83,7 @@ public class CAS {
 		} while (!this.unsafe.compareAndSwapObject(o, offset, v, newValue));
 		return v;
 	}
-	 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws SecurityException 
-	 * @throws NoSuchFieldException 
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
-	 */
+	
 	public static void main(String[] args) throws Exception {
 		
 		CAS cas = new CAS();

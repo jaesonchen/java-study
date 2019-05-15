@@ -40,7 +40,7 @@ import com.asiainfo.encrypt.MD5Util;
 public class FileUtils {
 
     public static final int EOF = -1;
-    @SuppressWarnings("restriction")
+    @SuppressWarnings("all")
     public static final String LINE_SEPARATOR = 
             java.security.AccessController.doPrivileged(new sun.security.action.GetPropertyAction("line.separator"));;
     

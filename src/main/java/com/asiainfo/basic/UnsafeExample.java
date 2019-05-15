@@ -17,16 +17,9 @@ import sun.misc.Unsafe;
  * @date         2017年9月18日  下午2:42:55
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings("all")
 public class UnsafeExample {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 * @throws InterruptedException 
-	 * @throws IOException 
-	 */
 	public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException, InstantiationException, InterruptedException, IOException {
 	    
 	    // theUnsafe

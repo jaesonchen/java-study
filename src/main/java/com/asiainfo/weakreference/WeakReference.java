@@ -20,7 +20,7 @@ public class WeakReference {
 	public static void main(String[] args) {
 		
         WeakHashMap<KeyHolder, ValueHolder> weakMap = new WeakHashMap<KeyHolder, ValueHolder>();
-        KeyHolder kh = new KeyHolder();    
+        KeyHolder kh = new KeyHolder();
         ValueHolder vh = new ValueHolder();
         
         weakMap.put(kh, vh);

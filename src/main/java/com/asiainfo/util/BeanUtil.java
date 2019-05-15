@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO
+ * java bean 工具类
  * 
  * @author       zq
  * @date         2017年11月15日  下午4:12:33

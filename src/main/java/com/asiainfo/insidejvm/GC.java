@@ -23,7 +23,7 @@ package com.asiainfo.insidejvm;
  *  b. 这个堆空间通常比年轻代的堆空间大，并且其空间增长速度较缓
  *  c. 由于大部分JVM堆空间都分配给了年老代，因此其垃圾回收算法需要更节省空间，此算法需要能够处理低垃圾密度的堆空间
  * 3. 持久代（Permanent Generation）
- *     存放VM和Java类型的元数据（metadata），以及intern字符串和类的静态变量(intern字符串池 jdk7后移到堆中，不在perm区)
+ *  - 存放VM和Java类型的元数据（metadata），以及类的静态变量和intern字符串(intern字符串池 jdk7后移到堆中，不在perm区)
  *     
  * 
  *  次收集（Minor GC）和全收集（Full GC）
@@ -81,7 +81,7 @@ package com.asiainfo.insidejvm;
  * 2、在并发过程中JVM觉得在并发过程结束之前堆就会满，需要提前触发FullGC
  * 
  * 
- * G1 GC，全称Garbage-FirstGarbage Collector，通过-XX:+UseG1GC参数来启用，在JDK 7u4版本发行时被正式推出。
+ * G1 GC，全称Garbage-First Garbage Collector，通过-XX:+UseG1GC参数来启用，在JDK 7u4版本发行时被正式推出。
  * G1的初衷就是要避免Full GC的出现，G1将整个java堆划分为多个大小想等的独立区域（Region），虽然还保留有新生代和老年代的概念，但新生代和老年代不再是物理隔离了，
  *   它们都是一部分Region（不需要连续）的集合。G1跟踪各个region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），
  *   在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region。这种使用Region划分内存空间以及有优先级的区域回收方式，
@@ -119,6 +119,76 @@ package com.asiainfo.insidejvm;
  *    如果对象内存分配速度过快，mixed gc来不及回收，导致老年代被填满，就会触发一次full gc，G1的full gc算法就是单线程执行的serial old gc，
  *    会导致异常长时间的暂停时间，需要进行不断的调优，尽可能的避免full gc。
  * 
+ * 
+ * JVM 参数含义:
+ * -Xmx         最大堆内存
+ * -Xms         初始时堆内存
+ * -xss         线程栈大小
+ * -XX:MaxNewSize       最大年轻代内存(Eden + 2个Survivor)
+ * -XX:NewSize          初始时年轻代内存.通常为 Xmx 的 1/3 或 1/4。年轻代 = Eden + 2个 Survivor。实际可用空间为 = Eden + 1个Survivor，即 90%
+ * -XX:SurvivorRatio    年轻代中 Eden 与 Survivor 的比值。默认值为 8。即 Eden 占新生代空间的 8/10，另外两个 Survivor 各占 1/10
+ * -XX:NewRatio         年轻代与老年代的比例，如 –XX:NewRatio=2，则年轻代占整个堆空间的1/3，老年代占2/3
+ * -XX:MaxPermSize      最大持久代内存，jdk8后移到Metaspace中
+ * -XX:PermSize         初始时持久代内存
+ * -XX:MetaspaceSize    设置Metaspace的初始（和最小大小）
+ * -XX:MaxMetaspaceSize 设置Metaspace的最大大小
+ * 
+ * -XX:+PrintGC                 打印 GC 信息
+ * -XX:+PrintGCDetails  
+ * -XX:+PrintGCTimeStamps
+ * 
+ * -XX:+UseSerialGC             串行GC
+ * -XX:+UseParallelGC           并行回收GC
+ * -XX:+UseParalledlOldGC       并行年老代收集器
+ * -XX:ParallelGCThreads=n      并行收集器收集时使用的CPU数。并行收集线程数。
+ * -XX:MaxGCPauseMillis=n       并行收集最大暂停时间
+ * -XX:GCTimeRatio=n            垃圾回收时间占程序运行时间的百分比。公式为1/(1+n)
+ * -XX:+UseConeMarkSweepGC      并发GC（CMS）
+ * -XX:ParallelGCThreads=n      并发收集器年轻代收集方式为并行收集时，使用的CPU数。并行收集线程数。
+ * -XX:MaxTenuringThreshold=n   控制新生代存活时间，从eden->suvivor时 年龄加1，默认15岁移到老年代
+ * 
+ * 
+ * JVM内存调优:
+ * - 对JVM内存的系统级的调优主要的目的是减少young GC的频率和Full GC的次数，过多的young GC和Full GC是会占用很多的系统资源（主要是CPU），影响系统的吞吐量。
+ * 1. 尽量让对象在新生代GC时被回收
+ * 2. 控制好新生代和旧生代的比例
+ *  - 新生代设置过小, young GC次数非常频繁，增大系统消耗；二是导致大对象直接进入旧生代，占据了旧生代剩余空间，诱发Full GC
+ *  - 新生代设置过大, 导致旧生代过小（堆总量一定），从而诱发Full GC；二是young GC耗时大幅度增加
+ *  - Survivor设置过小, 导致对象从eden直接到达旧生代，降低了在新生代的存活时间
+ *  - Survivor设置过大, 导致eden过小，增加了young GC频率
+ * 3. 吞吐量优先, JVM以吞吐量为指标，自行选择相应的GC策略及控制新生代与旧生代的大小比例，来达到吞吐量指标。可由-XX:GCTimeRatio=n来设置
+ * 4. 暂停时间优先, 尽量保证每次GC造成的应用停止时间都在指定的数值范围内完成。可由-XX:MaxGCPauseRatio=n来设置
+ * 
+ * 
+ * JVM调优工具:
+ * Jconsole，VisualVM
+ * 1. 堆信息
+ *  - 堆空间大小分配（年轻代、年老代、持久代分配）
+ *  - 垃圾回收算法设置是否合理
+ *  - 内存泄漏
+ *  
+ * 2. 线程监控
+ *  - 线程信息监控：系统线程数量。
+ *  - 线程状态监控：各个线程都处在什么样的状态下
+ * 
+ * 3. 热点分析
+ *  - CPU热点：检查系统哪些方法占用的大量CPU时间
+ *  - 内存热点：检查哪些对象在系统中数量最大
+ * 
+ * 
+ * 内存溢出:
+ * a. 年老代堆空间被占满, 堆空间都被无法回收的垃圾对象占满，虚拟机无法再在分配新空间。
+ *  - 异常： java.lang.OutOfMemoryError: Java heap space
+ * b. 持久代被占满, 无法为新的class分配存储空间而引发的异常。
+ *  - 异常：java.lang.OutOfMemoryError: PermGen space
+ * c. 堆栈溢出, 递归没返回，或者循环调用造成
+ *  - 异常：java.lang.StackOverflowError 
+ * d. 线程堆栈满, JDK5.0以后这个值是1M。与这个线程相关的数据将会保存在其中。
+ *  - 异常：Fatal: Stack size too small
+ * e. 系统内存被占满, 系统创建线程时，除了要在Java堆中分配内存外，操作系统本身也需要分配资源来创建线程。
+ *  - 因此，当线程数量大到一定程度以后，堆中或许还有空间，但是操作系统分配不出资源来了。分配给Java虚拟机的内存愈多，系统剩余的资源就越少。
+ *  - 因此，当系统内存固定时，分配给Java虚拟机的内存越多，那么，系统总共能够产生的线程也就越少，两者成反比的关系。
+ *  - 异常：java.lang.OutOfMemoryError: unable to create new native thread
  * 
  */
 public class GC {

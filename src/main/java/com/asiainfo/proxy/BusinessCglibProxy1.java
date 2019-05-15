@@ -71,7 +71,6 @@ public class BusinessCglibProxy1 implements MethodInterceptor {
 		//也就是说这个方法中的obj需要传入相同一个类的另一个对象，否则会进入无限递归循环。
 		//Object result = method.invoke(new BusinessImpl(), args);
 		Object result = proxy.invokeSuper(obj, args);
-		
 		System.out.println("End "+ method.getName() + " ..");
 		return result;
 	}

@@ -14,7 +14,7 @@ import com.asiainfo.ftp.SFTPConstants;
 import com.jcraft.jsch.SftpException;
 
 /**
- * @Description: TODO
+ * sftp 文件传输工具类
  * 
  * @author       zq
  * @date         2017年6月8日  下午4:49:17
@@ -121,20 +121,20 @@ public class FileTransferUtil {
 	public static Map<String, String> getSftpConfig() {
 		
 		Map<String, String> result = new HashMap<String, String>();
-		result.put(SFTPConstants.SFTP_REQ_HOST, PropertyReaderUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.HOST"));
-		result.put(SFTPConstants.SFTP_REQ_PORT, PropertyReaderUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.PORT"));
-		result.put(SFTPConstants.SFTP_REQ_USERNAME, PropertyReaderUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.USERNAME"));
-		result.put(SFTPConstants.SFTP_REQ_PASSWORD, PropertyReaderUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.PASSWORD"));
+		result.put(SFTPConstants.SFTP_REQ_HOST, PropertiesUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.HOST"));
+		result.put(SFTPConstants.SFTP_REQ_PORT, PropertiesUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.PORT"));
+		result.put(SFTPConstants.SFTP_REQ_USERNAME, PropertiesUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.USERNAME"));
+		result.put(SFTPConstants.SFTP_REQ_PASSWORD, PropertiesUtil.getInstance().getProperty("IOP.GROUP.FILE.SFTP.PASSWORD"));
 		return result;
 	}
 	
 	public static Map<String, String> getProvinceSftpConfig() {
 		
 		Map<String, String> result = new HashMap<String, String>();
-		result.put(SFTPConstants.SFTP_REQ_HOST, PropertyReaderUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.HOST"));
-		result.put(SFTPConstants.SFTP_REQ_PORT, PropertyReaderUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.PORT"));
-		result.put(SFTPConstants.SFTP_REQ_USERNAME, PropertyReaderUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.USERNAME"));
-		result.put(SFTPConstants.SFTP_REQ_PASSWORD, PropertyReaderUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.PASSWORD"));
+		result.put(SFTPConstants.SFTP_REQ_HOST, PropertiesUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.HOST"));
+		result.put(SFTPConstants.SFTP_REQ_PORT, PropertiesUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.PORT"));
+		result.put(SFTPConstants.SFTP_REQ_USERNAME, PropertiesUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.USERNAME"));
+		result.put(SFTPConstants.SFTP_REQ_PASSWORD, PropertiesUtil.getInstance().getProperty("IOP.PROVINCE.FILE.SFTP.PASSWORD"));
 		return result;
 	}
 }

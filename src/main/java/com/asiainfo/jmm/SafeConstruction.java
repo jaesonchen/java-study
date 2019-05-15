@@ -5,8 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Don't publish the "this" reference during construction
- * 不要在构造函数运行期间向外传递this引用。
+ * Don't publish the "this" reference during construction 不要在构造函数运行期间向外传递this引用。
  * 
  * @author       zq
  * @date         2017年9月27日  下午3:50:41

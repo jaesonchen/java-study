@@ -5,8 +5,7 @@ package com.asiainfo.proxy;
  * 数据库连接以及事物管理
  * web controller --> proxy.execute(...);
  * proxy --> connection.setAutoCommit(false);
- * proxy --> realAction.execute();
- * realAction does database work;
+ * proxy --> realAction.execute(); //realAction does database work;
  * proxy --> connection.commit();
  * 
  * 单元测试中的动态Mock对象

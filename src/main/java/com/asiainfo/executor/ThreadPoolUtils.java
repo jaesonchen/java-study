@@ -1,4 +1,4 @@
-package com.asiainfo.util;
+package com.asiainfo.executor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -42,6 +42,7 @@ public class ThreadPoolUtils {
 	public ExecutorService fixedThreadPool(int corePoolSize) {
 		return fixedThreadPool(corePoolSize, defaultFactory);
 	}
+	// fixed 的core和max一样大
 	public ExecutorService fixedThreadPool(int corePoolSize, ThreadFactory factory) {
 		//return Executors.newFixedThreadPool(corePoolSize, Executors.defaultThreadFactory());
 		return new ThreadPoolExecutor(corePoolSize, corePoolSize,
@@ -53,6 +54,7 @@ public class ThreadPoolUtils {
 	public ExecutorService cachedThreadPool() {
 		return cachedThreadPool(defaultFactory);
 	}
+	// cached 使用SynchronousQueue队列，每进入一个任务都会导致队列满，从而新建一个线程
 	public ExecutorService cachedThreadPool(ThreadFactory factory) {
 		//return Executors.newCachedThreadPool(Executors.defaultThreadFactory());
 		return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
@@ -64,6 +66,7 @@ public class ThreadPoolUtils {
 	public ScheduledExecutorService scheduledThreadPool(int corePoolSize) {
 		return scheduledThreadPool(corePoolSize, defaultFactory);
 	}
+	// scheduled 使用DelayedWorkQueue队列
 	public ScheduledExecutorService scheduledThreadPool(int corePoolSize, ThreadFactory factory) {
 		//return Executors.newScheduledThreadPool(corePoolSize, Executors.defaultThreadFactory());
 		return new ScheduledThreadPoolExecutor(corePoolSize, factory);

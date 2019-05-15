@@ -8,7 +8,7 @@ import sun.misc.Unsafe;
  * @VM args: -Xmx20M -XX:MaxDirectMemorySize=10M
  * 
  */
-@SuppressWarnings("restriction")
+@SuppressWarnings("all")
 public class DirectoryMemoryOOM {
 	
 	private static final int ONE_MB = 1024*1024;
