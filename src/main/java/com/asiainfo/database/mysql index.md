@@ -7,11 +7,11 @@
 ## MyISAM索引实现  
 MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。  
 下图是MyISAM索引的原理图：  
-![myisam primary index](picture/myisam-primary-index.png)  
+![myisam primary index](../../../../resources/static/database/myisam-primary-index.png)  
 
 MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。
   
-![myisam secondary index](picture/myiasm-secodary-index.png)  
+![myisam secondary index](../../../../resources/static/database/myiasm-secodary-index.png)  
 因此，MyISAM中索引检索的算法为: 首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。  
 MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为了与InnoDB的聚集索引区分。  
 
@@ -20,11 +20,11 @@ MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为�
 虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。  
 
 第一个重大区别是InnoDB的数据文件本身就是索引文件。从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。  
-![innodb primary index](picture/innodb-primary-index.png)  
+![innodb primary index](../../../../resources/static/database/innodb-primary-index.png)  
 可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。因为InnoDB的数据文件本身要按主键聚集，所以InnoDB要求表必须有主键（MyISAM可以没有），如果没有显式指定，则MySQL系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形。  
 
 第二个与MyISAM索引的不同是InnoDB的辅助索引data域存储相应记录主键的值而不是地址。换句话说，InnoDB的所有辅助索引都引用主键作为data域。  
-![innodb secondary index](picture/innodb-secondary-index.png)  
+![innodb secondary index](../../../../resources/static/database/innodb-secondary-index.png)  
 辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。  
 
 了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了InnoDB的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用散列少的字段作为主键在InnoDB中不是个好主意，因为InnoDB数据文件本身是一颗B+Tree，散列少的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择。  
@@ -221,11 +221,11 @@ EXPLAIN SELECT * FROM employees.titles WHERE emp_no-1='10000';
 在使用InnoDB存储引擎时，如果没有特别的需要，请永远使用一个与业务无关的自增字段作为主键。如果从数据库索引优化角度看，使用InnoDB引擎而不使用自增主键绝对是一个糟糕的主意。  
 
 InnoDB使用聚集索引，数据记录本身被存于主索引（一颗B+Tree）的叶子节点上。这就要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放，因此每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）。如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页。  
-![innodb insert autoincrement](picture/innodb-insert-autoincrement.png)  
+![innodb insert autoincrement](../../../../resources/static/database/innodb-insert-autoincrement.png)  
 
 
 这样就会形成一个紧凑的索引结构，近似顺序填满。由于每次插入时也不需要移动已有数据，因此效率很高，也不会增加很多开销在维护索引上。如果使用非自增主键（如果身份证号或学号等），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到现有索引页得中间某个位置：   
-![innodb insert normal](picture/innodb-insert-normal.png)  
+![innodb insert normal](../../../../resources/static/database/innodb-insert-normal.png)  
 
 此时MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。  
 

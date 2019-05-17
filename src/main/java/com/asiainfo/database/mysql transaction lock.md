@@ -58,7 +58,7 @@
 `select * from table where id=100`
 ## 当前读 (current read)
 读取数据库当前版本数据的方式，叫当前读 (current read)。   
-`select * from table where id=100 for update`
+`select * from table where id=100 for update`   
 `insert/update/delete ...`    
 
 事务的隔离级别实际上都是定义了当前读的级别，MySQL为了减少锁处理（包括等待其它锁）的时间，提升并发能力，引入了快照读的概念，使得select不用加锁。而for update、update、insert、delete这些“当前读”，就需要另外的模块来解决了。    
