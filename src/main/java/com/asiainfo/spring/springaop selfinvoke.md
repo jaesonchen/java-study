@@ -1,5 +1,5 @@
 # 问题描述
-![spring aop selfinvoke](picture/springaop-selfinvoke.jpg)  
+![spring aop selfinvoke](../../../../resources/static/spring/springaop-selfinvoke.jpg)  
 
 # 通过ThreadLocal暴露Aop代理对象
 ```
