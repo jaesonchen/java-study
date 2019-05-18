@@ -111,7 +111,7 @@ mysql> stop slave;
 ```
 
 ### 查看slave信息
-`mysql> show slave status\G;`
+`mysql> show slave status\G;`    
 ![slave status](../../../../resources/static/database/mysql-slave-status.png)  
 
 Slave_IO_Running和Slave_SQL_Running都为yes，则表示同步成功。    
