@@ -124,7 +124,9 @@ Slave_IO_Running和Slave_SQL_Running都为yes，则表示同步成功。
 - service层实现aop切面，在入口处使用Threadlocal保存service方法的datasource配置
 
 - service类/方法上通过注解指定使用slave/master数据源
-
+   
+[基于AbstractRoutingDataSource的读写分离实现](https://github.com/jaesonchen/multi-datasource)
+   
 ## MySQL Router中间件
 
 ## mycat 中间件
