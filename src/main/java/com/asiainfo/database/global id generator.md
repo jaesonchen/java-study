@@ -15,7 +15,7 @@
 可以通过设置数据库 sequence 或者表的自增字段步长来进行水平伸缩。    
 
 比如说，现在有 8 个服务节点，每个服务节点使用一个 sequence 功能来产生 ID，每个 sequence 的起始 ID 不同，并且依次递增，步长都是 8。    
-![sequence step](../../../../resources/static/database/database-id-sequence-step.png)   
+![sequence step](../../../../resources/images/database/database-id-sequence-step.png)   
 **适合的场景**：这种方案实现起来比较简单，也能达到性能目标。但是服务节点固定，步长也固定，将来如果还要增加服务节点，不好扩展。
 
 ## UUID

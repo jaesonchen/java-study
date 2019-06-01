@@ -60,13 +60,11 @@ SELECT userid,'政治' AS course,po_score AS score FROM tb_score1
 ORDER BY userid
 ``` 
     
-## 查询有重复得记录
+## 查询名字重复的学生
 ```
-select id,name
+select id, name
 from student
-where name in (
-    select name from student group by name having(count(*) > 1)
-) order by name;
+where name in (select name from student group by name having(count(*) > 1));
 ```
     
 ## 查询每门课成绩都不低于80的学生
@@ -74,19 +72,24 @@ where name in (
 select distinct sid
 from student_course
 where sid not in (select sid from student_course where score < 80);
+
+
+select sid from student_course
+group by sid
+having min(score) >= 80;
 ```
     
 ## 查询每个学生的总成绩：
 ```
-select name,sum(score)
+select id, sum(score)
 from student 
 left join student_course on student.id=student_course.sid
-group by sid;
+group by id;
 ```
     
 ## 总成绩最高的3位学生
 ```
-select sid,sum(score) as sum_score
+select sid, sum(score) as sum_score
 from student_course 
 group by sid
 order by sum_score desc 

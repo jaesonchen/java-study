@@ -7,7 +7,7 @@
 事务最经典也经常被拿出来说例子就是转账了。假如小明要给小红转账1000元，这个转账会涉及到两个关键操作就是：将小明的余额减少1000元，将小红的余额增加1000元。万一在这两个操作之间突然出现错误比如银行系统崩溃，导致小明余额减少而小红的余额没有增加，这样就不对了。事务就是保证这两个关键操作要么都成功，要么都要失败。
 
 ### 事物的特性(ACID)
-![acid](../../../../resources/static/database/acid.jpg)  
+![acid](../../../../resources/images/database/acid.jpg)  
 
 1.  **原子性：** 事务是最小的执行单位，不允许分割。事务的原子性确保动作要么全部完成，要么完全不起作用；
 2.  **一致性：** 执行事务前后，数据保持一致，多个事务对同一个数据读取的结果是相同的；
@@ -89,25 +89,25 @@ SET [SESSION|GLOBAL] TRANSACTION ISOLATION LEVEL [READ UNCOMMITTED|READ COMMITTE
 
 #### 脏读(读未提交)
 
-![read-uncommitted](../../../../resources/static/database/read-uncommitted.jpg)  
+![read-uncommitted](../../../../resources/images/database/read-uncommitted.jpg)  
 
 #### 避免脏读(读已提交)
 
-![read-committed](../../../../resources/static/database/read-committed.jpg)  
+![read-committed](../../../../resources/images/database/read-committed.jpg)  
 
 #### 不可重复读
 
 还是刚才上面的读已提交的图，虽然避免了读未提交，但是却出现了，一个事务还没有结束，就发生了 不可重复读问题。
 
-![unrepeatable-read](../../../../resources/static/database/unrepeatable-read.jpg)  
+![unrepeatable-read](../../../../resources/images/database/unrepeatable-read.jpg)  
 
 #### 可重复读
 
-![repeatable-read](../../../../resources/static/database/repeatable-read.jpg)  
+![repeatable-read](../../../../resources/images/database/repeatable-read.jpg)  
 
 #### 防止幻读(可重复读)
 
-![serializable](../../../../resources/static/database/serializable.jpg) 
+![serializable](../../../../resources/images/database/serializable.jpg) 
 
 一个事务对数据库进行操作，这种操作的范围是数据库的全部行，然后第二个事务也在对这个数据库操作，这种操作可以是插入一行记录或删除一行记录，那么第一个是事务就会觉得自己出现了幻觉，怎么还有没有处理的记录呢? 或者 怎么多处理了一行记录呢?
 

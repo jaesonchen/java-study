@@ -26,7 +26,7 @@ Public interface PlatformTransactionManager() {
 ```
 
 我们刚刚也说了Spring中PlatformTransactionManager根据不同持久层框架所对应的接口实现类, 几个比较常见的如下图所示：    
-![tx implemnt](../../../../resources/static/spring/spring-tx-impl.jpg)    
+![tx implemnt](../../../../resources/images/spring/spring-tx-impl.jpg)    
 
 
 比如我们在使用JDBC或者iBatis（就是Mybatis）进行数据持久化操作时,我们的xml配置通常如下：
