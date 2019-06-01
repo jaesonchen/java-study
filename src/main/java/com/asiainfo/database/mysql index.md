@@ -18,7 +18,7 @@ MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为�
 
 ## InnoDB索引实现  
 虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同。  
-![innodb storage](../../../../resources/images/database/mysql-storage.png.png)  
+![innodb storage](../../../../resources/images/database/mysql-storage.png)  
 
 第一个重大区别是InnoDB的数据文件本身就是索引文件。从上文知道，MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引。  
 ![innodb primary index](../../../../resources/images/database/innodb-primary-index.png)  
