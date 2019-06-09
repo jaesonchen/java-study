@@ -24,10 +24,10 @@ public class MyThreadPoolExecutor {
     private BlockingQueue<Runnable> taskQueue = null;
     private List<Worker> workers = new LinkedList<Worker>();
     private AtomicInteger threads = new AtomicInteger(0);
-    private volatile boolean isStopped = false;
+    private volatile boolean stopped = false;
     private int coreSize;
     private int maxSize;
-    private long keepAlive = 60L * 1000;
+    private final long keepAlive = 60L * 1000;
     private final Lock lock = new ReentrantLock();
     
     public MyThreadPoolExecutor(int coreSize, int maxSize) {
@@ -44,6 +44,9 @@ public class MyThreadPoolExecutor {
     public void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
+        }
+        if (this.stopped) {
+            throw new RuntimeException("ThreadPool is stopped!");
         }
         // 小于基本线程数，直接创建Worker
         Worker worker = newWorker(command, this.coreSize);
@@ -65,6 +68,13 @@ public class MyThreadPoolExecutor {
         }
         // rejected 异常
         throw new RuntimeException("Rejected by thread pool!");
+    }
+    
+    public void shutdown() {
+        this.stopped = true;
+        for (Worker worker : this.workers) {
+            worker.stopWorker();
+        }
     }
     
     // 新建worker
@@ -96,7 +106,8 @@ public class MyThreadPoolExecutor {
         private BlockingQueue<Runnable> taskQueue = null;
         private Runnable firstTask;
         private volatile long lastUsed = System.currentTimeMillis();
-        private volatile boolean isStopped = false;
+        private volatile boolean stopped = false;
+        private volatile boolean running = false;
         
         public Worker(Runnable firstTask, BlockingQueue<Runnable> taskQueue) {
             this.firstTask = firstTask;
@@ -108,7 +119,7 @@ public class MyThreadPoolExecutor {
             Runnable task = firstTask;
             firstTask = null;
             runTask(task);
-            while (!isStopped) {
+            while (!this.stopped) {
                 try {
                     // block on take
                     task = taskQueue.take();
@@ -122,23 +133,31 @@ public class MyThreadPoolExecutor {
         // 运行任务
         private void runTask(Runnable task) {
             try {
+                running = true;
                 task.run();
             } catch (Exception ex) {
                 // ignore
             } finally {
                 lastUsed = System.currentTimeMillis();
+                running = false;
             }
                 
         }
-        
         public void stopWorker() {
-            this.isStopped = true;
+            this.stopped = true;
             // 从taskQueue.take() 中唤醒
-            this.interrupt();
+            if (!this.isRunning()) {
+                this.interrupt();
+            }
         }
-        
         public long getLastUsed() {
             return this.lastUsed;
+        }
+        public boolean isStopped() {
+            return this.stopped;
+        }
+        public boolean isRunning() {
+            return this.running;
         }
     }
     
@@ -157,13 +176,13 @@ public class MyThreadPoolExecutor {
             final AtomicInteger threads = MyThreadPoolExecutor.this.threads;
             final int coreSize = MyThreadPoolExecutor.this.coreSize;
             List<Worker> idles = new ArrayList<>();
-            while (!MyThreadPoolExecutor.this.isStopped) {
+            while (!MyThreadPoolExecutor.this.stopped) {
                 try {
                     for (Worker worker : workers) {
                         // 获取worker的线程状态
                         State state = worker.getState();
                         // stop和terminate的先清除
-                        if (worker.isStopped || Thread.State.TERMINATED.equals(state)) {
+                        if (worker.isStopped() || Thread.State.TERMINATED.equals(state)) {
                             idles.add(worker);
                         }
                     }
@@ -171,6 +190,10 @@ public class MyThreadPoolExecutor {
                         // 保留coreSize数量的worker
                         if (threads.get() <= (idles.size() + coreSize)) {
                             break;
+                        }
+                        // 跳过运行中的线程，不管线程是否block
+                        if (worker.isRunning() || idles.contains(worker)) {
+                            continue;
                         }
                         // 获取worker的线程状态
                         State state = worker.getState();
@@ -180,7 +203,7 @@ public class MyThreadPoolExecutor {
                                 || Thread.State.TIMED_WAITING.equals(state)) {
                             // 判断空闲时间是否超过最大空闲时间
                             long idle = System.currentTimeMillis() - worker.getLastUsed();
-                            if (idle > this.keepAlive) {
+                            if (!worker.isRunning() && idle > this.keepAlive) {
                                 idles.add(worker);
                             }
                         }
@@ -205,8 +228,8 @@ public class MyThreadPoolExecutor {
                 workers.removeAll(idles);
                 // 设置worker状态
                 for (Worker worker : idles) {
-                    threads.decrementAndGet();
                     worker.stopWorker();
+                    threads.decrementAndGet();
                 }
             } catch (Exception ex) {
                 // ignore
