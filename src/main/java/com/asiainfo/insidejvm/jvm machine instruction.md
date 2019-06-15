@@ -47,8 +47,10 @@ main栈帧创建完成后，会将栈帧push 到虚拟机栈中，现在有两�
     
 ![runtime-stack-init](../../../../resources/images/jvm/runtime-stack-init.png)  
     
-接着JVM开始读取PC指向的机器指令。如上图所示，main方法的指令序列：12 10 4c 2b b8 20 12 b1 ，通过JVM虚拟机指令集规范，可以将这个指令序列解析成以下Java汇编语言：    
-
+接着JVM开始读取PC指向的机器指令。如上图所示，main方法的指令序列：12 10 4c 2b b8 20 12 b1 ，通过JVM虚拟机指令集规范，可以将这个指令序列解析成以下Java汇编语言：
+    
+| 机器指令 | 字节码 | 解释|
+| :---: | :---: | :---:|
 | 0x12 0x10 | ldc #16 | 将常量池中第16个常量池项引用推到操作数栈栈顶, 常量池第16项是CONSTANT_UTF-8_INFO项，表示字符串 Louis |
 | 0x4c| astore_1 | 操作数栈的栈顶元素出栈，将栈顶元素的值赋给index = 1 的局部变量表slot上 , 等价于：name = "Louis" | 
 | 0x2b | aload_1 | 将局部变量表中index = 1的slot的值推到操作数栈栈顶 |
@@ -65,7 +67,10 @@ invokestatic #18, 当JVM执行这条语句的时候，会做以下几件事：
 当main方法调用greeting()时， JVM会为greeting方法创建一个栈帧，用以表示对greeting方法的调用，具体栈帧信息如下：    
 ![runtime-new-stack](../../../../resources/images/jvm/runtime-new-stack.png)  
     
-greeting方法的机器码表示的含义：    
+greeting方法的机器码表示的含义：
+    
+| 机器指令 | 字节码 | 解释|
+| :---: | :---: | :---:|
 | b2 20 1a | getstatic #26 | 获取指定类的静态域，并将其值压入栈顶(java/lang/System.out:Ljava/io/PrintStream) | 
 | bb 20 20 | new #32 | 创建一个对象，并将其引用值压入栈顶(java/lang/StringBuider) | 
 | 59 | dup | 复制操作数栈栈顶的值，并插入到栈顶 | 

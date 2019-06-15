@@ -1,5 +1,5 @@
 # java对象存储
-![constant-pool](../../../../resources/images/jvm/constant-pool.png)  
+![object-storage](../../../../resources/images/jvm/object-storage.png)  
     
 
 # padding填充
@@ -16,9 +16,11 @@ HotSpot虚拟机 默认的分配策略为：
 - padding
 - 子类引用类型，Reference
     
-这个顺序可以使用JVM参数:  -XX:FieldsAllocationSylte=0(默认是1)来改变。
-    
 从分配策略中可以看出，相同宽度的字段总是被分配到一起；其中基本类型字段和引用类型字段之间需要padding填充，使其与8byte的倍数对齐。
+    
+`long/double -> int/float -> short/char -> byte/boolean -> Reference`
+    
+这个顺序可以使用JVM参数:  -XX:FieldsAllocationSylte=0(默认是1)来改变。
     
 
 # 需要填充的地方
@@ -78,9 +80,11 @@ static class PP {
 }
 ```
     
--XX:+UseCompressedOops: mark/8 + oop/4 + sPP/2 + padding/2 + iP/4 + bP/1 + padding/3 + rP/4 + s/2 + b/1 + padding/1 + j/8 + eArray/4 + padding/4 = 48 
-
--XX:-UseCompressedOops: mark/8 + oop/8 + sPP/2 + padding/6 + iP/4 + bP/1 + padding/3 + rP/4 + padding/4 + j/8 + s/2 + b/1 + padding/5 + eArray/4 + padding/4 = 64 
+**-XX:+UseCompressedOops**:     
+mark/8 + oop/4 + sPP/2 + padding/2 + iP/4 + bP/1 + padding/3 + rP/4 + s/2 + b/1 + padding/1 + j/8 + eArray/4 + padding/4 = 48 
+    
+**-XX:-UseCompressedOops**:     
+mark/8 + oop/8 + sPP/2 + padding/6 + iP/4 + bP/1 + padding/3 + rP/4 + padding/4 + j/8 + s/2 + b/1 + padding/5 + eArray/4 + padding/4 = 64 
     
 
 ## 数组对象
@@ -92,9 +96,11 @@ static class PP {
     
 `new int[11])`
     
--XX:+UseCompressedOops: mark/8 + oop/4 + length/4 + data/44 + padding/4 = 64 
-
--XX:-UseCompressedOops: mark/8 + oop/8 + length/4 + data/44 = 64 
+**-XX:+UseCompressedOops**:  
+mark/8 + oop/4 + length/4 + data/44 + padding/4 = 64 
+    
+**-XX:-UseCompressedOops**:     
+mark/8 + oop/8 + length/4 + data/44 = 64 
     
 
 ## 判断是否开启压缩指针
@@ -104,18 +110,19 @@ static class PP {
     
 
 # Java对象大小的计算方法
-## 通过java.lang.instrument.Instrumentation的getObjectSize(obj)直接获取对象的大小（不计算所引用的对象的实际大小）
-- 定义一个类，提供一个premain方法: public static void premain(String agentArgs, Instrumentation instP)
-- 创建META-INF/MANIFEST.MF文件，内容是指定PreMain的类是哪个： Premain-Class: com.asiainfo.insidejvm.MySizeOf
+## Instrumentation.getObjectSize()
+通过java.lang.instrument.Instrumentation的getObjectSize(obj)直接获取对象的大小（不计算所引用的对象的实际大小）：
+- 定义一个类，提供一个premain方法：public static void premain(String agentArgs, Instrumentation instP)
+- 创建META-INF/MANIFEST.MF文件，内容是指定PreMain的类是哪个：Premain-Class: com.asiainfo.insidejvm.MySizeOf
 - 把这个类打成jar，然后用java -javaagent XXXX.jar MySizeExample的方式执行
     
 
-## 通过sun.misc.Unsafe对象的objectFieldOffset(field)等方法结合反射来计算对象的大小
+## Unsafe.objectFieldOffset()
+通过sun.misc.Unsafe对象的objectFieldOffset(field)等方法结合反射来计算对象的大小：
 - 通过反射获得一个类的Field
 - 通过Unsafe的objectFieldOffset()获得每个Field的offSet
 - 对Field按照offset排序，取得最大的offset，然后加上这个field的长度，再加上Padding对齐
     
-
 
 # 对象头_mark
 对象头包含： hashCode、gc分代年龄、锁状态、持有锁的线程、偏向线程id    

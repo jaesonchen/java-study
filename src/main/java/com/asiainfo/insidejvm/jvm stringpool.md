@@ -46,7 +46,7 @@ public class Abc {
 ```
     
 查看其编译后的Class文件如下：    
-![ldc](../../../../resources/images/jvm/ldc.png)  
+![ldc](../../../../resources/images/jvm/ldc.jpg)  
     
 使用ldc将"AA"送到栈顶，然后用astore_1把它赋值给我们位于slot 1 位置的局部变量a，然后就return了。根据上面说的，在类加载阶段，这个解析步骤（ constant pool resolution ）是lazy的。换句话说并没有真正的对象，全局字符串常量池里自然也没有，那么ldc指令还怎么把字符串引用推送至栈顶？或者换一个角度想，既然resolve 阶段是lazy的，那总有一个时候它要真正的执行吧，是什么时候？ 执行ldc指令就是触发这个lazy resolution动作的条件，ldc字节码在这里的执行语义是：到当前类的运行时常量池（runtime constant pool）去查找该index对应的常量池项，如果该项尚未resolve则resolve之，并返回resolve后的内容。
     
