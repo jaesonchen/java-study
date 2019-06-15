@@ -11,7 +11,7 @@ package com.asiainfo.jmm;
  * 2. 该变量没有包含在具有其他变量的不变式中。
  * 
  * - volatile 操作不会像锁一样造成阻塞，因此，在能够安全使用 volatile 的情况下，volatile 可以提供一些优于锁的可伸缩特性。
- * -  如果读操作的次数要远远超过写操作，与锁相比，volatile 变量通常能够减少同步的性能开销。
+ * - 如果读操作的次数要远远超过写操作，与锁相比，volatile 变量通常能够减少同步的性能开销。
  * 
  * @author       zq
  * @date         2017年9月27日  下午4:31:54
@@ -31,6 +31,7 @@ public class VolatileExample {
 		//如果reader线程看到了v的值为true，那么，它也保证能够看到在之前发生的写入42这个操作。
 		if (v == true) {
 			//uses x - guaranteed to see 42.
+		    System.out.println(x);
 		}
 	}
 }

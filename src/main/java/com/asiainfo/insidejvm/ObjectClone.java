@@ -17,19 +17,19 @@ package com.asiainfo.insidejvm;
  * 
  */
 public class ObjectClone implements Cloneable {
-	private int i;
+	private int money;
 	private Handler handler = new Handler(101, "chenzq");
-	public ObjectClone(int i) {
-		this.i = i;
+	public ObjectClone(int money) {
+		this.money = money;
 	}
 	public void increase() {
-		this.i++;
+		this.money++;
 	}
 	public void changeHandler(String str) {
 		this.handler.setStr(str);
 	}
-	public int getI() {
-		return this.i;
+	public int getMoney() {
+		return this.money;
 	}
 	public Handler getHandler() {
 		return this.handler;
@@ -52,7 +52,7 @@ public class ObjectClone implements Cloneable {
 		ObjectClone obj = new ObjectClone(100);
 		ObjectClone clone = (ObjectClone) obj.clone();
 		obj.increase();
-		System.out.println("obj.i = " + obj.getI() + ", clone.i = " + clone.getI());
+		System.out.println("obj.money = " + obj.getMoney() + ", clone.money = " + clone.getMoney());
 		obj.changeHandler("jaesonchen");
 		System.out.println("obj.handler = " + obj.handler);
 		System.out.println("clone.handler = " + clone.handler);

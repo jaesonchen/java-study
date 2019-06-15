@@ -7,41 +7,10 @@ import java.lang.reflect.Field;
 import sun.misc.Unsafe;
 
 /**
- * 开启/关闭 压缩指针时，引用的大小不一致
  * @VM args: -javaagent:SizeOf.jar -XX:+UseCompressedOops
- * 
- * 
- *   普通对象：                                          数组对象：
- * 
- *  对象头 _mark                  对象头 _mark         
- *  类对象指针 oop                类对象指针 oop
- *  超类基本类型填充                            数组长度 length
- *  padding                   数组数据（值、引用）
- *  超类基本类型                                  padding（8的倍数对齐）  
- *  padding
- *  超类引用类型                                   
- *  padding                    
- *  子类基本类型 
- *  padding                                          
- *  子类引用类型
- *  padding
- *   
- *  
- *  对象头包含: hashCode、gc分代年龄、锁状态、持有锁的线程、偏向线程id
- *  
- *  我们在程序代码里面所定义的各种类型的字段内容，无论是从父类继承下来的，还是在子类中定义的都需要记录下来。 
- *  这部分的存储顺序会受到虚拟机分配策略参数（FieldsAllocationStyle）和字段在Java源码中定义顺序的影响。
- *  HotSpot虚拟机 默认的分配策略为longs/doubles、ints、shorts/chars、bytes/booleans、Reference，
- *  从分配策略中可以看出，相同宽度的字段总是被分配到一起。
- *  oop和基本类型之间需要填充和padding、基本数据类型和引用类型之间需要填充和padding、超类字段与子类字段之间需要填充和padding。
- *  填充发生的必要条件为 开启压缩指针且 padding >= 4 byte，需要padding的地方如果小于4则直接padding不填充。 
- *  
- *  这个排列不是固定的，如果_mark+oop刚好是16字节则按照这个顺序排，如果开启压缩oop时(12)，
- *  会优先使用int/float->short/char->byte/boolean->reference进行填充，不够的留padding到16字节，再按照这个顺序排列。
- *  这个顺序可以使用JVM参数:  -XX:FieldsAllocationSylte=0(默认是1)来改变。    
- *                          
+ *           
  *                              
- * 计算Java对象大小的方法：
+ * Java对象大小的计算方法：
  * 1. 通过java.lang.instrument.Instrumentation的getObjectSize(obj)直接获取对象的大小（不计算所引用的对象的实际大小）
  *    a. 定义一个类，提供一个premain方法: public static void premain(String agentArgs, Instrumentation instP)
  *    b. 创建META-INF/MANIFEST.MF文件，内容是指定PreMain的类是哪个： Premain-Class: sizeof.MySizeOf
@@ -141,7 +110,7 @@ public class ObjectSize {
     }
     static class PP {
         public short sPP;
-    }	
+    }
 	
     /** 
      * -XX:+UseCompressedOops: mark/4 + metedata/8 + field/4 = 16 

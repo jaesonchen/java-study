@@ -21,7 +21,7 @@ public class MySizeOf {
 
     static Instrumentation inst;
 
-    // -javaagent 注入的参数
+    // 通过 -javaagent:xxx.jar 注入代理对象
     public static void premain(String agent, Instrumentation inst) {
         MySizeOf.inst = inst;
     }
