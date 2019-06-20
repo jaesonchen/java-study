@@ -80,11 +80,17 @@ static class PP {
 }
 ```
     
-**-XX:+UseCompressedOops**:     
+**-XX:+UseCompressedOops**:
+     
+```
 mark/8 + oop/4 + sPP/2 + padding/2 + iP/4 + bP/1 + padding/3 + rP/4 + s/2 + b/1 + padding/1 + j/8 + eArray/4 + padding/4 = 48 
+```
     
-**-XX:-UseCompressedOops**:     
+**-XX:-UseCompressedOops**:
+     
+```
 mark/8 + oop/8 + sPP/2 + padding/6 + iP/4 + bP/1 + padding/3 + rP/4 + padding/4 + j/8 + s/2 + b/1 + padding/5 + eArray/4 + padding/4 = 64 
+```
     
 
 ## 数组对象
@@ -94,13 +100,13 @@ mark/8 + oop/8 + sPP/2 + padding/6 + iP/4 + bP/1 + padding/3 + rP/4 + padding/4 
 - 数组元素（值、引用）
 - padding
     
-`new int[11])`
+`new int[11]`
     
 **-XX:+UseCompressedOops**:  
-mark/8 + oop/4 + length/4 + data/44 + padding/4 = 64 
+`mark/8 + oop/4 + length/4 + data/44 + padding/4 = 64 `
     
 **-XX:-UseCompressedOops**:     
-mark/8 + oop/8 + length/4 + data/44 = 64 
+`mark/8 + oop/8 + length/4 + data/44 = 64 `
     
 
 ## 判断是否开启压缩指针
