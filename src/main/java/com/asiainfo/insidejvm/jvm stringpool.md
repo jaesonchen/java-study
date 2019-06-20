@@ -1,6 +1,8 @@
 # 常量池(Class Constant Pool)
 又叫静态常量池，每一个Java类编译后就会生成一份class文件；class文件中除了包含类的版本、字段、方法、接口等描述信息外，还有一项信息就是常量池(Constant Pool Table)，用于存放编译器生成的各种字面量(Literal)和符号引用(Symbolic References)。每个class文件都有一个常量池。
     
+![content](../../../../resources/images/jvm/cp-content.png)  
+    
 字面量(Literal)：
 - 文本字符串(用双引号包围的字符串字面量)
 - 八种基本类型的值
@@ -142,4 +144,44 @@ jdk1.7 jvm设计人员对intern()进行了一些修改，当执行String.intern(
 在JDK7.0中，StringTable的长度可以通过参数指定：
 -XX:StringTableSize=66666
     
+
+
+# 8种基本类型的包装类
+- Java 基本类型的包装类的大部分都实现了常量池技术，即 Byte, Character, Short, Integer, Long 这 5 种包装类默认创建了数值[-128，127] 的相应包装类型的缓存，但是超出此范围仍然会去创建新的对象。
+- 两种浮点数类型的包装类 Float, Double 并没有实现常量池技术。
+    
+## Integer 缓存源代码
+```
+//此方法将始终缓存-128 到 127范围内的Integer类型值。
+public static Integer valueOf(int i) {
+    if (i >= IntegerCache.low && i <= IntegerCache.high)
+        return IntegerCache.cache[i + (-IntegerCache.low)];
+    return new Integer(i);
+}
+```
+    
+## 应用场景
+```
+Integer i1 = 40; // Java 在编译的时候会直接将代码优化成 Integer i1=Integer.valueOf(40);从而使用常量池中的对象。
+Integer i1 = new Integer(40); // 明确使用new会创建新的对象。
+```
+
+## 示例
+```
+Integer i1 = 40;
+Integer i2 = 40;
+Integer i3 = 0;
+Integer i4 = new Integer(40);
+Integer i5 = new Integer(40);
+Integer i6 = new Integer(0);
+  
+System.out.println(i1 == i2);           // true
+System.out.println(i1 == i2 + i3);      // true
+System.out.println(i1 == i4);           // false
+System.out.println(i4 == i5);           // false
+System.out.println(i4 == i5 + i6);      // true
+System.out.println(40 == i5 + i6);      // true
+```
+    
+解释：语句 i4 == i5 + i6，因为+这个操作符不适用于 Integer 对象，首先 i5 和 i6 进行自动拆箱操作，进行数值相加，即 i4 == 40。然后 Integer 对象无法与数值进行直接比较，所以 i4 自动拆箱转为 int 值 40，最终这条语句转为 40 == 40 进行数值比较。
 

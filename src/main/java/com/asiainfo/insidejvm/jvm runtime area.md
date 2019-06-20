@@ -2,6 +2,14 @@
 JVM运行时数据区其实就是指JVM在运行期间，其对计算机内存空间的划分和分配。
 ![runtime-data-area](../../../../resources/images/jvm/runtime-data-area.png)  
     
+## jdk1.8方法区的变动
+jdk6及以前版本：    
+![runtime-area-jdk6](../../../../resources/images/jvm/runtime-area-jdk6.png)  
+    
+jdk1.8以后：    
+![runtime-area-jdk8](../../../../resources/images/jvm/runtime-area-jdk8.png)  
+    
+
 ## 虚拟机栈
 ![stack](../../../../resources/images/jvm/stack.png)  
     

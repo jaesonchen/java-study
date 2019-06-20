@@ -28,8 +28,8 @@ package com.asiainfo.insidejvm;
  */
 public class FinalAndPrivate {
 	
-	@SuppressWarnings("all")
-	public static void main(String[] args) {
+	@SuppressWarnings("static-access")
+    public static void main(String[] args) {
 		
 		FAPParent p = new FAPParent();
 		p.call();
@@ -38,29 +38,31 @@ public class FinalAndPrivate {
 		p.staticMethod();
 		System.out.println("=====================================");
 		
-		FAPParent psub = new FAP();
+		FAPParent psub = new FAPDerived();
 		psub.call();
 		psub.call2();
 		psub.print();
 		psub.staticMethod();
 		System.out.println("=====================================");
 		
-		FAP fap = new FAP();
+		FAPDerived fap = new FAPDerived();
 		fap.call();
 		fap.call2();
 		fap.print();
 		fap.print("hello world");
 		fap.staticMethod();
+		((FAPDerived) null).staticMethod();
 	}
 
 }
 class FAPParent {
 	
-    public String msg = "FAPParent msg";
+    public String msg = "Parent msg";
     
 	private void show() {
 		System.out.println("private Parent.show() is calling...");
 	}
+
 	public void call() {
 		System.out.println("public Parent.call() is calling...");
 		this.show();
@@ -73,7 +75,7 @@ class FAPParent {
 	
 	public void call2() {
 		System.out.println("public Parent.call2() is calling...");
-		System.out.println("in parent.call2(): " + this.msg);
+		System.out.println("in Parent.call2(): " + this.msg);
 		this.show2();
 	}
 	
@@ -85,44 +87,40 @@ class FAPParent {
 		System.out.println("Parent.staticMethod() is calling...");
 	}
 }
-class FAP extends FAPParent {
+class FAPDerived extends FAPParent {
 	
-    public String msg = "FAP msg";
+    public String msg = "Derived msg";
     
-    // 相同签名，不是覆盖
+    // 超类private不可见，可以在子类定义相同签名方法
 	private void show() {
-		System.out.println("private FAP.show() is calling...");
+		System.out.println("private Derived.show() is calling...");
 	}
 	
 	@Override
 	public void call() {
-		System.out.println("public FAP.call() is calling...");
+		System.out.println("public Derived.call() is calling...");
 		this.show();
 	}
 	
 	@Override
 	public void show2() {
-		System.out.println("public FAP.show2() is calling...");
-		System.out.println("in FAP.show2(): " + this.msg);
+		System.out.println("public Derived.show2() is calling...");
+		System.out.println("in Derived.show2(): " + this.msg);
 	}
 	
-	/* 
-	 * 编译错误，不能覆盖(override)超类的final方法
-	public final void print() {
-		System.out.println("FAP.print() is calling...");
-	}*/
-	//可以重载(overload)
+	// 编译错误，不能重写(override)超类的final方法
+	// public final void print() {}
+	
+	// 可以重载(overload)
 	public final void print(String str) {
-		System.out.println("public final FAP.print(String str) is calling... message = " + str);
+		System.out.println("public final Derived.print(String str) is calling... message = " + str);
 	}
 	
-	/* 
-	 * 编译错误，不能覆盖(override)超类的static方法
-	public void staticMethod() {
-		System.out.println("FAP.staticMethod() is calling...");
-	}
-	 */
+	// 编译错误，不能重写(override)超类的static方法
+	// public void staticMethod() {}
+	
+	// 可以定义子类相同签名的static方法，通过子类引用超类方法时，实际上会在编译时绑定为超类符号引用
 	public static void staticMethod() {
-		System.out.println("FAP.staticMethod() is calling...");
+		System.out.println("Derived.staticMethod() is calling...");
 	}
 }

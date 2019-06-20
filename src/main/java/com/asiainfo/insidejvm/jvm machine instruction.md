@@ -96,3 +96,144 @@ greeting方法的机器码表示的含义：
 Java虚拟机使用操作数栈 来存储机器指令的运算过程中的值。所有的操作数的操作，都要遵循出栈和入栈的规则，所以在《Java虚拟机规范》中，你会发现有很多机器指令都是关于出栈入栈的操作。    
 ![operation-stack](../../../../resources/images/jvm/operation-stack.png)  
     
+    
+
+
+# 常用指令集
+![machine-instruction-struct](../../../../resources/images/jvm/machine-instruction-struct.png) 
+    
+## 常量入栈指令 const/push/ldc
+```
+const 把简单的数值类型送到栈顶，该系列命令不带参数（取值    -1~5 时，JVM采用const指令将常量压入栈中 ）。
+push 把一个整型数字（长度比较小）送到到栈顶。有一个参数，用于指定要送到栈顶的数字。指令主要包括 bipush(操作数是byte)，sipush(操作数是short)。
+
+对于const系列命令和push系列命令操作范围之外的数值类型常量，都放在常量池中，需要使用ldc指令。
+ldc 把数值常量或String常量值从常量池中推送至栈顶，需要给一个表示常量在常量池中位置(编号)的参数。接收 8位参数（指向常量池中int/float/string的索引），ldc_w接收16位参数，ldw2_w接收的参数指向常量池long/double类型索引。 
+```
+    
+
+## 局部变量压栈
+```
+xload_n(i,l,f,d,a)，n取值范围为(0-3)
+xload(i,l,f,d,a) + slot索引
+xaload(i,l,f,d,a,b,c,s)
+```
+    
+括号内是x的可用类型范围。
+    
+x取值及操作数的类型含义：
+![machine-instruction-load](../../../../resources/images/jvm/machine-instruction-load.png)  
+    
+```
+xload_n 表示把第n个局部变量入栈。当局部变量数超过4个时，使用xload。
+xload 表示把第n个局部变量入栈，这个指令要求栈顶元素是slot索引。
+xaload 表示将数组元素入栈，这个指令要求栈顶元素是数组索引，栈顶第二元素是数组引用，在执行完后，会将a[i]入栈。
+```
+    
+
+## 出栈并装入局部变量表
+出栈装入局部变量表指令，将栈顶元素弹出，然后给局部变量表赋值。
+    
+```
+xstore(i,f,l,d,a) + slot索引
+xstore_n(i,f,l,d,a)，n取值范围为(0-3)
+xastore(i,f,l,d,a,b,c,s) slot索引
+```
+    
+xastore会弹出操作数栈的3个值：值、索引、引用，在执行完后，会栈顶的值存入a[i]。
+    
+
+## 通用型操作
+```
+NOP 表示什么都不做。 
+dup 复制栈顶元素，并压入栈顶。
+pop把元素从栈顶弹出，并直接废弃。
+```
+    
+
+## 类型转换指令
+```
+x2y
+x: i,f,l,d
+y: i,f,l,d,c,s,b
+```
+   
+在操作数栈上，没有 char / short / byte这三种类型，所以x没有它们。
+   
+
+## 运算指令
+```
+加法：iadd,ladd,fadd,dadd
+减法：isub,lsub,fsub,dsub
+乘法：imul同上
+除法：idiv同上
+取余：irem同上
+取反：ineg同上
+自增：iinc
+```
+    
+位运算：
+    
+```
+位移：ishl,ishr,iushr,ushl,lshr,lushr
+位或：ior,lor
+位与：iand,land
+位异或：ixor,lxor
+```
+    
+    
+## 字段访问指令
+```
+getfield, putfield, getstatic, putstatic
+```
+    
+
+## 数组/对象操作指令 
+创建指令：
+     
+```
+new 创建普通对象，接收一个操作数，指向常量池索引。执行完成后，将对象的引用入栈。
+newarray 创建数组，会取出栈顶的数作为数组的大小。 
+anewarray 创建对象数组，接收参数指向常量池类型。
+multianewarray 创建多维数组，接收2个参数，第一个参数指向常量池类型，第二个参数表示数组维度。
+```
+    
+
+## 类型检查指令 
+```
+checkcast 用于检查类型强制转换是否可以进行。 
+instanceof 用来判断给定对象是否是一个类的实例，会将判断结果压入操作数栈。 
+```
+
+## 数组操作指令 
+除了xastore,xaload指令，还有获取数组长度的arraylength指令，它弹出栈顶数组引用，将长度入栈。
+
+
+## 比较控制指令
+```
+比较指令：比较栈顶两个元素的大小，并将比较结果入栈。比较指令有:dcmpg,dcmpl,fcmpg,fcmpl,lcmp。 
+fcmpg遇到NAN，会压入1，fmpl会压入-1。
+
+
+条件跳转指令：*ifeq,iflt,ifle, ifne,ifgt,ifge,ifnull,ifnonnull，这些指令都接收两个字节的操作数，用于计算跳转的位置。
+
+比较条件跳转指令：将比较和跳转两个步骤合二为一，指令有if_icmpeq,if_icmpne,if_icmplt,if_icmpgt,if_icmple,if_icmpge,if_acmpeq,ifacmpne
+
+多条件分支跳转：转为switch-case语句设计，主要有tableswitch和lookupswitch。 
+case的值是连续的，则使用tableswitch，否则使用lookupswitch。
+
+string作为case类型时，比较的是哈希值。
+
+无条件跳转 
+goto接收2个字节,goto_w接收4个字节。
+```
+    
+
+## 函数调用与返回指令 
+![machine-instruction-invoke](../../../../resources/images/jvm/machine-instruction-invoke.png)  
+    
+
+## 同步控制 
+monitorenter，monitorexit临界区进入和离开操作，访问当前对象的监视器的计数，如果为0，则可以进入，否则，看持有计数器的线程是否是当前线程，不是的话等待计数器降低到0。每个对象都有对应的监视器。
+    
+    

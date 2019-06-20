@@ -31,7 +31,7 @@ jdk版本对应关系：
 ## 访问标志(access_flags)
 访问标志，access_flags 是一种掩码标志，用于表示某个类或者接口的访问权限及基础属性。
     
-![access-flag](../../../../resources/images/jvm/access-flag.png)  
+![access-flag](../../../../resources/images/jvm/class-access-flag.png)  
     
 访问标志（access_flags）紧接着常量池后，占有两个字节，总共16位，如下图所示：
 ![cp-accessflag](../../../../resources/images/jvm/cp-accessflag.png)  

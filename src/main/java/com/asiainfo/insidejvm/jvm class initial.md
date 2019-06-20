@@ -83,7 +83,6 @@ class Const {
         System.out.println("初始化Const类");
     }
 }
- 
 public class ArrayTest {
     public static void main(String[] args) {
         Const[] con = new Const[5];
@@ -91,7 +90,7 @@ public class ArrayTest {
 }
 ```
     
-但这段代码里触发了另一个名为[LConst;的类的初始化，它是一个由虚拟机自动生成的、直接继承于java.lang.Object的子类，创建动作由字节码指令newarray触发，这是一个对数组引用类型的初初始化，而该数组中的元素仅仅包含一个对Const类的引用，并没有对其进行初始化。
+但这段代码里触发了另一个名为`[Lcom.asiainfo.Const;`的引用数组类型的初始化，它是一个由虚拟机自动生成的、直接继承于java.lang.Object的数组类型，创建动作由字节码指令newarray触发，这是一个对数组引用类型的初初始化，而该数组中的元素仅仅包含一个对Const类的引用，并没有对其进行初始化。
     
 
 # 实例初始化
