@@ -115,4 +115,13 @@ public class Sorts {
         sb.append("]");
         System.out.println(sb.toString());
     }
+    
+    public static interface Strategy<T> {
+        /**
+         * t1 < t2 返回 -1
+         * t1 = t2 返回0
+         * t1 > t2 返回1
+         */
+         int compare(T t1, T t2);
+    }
 }

@@ -67,9 +67,4 @@ public class StringPool {
         System.out.println(s10.equals(s11));        // true
         System.out.println(s11 == s11.intern());    // true
     }
-    
-    String t;
-    public void set() {
-        this.t = "dd";
-    }
 }

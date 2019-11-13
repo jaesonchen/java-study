@@ -47,11 +47,11 @@ public class ThreadStatusExample {
 	
 	public static void main(String[] args) {
 		
-		ThreadPoolUtils.getInstance().newThread(new SleepBlock(), "SleepBlockThread").start();
+		ThreadPoolUtils.getInstance().newThread(new SleepBlock(), "SleepThread").start();
 		ThreadPoolUtils.getInstance().newThread(new Waiting(), "WaitingThread").start();
 		//使用两个Blocked线程，一个获取锁成功，另一个被阻塞
-		ThreadPoolUtils.getInstance().newThread(new LockPool(), "LockPoolThread-1").start();
-		ThreadPoolUtils.getInstance().newThread(new LockPool(), "LockPoolThread-2").start();
+		ThreadPoolUtils.getInstance().newThread(new Blocked(), "BlockedThread-1").start();
+		ThreadPoolUtils.getInstance().newThread(new Blocked(), "BlockedThread-2").start();
 	}
 	
 	//该线程不断进行睡眠
@@ -81,10 +81,10 @@ public class ThreadStatusExample {
 	}
 	
 	//该线程在Blocked.class上加锁后，不会释放该锁
-	static class LockPool implements Runnable {
+	static class Blocked implements Runnable {
 		@Override
 		public void run() {
-			synchronized (LockPool.class) {
+			synchronized (Blocked.class) {
 				while(true) {
 					ServiceUtil.waitFor(1, TimeUnit.SECONDS);
 				}

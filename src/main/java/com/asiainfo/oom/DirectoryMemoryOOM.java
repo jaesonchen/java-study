@@ -11,7 +11,7 @@ import sun.misc.Unsafe;
 @SuppressWarnings("all")
 public class DirectoryMemoryOOM {
 	
-	private static final int ONE_MB = 1024*1024;
+	private static final int ONE_MB = 1024 * 1024;
     private static int count = 1;
     
     public static void main(String[] args) {

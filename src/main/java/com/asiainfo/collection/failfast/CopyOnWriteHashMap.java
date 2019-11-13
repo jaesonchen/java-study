@@ -6,20 +6,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-/*
- * fail-safe类型HashMap实现，适用于高并发读，少量修改
+/**
+ * @Description: fail-safe类型HashMap实现，适用于高并发读，少量修改
+ * 
+ * @author chenzq  
+ * @date 2019年8月20日 下午1:32:09
+ * @version V1.0
+ * @Copyright: Copyright(c) 2019 jaesonchen.com Inc. All rights reserved.
  */
-public class CopyOnWriteHashMap<K, V> implements Cloneable, Map<K, V> {
+public class CopyOnWriteHashMap<K, V> implements Map<K, V>, Cloneable {
 
 	final transient ReentrantLock lock = new ReentrantLock();
 	private volatile Map<K, V> internalMap;
-	private final int DEFAULT = 16;
 	
 	public CopyOnWriteHashMap() {
-        internalMap = new HashMap<K, V>(DEFAULT);
+        internalMap = new HashMap<K, V>();
     }
 	
-	//设置初始化大小，减少hash冲突
+	// 设置初始化大小，避免resize
 	public CopyOnWriteHashMap(int size) {
         internalMap = new HashMap<K, V>(size);
     }

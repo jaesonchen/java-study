@@ -54,7 +54,7 @@ public class RpcServer implements Runnable {
 				//Set<SelectionKey> selected = this.selector.selectedKeys();
 				Iterator<SelectionKey> it = this.selector.selectedKeys().iterator();
 				while (it.hasNext()) {
-					this.dispatch((SelectionKey) (it.next()));
+					this.dispatch(it.next());
 				}
 				this.selector.selectedKeys().clear();
 			}

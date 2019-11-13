@@ -77,11 +77,7 @@ public class ThreadLocalRandomExample {
         protected Random getRandom() {
             return random;
         }
-        
-        /* 
-         * TODO
-         * @see java.lang.Runnable#run()
-         */
+
         @Override
         public void run() {
             

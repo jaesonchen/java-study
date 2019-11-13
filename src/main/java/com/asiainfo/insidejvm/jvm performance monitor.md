@@ -337,7 +337,7 @@ Server is ready.
    
 针对每一个虚拟机，可以使用help命令列出该虚拟机支持的所有命令 `jcmd pid cmd`。
    
-````
+```
 [root@localhost workspace]# jcmd 10432 help
 10432:
 The following commands are available:
@@ -365,10 +365,9 @@ VM.command_line             // 启动时命令行指定的参数
 VM.version
 help
 
-For more information about a specific command use 'help <command>'.
+For more information about a specific command use help <command>.
 ```
     
-
 
 
 # 图像化工具远程连接

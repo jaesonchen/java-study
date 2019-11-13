@@ -1,5 +1,104 @@
+# 同源策略（Same origin policy）
+同源策略（Same origin policy）是一种约定，它是浏览器最核心也最基本的安全功能，可以说Web是构建在同源策略基础之上的，浏览器只是针对同源策略的一种实现。
+    
+同源就是指协议、域名、端口号相同，同源策略是指一个源的文档或者脚本在没有明确授权的情况下不准操作其他源的资源。
+    
+现代浏览器在安全性和可用性之间选择了一个平衡点。跨站引用资源(例如img script style iframe等标签)，重定向以及表单提交不受同源策略的限制，这算是浏览器的一个妥协（让你下载别的网站的资源来使用）。
+    
+同源策略限制的不同源之间的交互主要针对的是js中的XMLHttpRequest等请求。
+    
+
+# 跨域的实现
+出于同源策略的限制，不同源的客户端脚本是不能读写对方资源的，而跨域就是突破同源策略的限制，实现跨源通信。
+    
+
+## 降域(document.domain + iframe)
+让不同源的变成同源。
+    
+通过降域可以使两个一级域名相同， 二级域名不同的网页实现跨域资源共享。
+    
+具体做法是在两个页面window或者frames包含的脚本可以把domain设置成一样的值`document.domain = "example.com";` ，从而让这两个站点下面的文档看起来像在同源下，然后就可以让每个文档读取另一个文档的属性。
+
+缺点：
+1. 这种方案容易出现大面积的安全问题，只要任何一个子域名被攻击，那么主域名下的信息也会被泄露。
+2. 只对iframe形式的跨域有效。
+3. 只对带有同样后缀的域名有效。
+    
+
+## JSONP(JSON with Padding)
+JSONP和JSON没有任何关系，仅仅是因为最后生成的JS文件中的数据一般是JSON格式的，像这样`printData({name: 'chenzq', age: 20});`因此得名。
+    
+JSONP就是服务端动态的生成JS脚本。由于JSONP的服务端要面对很多服务对象，而这些服务对象各自的本地函数都不一样，所以为了让服务端知道它应该调用的本地函数叫什么名字，客户端传一个参数告诉服务端我想要一段调用XXX函数的JS代码，请你返回给我，于是服务器就可以按照客户端的需求来生成JS脚本并响应了。
+    
+```
+<script type="text/javascript">
+// 得到航班信息查询结果后的回调函数
+var printData = function(data){
+    alert('你查询的航班结果是：票价 ' + data.price + ' 元，' + '余票 ' + data.tickets + ' 张。');
+};
+// 提供jsonp服务的url地址（不管是什么类型的地址，最终生成的返回值都是一段javascript代码）
+var url = "http://flightQuery.com/jsonp/flightResult.do?code=CA1998&callback=printData";
+// 创建script标签，设置其属性
+var script = document.createElement('script');
+script.setAttribute('src', url);
+// 把script标签加入head，此时调用开始
+ document.getElementsByTagName('head')[0].appendChild(script); 
+</script>
+
+
+<!--用jquery实现jsonp调用-->
+<script type="text/javascript">
+$(function(){
+    $.ajax({
+        type: "get",
+        async: false,
+        url: "http://flightQuery.com/jsonp/flightResult.do?code=CA1998",
+        dataType: "jsonp",
+        jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+        jsonpCallback:"printData",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+        success: function(json){
+            alert('您查询到航班信息：票价： ' + json.price + ' 元，余票： ' + json.tickets + ' 张。');
+        },
+        error: function(){
+            alert('fail');
+        }
+    });
+});
+</script>
+```
+
+服务器端代码及生成的JS代码：
+    
+```
+boolean jsonP = false;
+String callback = request.getParameter("callback");
+if (callback != null) {
+    jsonP = true;
+    response.setContentType("text/javascript");
+} else {
+    response.setContentType("application/x-json");
+}
+Writer out = response.getWriter();
+if (jsonP) {
+    out.write(callback + "(");
+}
+out.print(data.toJsonString());
+if (jsonP) {
+    out.write(");");
+}
+
+
+printData({
+    "code": "CA1998",
+    "price": 1780,
+    "tickets": 10
+});
+```
+    
+
+
 # CORS（Cross-origin resource sharing）跨域资源共享
-跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器  让运行在一个 origin (domain) 上的Web应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求(XMLHttpRequest)。
+跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器让运行在一个 Origin (domain) 上的Web应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求(XMLHttpRequest)。
     
 比如，站点 http://domain-a.com 的某 HTML 页面通过 <img> 的 src 请求 http://domain-b.com/image.jpg。网络上的许多页面都会加载来自不同域的CSS样式表，图像和脚本等资源。
     
@@ -172,7 +271,7 @@ Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
 Access-Control-Max-Age: 86400
 ```
     
-首部字段 `Access-Control-Allow-Origin` 表明服务器接受来自域 `http://foo.example`的跨域请求。
+首部字段 `Access-Control-Allow-Origin` 表明服务器接受来自域 `http://foo.example`的跨域请求。    
 首部字段 `Access-Control-Allow-Methods` 表明服务器允许客户端使用 `POST, GET 和 OPTIONS` 方法发起请求。    
 首部字段 `Access-Control-Allow-Headers` 表明服务器允许请求中携带首部字段 `X-PINGOTHER 与 Content-Type`。    
 首部字段 `Access-Control-Max-Age` 表明该预检响应的有效时间为 86400 秒，也就是 24 小时。在有效时间内，浏览器无须为同一请求再次发起预检请求。浏览器自身维护了一个最大有效时间，如果该首部字段的值超过了最大有效时间，将不会生效。
@@ -217,7 +316,7 @@ Content-Type: text/plain
     
 
 ## 附带身份凭证的请求
-一般而言，对于跨域 XMLHttpRequest 或 Fetch 请求，浏览器不会发送身份凭证信息。如果要发送凭证信息，需要设置 XMLHttpRequest 的某个特殊标志位。可以基于  HTTP cookies 和 HTTP 认证信息发送身份凭证。
+一般而言，对于跨域 XMLHttpRequest 或 Fetch 请求，浏览器不会发送身份凭证信息(Cookie)。如果要发送凭证信息，需要设置 XMLHttpRequest 的某个特殊标志位。可以基于  HTTP cookies 和 HTTP 认证信息发送身份凭证。
     
 ![cors-credential](../../../../resources/images/http/cors-credential.png)  
     
@@ -226,15 +325,15 @@ XMLHttpRequest 的 `withCredentials` 标志设置为 true，从而向服务器�
 发起一个GET 请求，并设置 Cookies：
     
 ```
-var invocation = new XMLHttpRequest();
+var xhr = new XMLHttpRequest();
 var url = 'http://bar.other/resources/credentialed-content/';
     
 function callOtherDomain(){
-  if(invocation) {
-    invocation.open('GET', url, true);
-    invocation.withCredentials = true;
-    invocation.onreadystatechange = handler;
-    invocation.send(); 
+  if(xhr) {
+    xhr.open('GET', url, true);
+    xhr.withCredentials = true;
+    xhr.onreadystatechange = handler;
+    xhr.send(); 
   }
 }
 ```

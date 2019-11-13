@@ -26,7 +26,7 @@ import java.util.concurrent.locks.Lock;
  * @date         2017年9月3日  下午9:48:35
  * Copyright: 	  北京亚信智慧数据科技有限公司
  */
-public class AQSReetrantLock implements Lock , Serializable {
+public class AQSReetrantLock implements Lock, Serializable {
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 1L;

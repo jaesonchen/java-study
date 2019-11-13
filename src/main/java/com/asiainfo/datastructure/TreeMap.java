@@ -13,32 +13,17 @@ public class TreeMap<K, V> implements Map<K, V> {
 
     private BinaryTree<TreeNode<K, V>> tree = new BinaryTree<TreeNode<K, V>>();
     private int size;
-    /* 
-     * TODO
-     * @return
-     * @see com.asiainfo.datastructure.Map#size()
-     */
+
     @Override
     public int size() {
         return size;
     }
 
-    /* 
-     * TODO
-     * @return
-     * @see com.asiainfo.datastructure.Map#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /* 
-     * TODO
-     * @param key
-     * @return
-     * @see com.asiainfo.datastructure.Map#containsKey(java.lang.Object)
-     */
     @Override
     public boolean containsKey(Object key) {
         @SuppressWarnings("unchecked")
@@ -46,12 +31,6 @@ public class TreeMap<K, V> implements Map<K, V> {
         return null != node;
     }
 
-    /* 
-     * TODO
-     * @param key
-     * @return
-     * @see com.asiainfo.datastructure.Map#get(java.lang.Object)
-     */
     @Override
     public V get(Object key) {
         @SuppressWarnings("unchecked")
@@ -59,13 +38,6 @@ public class TreeMap<K, V> implements Map<K, V> {
         return null == node ? null : node.getData().getValue();
     }
 
-    /* 
-     * TODO
-     * @param key
-     * @param value
-     * @return
-     * @see com.asiainfo.datastructure.Map#put(java.lang.Object, java.lang.Object)
-     */
     @Override
     public V put(K key, V value) {
         
@@ -81,11 +53,6 @@ public class TreeMap<K, V> implements Map<K, V> {
         return oldValue;
     }
 
-    /* 
-     * TODO
-     * @param map
-     * @see com.asiainfo.datastructure.Map#putAll(com.asiainfo.datastructure.Map)
-     */
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         
@@ -93,13 +60,7 @@ public class TreeMap<K, V> implements Map<K, V> {
             put(entry.getKey(), entry.getValue());
         }
     }
-    
-    /* 
-     * TODO
-     * @param key
-     * @return
-     * @see com.asiainfo.datastructure.Map#remove(java.lang.Object)
-     */
+
     @Override
     public V remove(Object key) {
         
@@ -112,21 +73,12 @@ public class TreeMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    /* 
-     * TODO
-     * @see com.asiainfo.datastructure.Map#clear()
-     */
     @Override
     public void clear() {
         tree.setRoot(null);
         size = 0;
     }
 
-    /* 
-     * TODO
-     * @return
-     * @see com.asiainfo.datastructure.Map#keySet()
-     */
     @Override
     public Set<K> keySet() {
         
@@ -138,11 +90,6 @@ public class TreeMap<K, V> implements Map<K, V> {
         return result;
     }
 
-    /* 
-     * TODO
-     * @return
-     * @see com.asiainfo.datastructure.Map#values()
-     */
     @Override
     public List<V> values() {
         
@@ -154,11 +101,6 @@ public class TreeMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    /* 
-     * TODO
-     * @return
-     * @see com.asiainfo.datastructure.Map#entrySet()
-     */
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         

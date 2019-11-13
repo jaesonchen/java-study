@@ -11,11 +11,6 @@ import java.util.ServiceLoader;
  */
 public class SpiServiceExample {
 
-	/** 
-	 * @Description: TODO
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		
 		ServiceLoader<SpiService> loaders = ServiceLoader.load(SpiService.class);

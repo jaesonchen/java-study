@@ -38,6 +38,7 @@ public class ExpressionCalculate {
         // 算术运算
         Expression exp = ep.parseExpression("1 + 100.2 + 2 * 4 + 3 * (4 - 3) / 2");
         System.out.println(exp.getValue(Double.class));
+        System.out.println(exp.getValue(Integer.class));
         // 关系运算
         exp = ep.parseExpression("1 < 2");
         System.out.println(exp.getValue(Boolean.class));
@@ -128,10 +129,10 @@ public class ExpressionCalculate {
      * 
      * @return
      */
+    @SuppressWarnings("serial")
     protected static Map<String, Operator> supportOperator() {
         
         return new HashMap<String, Operator>() {
-            private static final long serialVersionUID = 7706718608122369958L;
             {
                 put("+", Operator.PLUS);
                 put("-", Operator.MINUS);
@@ -155,9 +156,9 @@ public class ExpressionCalculate {
         OperatorNumber<?> result = null;
         // 弹出操作栈最顶上的运算符进行计算
         if (num1.isInteger() && num2.isInteger()) {
-            result = new OperatorNumber<Integer>(((Operator) operStack.pop()).calculate(num1.getValue().intValue(), num2.getValue().intValue()));
+            result = new OperatorNumber<Integer>(operStack.pop().calculate(num1.getValue().intValue(), num2.getValue().intValue()));
         } else {
-            result = new OperatorNumber<Double>(((Operator) operStack.pop()).calculate(num1.getValue().doubleValue(), num2.getValue().doubleValue()));
+            result = new OperatorNumber<Double>(operStack.pop().calculate(num1.getValue().doubleValue(), num2.getValue().doubleValue()));
         }
         // 把计算结果重新放到队列的末端 
         numStack.push(result);

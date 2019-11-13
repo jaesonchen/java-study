@@ -3,11 +3,18 @@ package com.asiainfo.arm;
 /**   
  * Java 7 的编译器和运行环境支持新的 try-with-resources 语句，称为 ARM 块(Automatic Resource Management) ，自动资源管理。
  * 
- * 传统的try{}finally{}代码通常都是在finally里写资源关闭代码，以保证try块出现异常时，finally的资源关闭一定会被执行；
- * 但是当try块抛出异常，而finally的资源关闭代码也抛出异常时，try块的异常将被finally块的异常抑制，finally的异常将根据调用栈向往传播，
- * 即使try语句块中抛出的异常与异常传播更相关。
+ * try{} finally {}代码通常都是在finally里写资源关闭代码，以保证try块出现异常时，finally的资源关闭一定会被执行； 但是当try块抛出异常，
+ * finally的资源关闭代码也抛出异常时，try块的异常将被finally块的异常抑制，finally的异常将根据调用栈向往传播，即使try语句块中抛出的异常与异常传播更相关。
  * 
  * try-with-resources结构里不仅能够操作java内置的类。你也可以在自己的类中实现java.lang.AutoCloseable接口，然后在try-with-resources结构里使用这个类。
+ * 
+ * 
+ * try finally特性：
+ * try中的return语句会将返回结果/抛出异常压栈，然后转入到finally子过程，等到finally子过程执行完毕之后（没有return），再返回/抛出异常。
+ * finally的语句是在方法return之前执行的，而且如果finally中有return语句的话，方法直接结束，不再返回栈中的值/异常。
+ * finally中return会吃掉try中抛出的异常，方法不需要声明异常。
+ * finally中抛出异常会抑制try中抛出的异常，方法需要声明finally抛出得异常类型。
+ * 
  * 
  * @author chenzq  
  * @date 2019年3月19日 下午1:14:01
@@ -46,7 +53,6 @@ public class TryWithResources {
 
     // 传统的资源管理
     static void traditionResourceManager() throws Exception {
-        
         MyResources res = null;
         try {
             res = new MyResources();
